@@ -33,10 +33,10 @@ import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.renderer.*;
-import remixlab.dandelion.timer.*;
 import remixlab.tersehandling.generic.event.*;
 import remixlab.tersehandling.core.*;
 import remixlab.tersehandling.generic.profile.*;
+import remixlab.tersehandling.timing.*;
 
 import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
@@ -151,7 +151,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		public ProsceneMouse(Scene scn, String n) {
 			super(scn, n);
 			scene = scn;
-			cameraProfile().setBinding(TH_META, TH_RIGHT, DOF2Action.TRANSLATE);	
+			
+			//cameraProfile().setBinding(TH_META, TH_RIGHT, DOF2Action.TRANSLATE);	
 			
 			/**
 			//TODO testing:
@@ -490,10 +491,10 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 
 		@Override
 		public void drawZoomWindowHint() {
-			float p1x = (float) scene.prosceneMouse.fCorner.getX();
-			float p1y = (float) scene.prosceneMouse.fCorner.getY();
-			float p2x = (float) scene.prosceneMouse.lCorner.getX();
-			float p2y = (float) scene.prosceneMouse.lCorner.getY();
+			float p1x = (float) ((Scene)scene).prosceneMouse.fCorner.getX();
+			float p1y = (float) ((Scene)scene).prosceneMouse.fCorner.getY();
+			float p2x = (float) ((Scene)scene).prosceneMouse.lCorner.getX();
+			float p2y = (float) ((Scene)scene).prosceneMouse.lCorner.getY();
 			scene.beginScreenDrawing();
 			pg().pushStyle();
 			pg().stroke(255, 255, 255);
@@ -511,8 +512,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 
 		@Override
 		public void drawScreenRotateLineHint() {
-			float p1x = (float) scene.prosceneMouse.lCorner.getX();
-			float p1y = (float) scene.prosceneMouse.lCorner.getY();
+			float p1x = (float) ((Scene)scene).prosceneMouse.lCorner.getX();
+			float p1y = (float) ((Scene)scene).prosceneMouse.lCorner.getY();
 			Vec p2 = scene.viewport().projectedCoordinatesOf(scene.arcballReferencePoint());
 			scene.beginScreenDrawing();
 			pg().pushStyle();
@@ -1837,6 +1838,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	protected Method animateHandlerMethod;
 	/** the name of the method to handle the animation */
 	protected String animateHandlerMethodName;	
+	
+	protected boolean javaTiming;
 
 	/**
 	 * Constructor that defines an on-screen Scene (the one that most likely
@@ -1850,7 +1853,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * @see #Scene(PApplet, PGraphics, int, int)
 	 */	
 	public Scene(PApplet p) {
-		this(p, p.g);
+		this(p, (PGraphics) p.g);		
 	}
 	
 	/**
@@ -1904,7 +1907,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			this.setDottedGrid(false);
 		
 		//setJavaTimers();
-		this.parent.frameRate(100);
+		//TODO broken in the meantime
+		//this.parent.frameRate(100);
 		setLeftHanded();
 		
 		/**
@@ -1942,11 +1946,6 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		//setDeviceGrabber(null);
 		
 		//deviceGrabberIsAnIFrame = false;
-
-		//animation
-		animationTimer = new SeqTimer(this);
-		setAnimationPeriod(40, false); // 25Hz
-		stopAnimation();
 
 		//withConstraint = true;
 
@@ -2166,39 +2165,9 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	@Override
 	public void registerJob(AbstractTimerJob job) {
 		if (timersAreSingleThreaded())
-			super.registerJob(job);
-		else {
-			job.setTimer(new TimerWrap(this, job));
-			timerPool.add(job);
-		}
-	}
-	
-	public void setSingleThreadedTimers() {
-		if( timersAreSingleThreaded() )
-			return;
-		
-		boolean isActive;
-		
-		for ( AbstractTimerJob job : timerPool ) {
-			long period = 0;
-			boolean rOnce = false;
-			isActive = job.isActive();
-			if(isActive) {
-				period = job.period();
-				rOnce = job.timer().isSingleShot();
-			}
-			job.stop();
-			job.setTimer(new SeqTaskableTimer(this, job));			
-			if(isActive) {
-				if(rOnce)
-					job.runOnce(period);
-				else
-					job.run(period);
-			}
-		}
-		
-		singleThreadedTaskableTimers = true;		
-		PApplet.println("single threaded timers set");
+			timerHandler().registerJob(job);
+		else
+			timerHandler().registerJob(job, new TimerWrap(this, job));
 	}
 	
 	public void setJavaTimers() {
@@ -2207,7 +2176,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		
 		boolean isActive;
 		
-		for ( AbstractTimerJob job : timerPool ) {
+		for ( AbstractTimerJob job : timerHandler().timerPool() ) {
 			long period = 0;
 			boolean rOnce = false;
 			isActive = job.isActive();
@@ -2225,8 +2194,12 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			}
 		}	
 		
-		singleThreadedTaskableTimers = false;
+		javaTiming = true;
 		PApplet.println("awt timers set");
+	}
+	
+	public boolean timersAreSingleThreaded() {
+		return !javaTiming;
 	}
 	
 	public void switchTimers() {
@@ -2234,6 +2207,11 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			setJavaTimers();
 		else
 			setSingleThreadedTimers();
+	}
+	
+	public void setSingleThreadedTimers() {
+		javaTiming = false;
+		timerHandler().restoreTimers();
 	}
 	
 	// 5. Drawing methods
@@ -2758,23 +2736,17 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * @see #startAnimation()
 	 */
 	@Override
-	protected void performAnimation() {
-		if( !animationTimer.isTrigggered() ) {
-			animatedFrameWasTriggered = false;
-			return;
-		}
-		
-		animatedFrameWasTriggered = true;		
+	public boolean externalAnimation() {
 		if (animateHandlerObject != null) {
 			try {
 				animateHandlerMethod.invoke(animateHandlerObject, new Object[] { this });
+				return true;
 			} catch (Exception e) {
 				PApplet.println("Something went wrong when invoking your " + animateHandlerMethodName + " method");
 				e.printStackTrace();
 			}
 		}
-		else
-			animate();
+		return false;
 	}
 	
 	/**
@@ -2831,9 +2803,9 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	protected Camera.WorldPoint pointUnderPixel(Point pixel) {
 		float[] depth = new float[1];
 		PGL pgl = pggl().beginPGL();
-		pgl.readPixels(pixel.x, (camera().screenHeight() - pixel.y), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT, FloatBuffer.wrap(depth));		
+		pgl.readPixels((int) pixel.x, (camera().screenHeight() - (int) pixel.y), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT, FloatBuffer.wrap(depth));		
 		pggl().endPGL();		
-		Vec point = new Vec(pixel.x, pixel.y, depth[0]);		
+		Vec point = new Vec((int) pixel.x, (int) pixel.y, depth[0]);		
 		point = camera().unprojectedCoordinatesOf(point);
 		return camera().new WorldPoint(point, (depth[0] < 1.0f));
 	}	
