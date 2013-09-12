@@ -125,6 +125,7 @@ void keyPressed() {
     scene.switchTimers();
   case 'p':
     println("Frame rate: " + frameRate);
+    break;
   case 'u':
     smoothEdges = !smoothEdges;
     if (smoothEdges)
