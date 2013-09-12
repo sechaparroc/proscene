@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace/libs/all/tersehandling.jar"/>
 	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace/libs/all/dandelion.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/p5-2x"/>
+	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace/libs/all/fpstiming.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
