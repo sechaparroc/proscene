@@ -1764,15 +1764,30 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	// ---- //
 	
 	// proscene version
-	public static final String version = "1.9.60";
+    public static final String prettyVersion = "1.9.50";
+		
+	public static final String version = "16";
+	
+	public static String prettyVersion() {
+		return prettyVersion;
+	}
+	
+	public static final int versionNumber() {
+		return Integer.parseInt(version);
+	}
+	
+	public static final String version() {
+		return version;
+	}	
+	
 	/**
 	 * Returns the major release version number of proscene as an integer.
 	 * <p>
 	 * {@code Scene.version} will return the complete version (major+minor)
 	 * number as a string. 
 	 */
-	public static int majorVersionNumber() {
-		return Integer.parseInt(majorVersion());
+	public static int majorPrettyVersionNumber() {
+		return Integer.parseInt(majorPrettyVersion());
 	}
 	
 	/**
@@ -1781,8 +1796,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * {@code Scene.version} will return the complete version (major+minor)
 	 * number as a string.
 	 */
-	public static String majorVersion() {
-		return version.substring(0, version.indexOf("."));
+	public static String majorPrettyVersion() {
+		return prettyVersion.substring(0, prettyVersion.indexOf("."));
 	}
 	
 	/**
@@ -1791,8 +1806,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * {@code Scene.version} will return the complete version (major+minor)
 	 * number as a string.
 	 */
-	public static float minorVersionNumber() {
-		return Float.parseFloat(minorVersion());
+	public static float minorPrettyVersionNumber() {
+		return Float.parseFloat(minorPrettyVersion());
 	}
 	
 	/**
@@ -1801,8 +1816,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * {@code Scene.version} will return the complete version (major+minor)
 	 * number as a string.
 	 */
-	public static String minorVersion() {
-		return version.substring(version.indexOf(".") + 1);
+	public static String minorPrettyVersion() {
+		return prettyVersion.substring(prettyVersion.indexOf(".") + 1);
 	}
 
 	// P R O C E S S I N G   A P P L E T   A N D   O B J E C T S
