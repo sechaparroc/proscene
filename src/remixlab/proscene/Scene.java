@@ -1749,20 +1749,20 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	// ---- //
 	
 	// proscene version
-    public static final String prettyVersion = "1.9.50";
+  public static final String proscenePrettyVersion = "1.9.50";
 		
-	public static final String version = "16";
+	public static final String prosceneVersion = "16";
 	
 	public static String prettyVersion() {
-		return prettyVersion;
+		return proscenePrettyVersion;
 	}
 	
-	public static final int versionNumber() {
-		return Integer.parseInt(version);
+	public static int versionNumber() {
+		return Integer.parseInt(prosceneVersion);
 	}
 	
-	public static final String version() {
-		return version;
+	public static String version() {
+		return prosceneVersion;
 	}	
 	
 	/**
@@ -1782,7 +1782,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * number as a string.
 	 */
 	public static String majorPrettyVersion() {
-		return prettyVersion.substring(0, prettyVersion.indexOf("."));
+		return proscenePrettyVersion.substring(0, proscenePrettyVersion.indexOf("."));
 	}
 	
 	/**
@@ -1802,7 +1802,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * number as a string.
 	 */
 	public static String minorPrettyVersion() {
-		return prettyVersion.substring(prettyVersion.indexOf(".") + 1);
+		return proscenePrettyVersion.substring(proscenePrettyVersion.indexOf(".") + 1);
 	}
 
 	// P R O C E S S I N G   A P P L E T   A N D   O B J E C T S
