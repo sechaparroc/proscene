@@ -1,8 +1,8 @@
-public class TUIO2DOFAgent extends MouseAgent {
+public class TUIOAgent extends MouseAgent {
   Scene scene;
   GenericDOF2Event<DOF2Action> event, prevEvent;
 
-  public TUIO2DOFAgent(Scene scn, String n) {
+  public TUIOAgent(Scene scn, String n) {
     super(scn, n);
     this.enableTracking();
     scene = scn;

@@ -16,13 +16,13 @@ import remixlab.proscene.*;
 
 Scene scene;
 Box [] boxes;
-TUIO2DOFAgent agent;
+TUIOAgent agent;
 TuioProcessing tuioClient;
 
 public void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  agent = new TUIO2DOFAgent(scene, "MyTuioAgent");
+  agent = new TUIOAgent(scene, "MyTuioAgent");
   scene.setRadius(150);
   scene.showAll();
   //'f' toggles hints
