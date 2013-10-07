@@ -40,7 +40,8 @@ public class TUIOAgent extends MouseAgent {
     tcur.getScreenY(scene.height()), 
     TH_NOMODIFIER_MASK, 
     TH_NOBUTTON);
-    updateGrabber(event);
     prevEvent = event.get();
+    disableTracking();
+    enableTracking();
   }
 }
