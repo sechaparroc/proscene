@@ -1,3 +1,10 @@
+/**
+ * Dizzi
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import java.util.ArrayList;
 
 import remixlab.proscene.*;

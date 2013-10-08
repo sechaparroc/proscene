@@ -40,7 +40,7 @@ public abstract class Button2D extends AbstractGrabber {
     if (grabsAgent(scene.defaultMouseAgent()))
       parent.fill(255);
     else
-      parent.fill(100);
+      parent.fill(0,255,0);
     scene.beginScreenDrawing();
     parent.text(myText, position.x, position.y, myWidth, myHeight);
     scene.endScreenDrawing();

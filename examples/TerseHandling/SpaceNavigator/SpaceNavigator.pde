@@ -1,3 +1,10 @@
+/**
+ * Space Navigator
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import processing.opengl.*;
 
 import remixlab.proscene.*;

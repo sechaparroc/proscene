@@ -1,3 +1,10 @@
+/**
+ * Mouse Move Came Rotate
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.agent.KeyboardAgent;
 import remixlab.dandelion.agent.MouseAgent;

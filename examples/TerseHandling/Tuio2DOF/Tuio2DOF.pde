@@ -1,3 +1,10 @@
+/**
+ * TUIO 2 DOF
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import java.util.Vector;
 
 import TUIO.*;
@@ -29,10 +36,8 @@ public void setup() {
   scene.setFrameSelectionHintIsDrawn(true);
   boxes = new Box[30];
 
-  for (int i = 0; i < boxes.length; i++) {
+  for (int i = 0; i < boxes.length; i++)
     boxes[i] = new Box(scene);
-    agent.addInPool(boxes[i].iFrame);
-  }	
 
   tuioClient = new TuioProcessing(this, 3333);
   // 'h' also displays it:

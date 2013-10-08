@@ -1,3 +1,10 @@
+/**
+ * Low
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+ 
 import remixlab.proscene.*;
 import remixlab.proscene.Scene.ProsceneKeyboard;
 import remixlab.proscene.Scene.ProsceneMouse;

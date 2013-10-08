@@ -1,3 +1,10 @@
+/**
+ * Basic 2D
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 

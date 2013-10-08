@@ -1,3 +1,10 @@
+/**
+ * IFrame 2D
+ * by Jean Pierre Charalambos.
+ *
+ * Doc to come...
+ */
+
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
