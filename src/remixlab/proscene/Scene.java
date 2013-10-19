@@ -1747,7 +1747,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	// ---- //
 	
 	// proscene version
-  public static final String prettyVersion = "1.9.50";
+  public static final String prettyVersion = "2.0.0-alpha.1";
 		
 	public static final String version = "16";
 	
