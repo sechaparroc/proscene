@@ -1,6 +1,6 @@
 /**
  * TUIO 2 DOF
- * by Jean Pierre Charalambos.
+ * by Eduardo Moriana and Jean Pierre Charalambos.
  *
  * Doc to come...
  */
