@@ -5,11 +5,7 @@ public class Kinect {
   PVector rotat;            // The vector with rotation values calculated with hands positions
   PVector initial;          // Initial position, set when two hands are detected
   boolean initialDefined;   // True if the initial vector was defined
-
-  /**
-   * Kinect object constructor
-   * @param PApplet p PApplet object
-   */
+  
   public Kinect(PApplet p) {
     //Kinect init
     context = new SimpleOpenNI(p);
@@ -40,10 +36,7 @@ public class Kinect {
       update();
     }
   }
-
-  /**
-   * Update the Kinect context and the hand positions
-   */
+ 
   public void update() {
     //update the camera context
     context.update();
@@ -55,10 +48,7 @@ public class Kinect {
       initialDefined=true;
     }
   }
-  
-  /**
-   * Draw the hands
-   */
+ 
   public void draw() {
     drawScreenElements();
   }
@@ -77,10 +67,6 @@ public class Kinect {
     scene.endScreenDrawing();
   }
 
-  /**
-   * Return the position computed from the position of the hands
-   * @param PVector Position vector
-   */
   public PVector positionVector() {
     posit=new PVector(0, 0, 0);
     if (isActiveUser()) {
@@ -90,11 +76,7 @@ public class Kinect {
     }
     return posit;
   }
-  
-  /**
-   * Return the difference between the initial position and the current position
-   * @param PVector Position vector
-   */
+ 
   public PVector deltaPositionVector() {
     PVector delta=new PVector(0, 0, 0);
     PVector posit=positionVector();
@@ -106,10 +88,6 @@ public class Kinect {
     return delta;
   }
   
-  /**
-   * Return the rotations computed from the position of the hands
-   * @param PVector Rotation vector
-   */
   public PVector rotationVector() {
     rotat=new PVector(0, 0, 0);
     if (isActiveUser()) {
@@ -121,9 +99,6 @@ public class Kinect {
     return rotat;
   }
 
-  /**
-   * Update the hands position with the screen values (projective coordinates)
-   */
   private void updateHands() {
     if (isActiveUser()) {
       int[] userList = context.getUsers();
@@ -144,11 +119,6 @@ public class Kinect {
     return screenPos;
   }
   
-  /**
-   * Check if there is an active user in the openni context.
-   * This example only works with the first registered user.
-   * @return boolean True if is an active user, false otherwise
-   */
   private boolean isActiveUser() {
     boolean active=false;
     if (context.isInit() == true) {
@@ -160,15 +130,16 @@ public class Kinect {
     return active;
   }
   
-  /**
-   * Check if the device is detecting both hands.
-   */
   private boolean isDetectingHands() {
     if (left.getPoint().x==0&&left.getPoint().y==0&&left.getPoint().z==0&&
       right.getPoint().x==0&&right.getPoint().y==0&&right.getPoint().z==0)
       return false;
     else
       return true;
+  }
+  
+  private float distance() {
+    return sqrt(pow(left.getPoint().x-right.getPoint().x, 2)+pow(left.getPoint().y-right.getPoint().y, 2)+pow(left.getPoint().z-right.getPoint().z, 2));
   }
   
   // SimpleOpenNI events

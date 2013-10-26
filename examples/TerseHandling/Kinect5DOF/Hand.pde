@@ -1,7 +1,7 @@
 public class Hand {
   PVector point;
   color col;
- 
+
   public Hand() {
     point=new PVector(0, 0, 0);
   }
@@ -10,18 +10,15 @@ public class Hand {
     point=new PVector(0, 0, 0);
     col=inColor;
   }
-
+  
   public PVector getPoint() {
     return point;
   }
- 
+  
   public void setPoint(PVector inPoint) {
     point=inPoint;
   }
- 
-  /**
-   * Draw hand
-   */
+  
   public void draw() {
     fill(col);
     float maxZAllowed=1800;
