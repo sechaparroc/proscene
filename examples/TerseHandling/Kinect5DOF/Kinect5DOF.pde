@@ -31,13 +31,14 @@ void setup() {
   scene = new Scene(this);
   kinect=new Kinect(this);
 
-  scene.camera().setPosition(new Vec(250, 250, 250));
-  scene.camera().lookAt(new Vec(0, 0, 0));
+  scene.setRadius(200);
+  scene.showAll();
 
   agent = new HIDAgent(scene, "Kinect") {
     GenericDOF6Event<Constants.DOF6Action> event, prevEvent;
     @Override
     public GenericDOF6Event<Constants.DOF6Action> feed() {
+      if(!kinect.initialDefined) return null;
       if (cameraMode) { //-> event is absolute
         setDefaultGrabber(scene.viewport().frame()); //set it by default
         disableTracking();
@@ -48,8 +49,11 @@ void setup() {
         setDefaultGrabber(null);
         enableTracking();
         scene.setFrameSelectionHintIsDrawn(true);
-        event = new GenericDOF6Event<Constants.DOF6Action>(prevEvent, kinect.posit.x, kinect.posit.y, 0,0,0,0);
+        event = new GenericDOF6Event<Constants.DOF6Action>(prevEvent, kinect.posit.x, kinect.posit.y, kinect.posit.z, 0, kinectRot.y, kinectRot.z);
         prevEvent = event.get();
+        //debug:     
+        //println("abs pos: " + event.getX() + ", " + event.getY() + ", " + event.getZ());
+        //println("deltas : " + event.getDX() + ", " + event.getDY() + ", " + event.getDZ());
         if(trackedGrabber() == null)
           updateGrabber(event); 
       }
@@ -57,6 +61,10 @@ void setup() {
     }
   };  
   agent.setSensitivities(0.03, 0.03, 0.03, 0.00005, 0.00005, 0.00005);
+  agent.cameraProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE); //set by default anyway
+  agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE3);
+  //needs fixing in dandelion:
+  //agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE); //set by default anyway
 
   boxes = new Box[30];
   for (int i = 0; i < boxes.length; i++) {
@@ -82,10 +90,9 @@ void draw() {
 }
 
 void keyPressed() {
-  cameraMode = !cameraMode;
+  if(key == 'v' || key == 'V')  cameraMode = !cameraMode;
 }
 
 void onNewUser(SimpleOpenNI curContext, int userId) {
   kinect.onNewUser(curContext, userId);
 }
-
