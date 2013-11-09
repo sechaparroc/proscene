@@ -15,7 +15,7 @@ import processing.opengl.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.renderer.*;
+import remixlab.dandelion.helper.*;
 import remixlab.fpstiming.*;
 import remixlab.tersehandling.generic.event.*;
 import remixlab.tersehandling.core.*;
@@ -619,7 +619,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 
 		@Override
 		public void drawWindow(Window camera, float scale) {
-			pushMatrix();
+			pushModelView();
 			
 			/**
 			VFrame tmpFrame = new VFrame(scene.is3D());
@@ -688,7 +688,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			pg().endShape();		
 			
 			pg().popStyle();
-			popMatrix();
+			popModelView();
 		}
 		
 		 @Override
@@ -810,7 +810,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 					for (RefFrame myFr : path)
 						if ((count++) >= goal) {
 							goal += nbSteps / (float) nbFrames;
-							pushMatrix();
+							pushModelView();
 												  
 							scene.applyTransformation(myFr);						
 
@@ -819,7 +819,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 							if ((mask & 4) != 0)
 								drawAxis(scale / 10.0f);
 
-							popMatrix();
+							popModelView();
 						}
 				}
 				pg().popStyle();
@@ -897,7 +897,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 
 		/**
 		 * Draws a cylinder whose bases are formed by two cutting planes ({@code m}
-		 * and {@code n}), along the {@link #matrixHelpler()} positive {@code z} axis.
+		 * and {@code n}), along the {@link #matrixHelper()} positive {@code z} axis.
 		 * 
 		 * @param detail
 		 * @param w radius of the cylinder and h is its height
@@ -938,7 +938,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}
 
 		/**
-		 * Overriding of {@link remixlab.dandelion.core.Renderable#cone(int, float, float, float, float)}.
+		 * Overriding of {@link remixlab.dandelion.core.MatrixHelpable#cone(int, float, float, float, float)}.
 		 * <p>
 		 * The code of this function was adapted from
 		 * http://processinghacks.com/hacks:cone Thanks to Tom Carden.
@@ -956,7 +956,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				unitConeY[i] = r * (float) Math.sin(a1);
 			}
 
-			pushMatrix();
+			pushModelView();
 			translate(x, y);
 			pg3d().beginShape(PApplet.TRIANGLE_FAN);
 			pg3d().vertex(0, 0, h);
@@ -964,11 +964,11 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				pg3d().vertex(unitConeX[i], unitConeY[i], 0.0f);
 			}
 			pg3d().endShape();
-			popMatrix();
+			popModelView();
 		}
 
 		/**
-		 * Overriding of {@link remixlab.dandelion.core.Renderable#cone(int, float, float, float, float, float)}.
+		 * Overriding of {@link remixlab.dandelion.core.MatrixHelpable#cone(int, float, float, float, float, float)}.
 		 */
 		@Override
 		public void cone(int detail, float x, float y, float r1, float r2, float h) {
@@ -985,7 +985,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				secondCircleY[i] = r2 * (float) Math.sin(a1);
 			}
 
-			pushMatrix();
+			pushModelView();
 			translate(x, y);
 			pg3d().beginShape(PApplet.QUAD_STRIP);
 			for (int i = 0; i <= detail; i++) {
@@ -993,7 +993,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				pg3d().vertex(secondCircleX[i], secondCircleY[i], h);
 			}
 			pg3d().endShape();
-			popMatrix();		
+			popModelView();		
 		}
 
 		@Override
@@ -1081,7 +1081,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		
 		@Override
 		public void drawCamera(Camera cam, boolean drawFarPlane, float scale) {
-			pushMatrix();
+			pushModelView();
 			
 			//applyMatrix(camera.frame().worldMatrix());
 			// same as the previous line, but maybe more efficient
@@ -1219,7 +1219,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			pg3d().endShape();
 			
 			pg3d().popStyle();
-			popMatrix();
+			popModelView();
 		}
 
 		@Override
@@ -1315,7 +1315,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 					for (RefFrame myFr : path)
 						if ((count++) >= goal) {
 							goal += nbSteps / (float) nbFrames;
-							pushMatrix();
+							pushModelView();
 												  
 							scene.applyTransformation(myFr);						
 
@@ -1324,7 +1324,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 							if ((mask & 4) != 0)
 								drawAxis(scale / 10.0f);
 
-							popMatrix();
+							popModelView();
 						}
 				}
 				pg3d().popStyle();
@@ -1333,7 +1333,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		
 		@Override
 		public void drawWindow(Window camera, float scale) {
-			pushMatrix();
+			pushModelView();
 			
 			//VFrame tmpFrame = new VFrame(scene.is3D());
 			//tmpFrame.fromMatrix(camera.frame().worldMatrix(), camera.frame().magnitude());		
@@ -1399,7 +1399,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			pg().endShape();		
 			
 			pg().popStyle();
-			popMatrix();
+			popModelView();
 		}
 		
 		/**
@@ -1422,16 +1422,16 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		*/
 	}
 	
-	protected class P5RendererJava2D extends Renderer {
+	protected class P5Java2DMatrixHelper extends MatrixHelper {
 		PGraphics pg;
 		Mat proj;
 		
-		public P5RendererJava2D(Scene scn, PGraphics renderer, Depictable d) {
+		public P5Java2DMatrixHelper(Scene scn, PGraphics renderer, Depictable d) {
 			super(scn);
 			pg = renderer;
 		}
 		
-		public P5RendererJava2D(Scene scn, PGraphics renderer) {
+		public P5Java2DMatrixHelper(Scene scn, PGraphics renderer) {
 			super(scn);
 			pg = renderer;
 		}		
@@ -1447,41 +1447,41 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	  // matrix stuff
 		
 		@Override
-		public void pushMatrix() {
+		public void pushModelView() {
 			pg().pushMatrix();
 		}
 		
 		@Override
-		public void popMatrix() {
+		public void popModelView() {
 			pg().popMatrix();
 		}
 		
 		@Override
-		public void resetMatrix() {
+		public void resetModelView() {
 			pg().resetMatrix();
 		}
 		
 		@Override
-		public Mat getMatrix() {
+		public Mat getModelView() {
 			PMatrix3D pM = (PMatrix3D) pg().getMatrix();
 			return new Mat(pM.get(new float[16]), true);// set it transposed
 		}
 		
 		@Override
-		public Mat getMatrix(Mat target) {
+		public Mat getModelView(Mat target) {
 			PMatrix3D pM = (PMatrix3D) pg().getMatrix();
 			target.setTransposed(pM.get(new float[16]));
 			return target;
 		}
 		
 		@Override
-		public void setMatrix(Mat source) {
-			resetMatrix();
-			applyMatrix(source);
+		public void setModelView(Mat source) {
+			resetModelView();
+			applyModelView(source);
 		}
 		
 		@Override
-		public void printMatrix() {
+		public void printModelView() {
 			pg().printMatrix();
 		}
 		
@@ -1491,14 +1491,14 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}
 		
 		@Override
-		public void applyMatrix(Mat source) {
+		public void applyModelView(Mat source) {
 			PMatrix3D pM = new PMatrix3D();
 			pM.set(source.getTransposed(new float[16]));
 			pg().applyMatrix(pM);
 		}
 		
 		@Override
-		public void applyMatrixRowMajorOrder(float n00, float n01, float n02, float n03,
+		public void applyModelViewRowMajorOrder(float n00, float n01, float n02, float n03,
 				                                 float n10, float n11, float n12, float n13,
 				                                 float n20, float n21, float n22, float n23,
 				                                 float n30, float n31, float n32, float n33) {
@@ -1601,13 +1601,23 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		public void setProjection(Mat source) {
 			AbstractScene.showMissingImplementationWarning("P5RendererJava2D.setProjection");
 		}
+
+		@Override
+		public void initProjection() {
+			AbstractScene.showMissingImplementationWarning("P5RendererJava2D.initProjection");
+		}
+
+		@Override
+		public void initModelView() {
+			AbstractScene.showMissingImplementationWarning("P5RendererJava2D.initModelView");
+		}
 	}
 
-	protected abstract class P5Renderer extends ProjectionRenderer {
+	protected abstract class P5GLMatrixHelper extends PlugableMatrixHelper {
 		PGraphicsOpenGL pg;
 		Mat proj;
 		
-		public P5Renderer(Scene scn, PGraphicsOpenGL renderer) {
+		public P5GLMatrixHelper(Scene scn, PGraphicsOpenGL renderer) {
 			super(scn);
 			pg = renderer;
 			proj = new Mat();
@@ -1672,53 +1682,53 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	// matrix stuff
 		
 		@Override
-		public void pushMatrix() {
+		public void pushModelView() {
 			pg().pushMatrix();
 		}
 		
 		@Override
-		public void popMatrix() {
+		public void popModelView() {
 			pg().popMatrix();
 		}
 		
 		@Override
-		public void resetMatrix() {
+		public void resetModelView() {
 			pg().resetMatrix();
 		}
 		
 		@Override
-		public Mat getMatrix() {
+		public Mat getModelView() {
 			PMatrix3D pM = (PMatrix3D) pg().getMatrix();
 			return new Mat(pM.get(new float[16]), true);// set it transposed
 		}
 		
 		@Override
-		public Mat getMatrix(Mat target) {
+		public Mat getModelView(Mat target) {
 			PMatrix3D pM = (PMatrix3D) pg().getMatrix();
 			target.setTransposed(pM.get(new float[16]));
 			return target;
 		}
 		
 		@Override
-		public void setMatrix(Mat source) {
-			resetMatrix();
-			applyMatrix(source);
+		public void setModelView(Mat source) {
+			resetModelView();
+			applyModelView(source);
 		}
 		
 		@Override
-		public void printMatrix() {
+		public void printModelView() {
 			pg().printMatrix();
 		}
 		
 		@Override
-		public void applyMatrix(Mat source) {
+		public void applyModelView(Mat source) {
 			PMatrix3D pM = new PMatrix3D();
 			pM.set(source.getTransposed(new float[16]));
 			pg().applyMatrix(pM);
 		}
 		
 		@Override
-		public void applyMatrixRowMajorOrder(float n00, float n01, float n02, float n03,
+		public void applyModelViewRowMajorOrder(float n00, float n01, float n02, float n03,
 				                                 float n10, float n11, float n12, float n13,
 				                                 float n20, float n21, float n22, float n23,
 				                                 float n30, float n31, float n32, float n33) {
@@ -1778,8 +1788,8 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}
 	}
 	
-	protected class P5Renderer2D extends P5Renderer {	
-		public P5Renderer2D(Scene scn, PGraphicsOpenGL renderer) {
+	protected class P5GL2DMatrixHelper extends P5GLMatrixHelper {	
+		public P5GL2DMatrixHelper(Scene scn, PGraphicsOpenGL renderer) {
 			super(scn, renderer);
 		}
 		
@@ -1795,7 +1805,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}
 
 		@Override
-		public void setMatrix(Mat source) {
+		public void setModelView(Mat source) {
 			PMatrix3D pM = new PMatrix3D();
 			pM.set(source.getTransposed(new float[16]));
 			//pg2d().setMatrix(pM);
@@ -1808,7 +1818,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		 * {@link remixlab.dandelion.core.Camera#type()}.
 		 */
 		@Override
-		protected void setProjectionMatrix() {
+		public void initProjection() {
 		  // All options work seemlessly
 			/**		
 			// Option 1
@@ -1827,7 +1837,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 			// /**
 		  // option 3 (new, Andres suggestion)
 			// /**		
-			proj = scene.window().getProjectionMatrix(true);
+			proj = scene.window().getProjection(true);
 			pg2d().setProjection(new PMatrix3D( proj.mat[0],  proj.mat[4], proj.mat[8],  proj.mat[12],
 		                                      proj.mat[1],  proj.mat[5], proj.mat[9],  proj.mat[13],
 		                                      proj.mat[2],  proj.mat[6], proj.mat[10], proj.mat[14],
@@ -1850,7 +1860,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		 * {@code PApplet.camera()}.
 		 */
 		@Override
-		protected void setModelViewMatrix() {
+		public void initModelView() {
 		  // The two options work seamlessly
 			/**		
 			// Option 1
@@ -1863,19 +1873,19 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 
 			// /**		
 			// Option 2
-			pg2d().modelview.set(scene.window().getViewMatrix(true).getTransposed(new float[16]));						
+			pg2d().modelview.set(scene.window().getView(true).getTransposed(new float[16]));						
 			// Finally, caches projmodelview
-			//pg2d().projmodelview.set(scene.viewWindow().getProjectionViewMatrix(true).getTransposed(new float[16]));		
-			Mat.mult(proj, scene.window().view(), scene.window().projectionView());
-			pg2d().projmodelview.set(scene.window().getProjectionTimesView(false).getTransposed(new float[16]));
+			//pg2d().projmodelview.set(scene.viewWindow().getProjectionViewMatrix(true).getTransposed(new float[16]));	
+			scene.window().updateProjectionView();
+			pg2d().projmodelview.set(scene.window().getProjectionView().getTransposed(new float[16]));
 		  // */
 		}
 	}
 	
-	protected class P5Renderer3D extends P5Renderer {
+	protected class P5GL3DMatrixHelper extends P5GLMatrixHelper {
 		Vec at;	
 		
-		public P5Renderer3D(Scene scn, PGraphicsOpenGL renderer) {
+		public P5GL3DMatrixHelper(Scene scn, PGraphicsOpenGL renderer) {
 			super(scn, renderer);		
 			at = new Vec();		
 		}
@@ -1892,7 +1902,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}
 		
 		@Override
-		public void setMatrix(Mat source) {
+		public void setModelView(Mat source) {
 			PMatrix3D pM = new PMatrix3D();
 			pM.set(source.getTransposed(new float[16]));
 			pg3d().setMatrix(pM);//needs testing in screen drawing
@@ -1906,7 +1916,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	   * {@link remixlab.dandelion.core.Camera#type()}.
 	   */
 		@Override
-		protected void setProjectionMatrix() {
+		public void initProjection() {
 		  // All options work seemlessly
 		  /**
 		  // Option 1
@@ -1925,7 +1935,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		  // /**
 		  // option 3 (new, Andres suggestion)
 		  //proj.set((scene.camera().getProjectionMatrix(true).getTransposed(new float[16])));
-		  proj = scene.camera().getProjectionMatrix(true);
+		  proj = scene.camera().getProjection(true);
 		  pg3d().setProjection(new PMatrix3D( proj.mat[0], proj.mat[4], proj.mat[8], proj.mat[12],
 		  																		proj.mat[1], proj.mat[5], proj.mat[9], proj.mat[13],
 		  																		proj.mat[2], proj.mat[6], proj.mat[10], proj.mat[14],
@@ -1967,7 +1977,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		* {@code PApplet.camera()}.
 		*/	
 		@Override
-		protected void setModelViewMatrix() {
+		public void initModelView() {
 		  // All three options work seamlessly
 		  /**
 		  // Option 1
@@ -2005,9 +2015,9 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		  							at.x(), at.y(), at.z(),
 		  							scene.camera().upVector().x(), scene.camera().upVector().y(), scene.camera().upVector().z());
 		  // We cache the processing camera modelview matrix into our camera()
-		  scene.camera().setViewMatrix( pg3d().modelview.get(new float[16]), true );// set it transposed
+		  scene.camera().setView( pg3d().modelview.get(new float[16]), true );// set it transposed
 		  // We cache the processing camera projmodelview matrix into our camera()
-		  scene.camera().setProjectionViewMatrix( pg3d().projmodelview.get(new float[16]), true );// set it transposed
+		  scene.camera().setProjectionView( pg3d().projmodelview.get(new float[16]), true );// set it transposed
 		  // */
 		}	
 	}
@@ -2096,7 +2106,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * corner where the off-screen Scene is expected to be displayed, e.g., for
 	 * instance with a call to the Processing built-in {@code image(img, x, y)}
 	 * function. If {@link #isOffscreen()} returns {@code false} (i.e.,
-	 * {@link #matrixHelpler()} equals the PApplet's renderer), the values of x and y
+	 * {@link #matrixHelper()} equals the PApplet's renderer), the values of x and y
 	 * are meaningless (both are set to 0 to be taken as dummy values). If you
 	 * plan to define an on-screen Scene, call {@link #Scene(PApplet)} instead. 
 	 * 
@@ -2108,17 +2118,17 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		pgraphics = pg;
 		
 		if( pg instanceof PGraphicsJava2D ) {
-			setMatrixHelper( new P5RendererJava2D(this, (PGraphicsJava2D)pg) );
+			setMatrixHelper( new P5Java2DMatrixHelper(this, (PGraphicsJava2D)pg) );
 			setDrawingHelper(new P5Drawing2D(this));
 		}
 		else
 			if( pg instanceof PGraphics2D ) {
-				setMatrixHelper( new P5Renderer2D(this, (PGraphics2D)pg) );
+				setMatrixHelper( new P5GL2DMatrixHelper(this, (PGraphics2D)pg) );
 				setDrawingHelper(new P5Drawing2D(this));
 			}
 			else
 				if( pg instanceof PGraphics3D ) {
-					setMatrixHelper( new P5Renderer3D(this, (PGraphics3D)pg) );
+					setMatrixHelper( new P5GL3DMatrixHelper(this, (PGraphics3D)pg) );
 					setDrawingHelper(new P5Drawing3D(this));
 				}
 		
@@ -2313,7 +2323,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		}	
 		
 		javaTiming = true;
-		PApplet.println("awt timers set");
+		PApplet.println("java util timers set");
 	}
 	
 	public boolean timingIsSingleThreaded() {
@@ -2556,14 +2566,14 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	
 	public PGraphics2D pg2d() {
 		if (pg() instanceof PGraphics2D)
-			return ((P5Renderer2D) matrixHelpler()).pg2d();
+			return ((P5GL2DMatrixHelper) matrixHelper()).pg2d();
 		else 
 			throw new RuntimeException("pGraphics is not instance of PGraphics2D");		
 	}
 	
 	public PGraphics3D pg3d() {
 		if (pg() instanceof PGraphics3D)
-			return ((P5Renderer3D) matrixHelpler()).pg3d();
+			return ((P5GL3DMatrixHelper) matrixHelper()).pg3d();
 		else 
 			throw new RuntimeException("pGraphics is not instance of PGraphics3D");		
 	}

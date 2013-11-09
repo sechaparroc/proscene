@@ -74,7 +74,7 @@ public void draw() {
 
 public void mainDrawing(Scene s) {				
   s.pg().pushStyle();
-  s.pushMatrix();
+  s.pushModelView();
   if (s == scene)
     frame1.applyTransformation();
   else
@@ -90,7 +90,7 @@ public void mainDrawing(Scene s) {
     s.pg().rect(0, 0, 40, 10, 5);
   }
 
-  s.pushMatrix();
+  s.pushModelView();
   if (s == scene)
     frame2.applyTransformation();
   else
@@ -106,7 +106,7 @@ public void mainDrawing(Scene s) {
     s.pg().rect(0, 0, 40, 10, 5);
   }		
 
-  s.pushMatrix();
+  s.pushModelView();
   if (s == scene)
     frame3.applyTransformation();
   else
@@ -121,11 +121,11 @@ public void mainDrawing(Scene s) {
     s.pg().fill(0, 255, 255);
     s.pg().rect(0, 0, 40, 10, 5);
   }		
-  s.popMatrix();
+  s.popModelView();
 
-  s.popMatrix();
+  s.popModelView();
 
-  s.popMatrix();
+  s.popModelView();
   s.pg().popStyle();
 }
 
