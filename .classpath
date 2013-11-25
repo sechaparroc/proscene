@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace2/proscene/lib/tersehandling.jar"/>
-	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace2/proscene/lib/dandelion.jar"/>
-	<classpathentry kind="lib" path="/home/pierre/Dropbox/workspace2/proscene/lib/fpstiming.jar"/>
+	<classpathentry kind="lib" path="/home/pierre/workspace/proscene/lib/tersehandling.jar"/>
+	<classpathentry kind="lib" path="/home/pierre/workspace/proscene/lib/dandelion.jar"/>
+	<classpathentry kind="lib" path="/home/pierre/workspace/proscene/lib/fpstiming.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/p5-2x"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
