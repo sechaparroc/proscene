@@ -90,16 +90,18 @@ public void keyPressed() {
 }
 
 public class CustomizedMouseAgent extends ProsceneMouse {
-  public CustomizedMouseAgent(AbstractScene scn, String n) {
-    scene.super(scene, n);
+  public CustomizedMouseAgent(Scene scn, String n) {
+    //inner class'ss weirdeness ...ss
+    scn.super(scn, n);
     cameraProfile().setBinding(TH_LEFT, DOF2Action.TRANSLATE);
     cameraProfile().setBinding(TH_META, TH_RIGHT, DOF2Action.ROTATE);
   }
 }
 
 public class CustomizedKeyboardAgent extends ProsceneKeyboard {
-  public CustomizedKeyboardAgent(Scene scene, String n) {
-    scene.super(scene, n);
+  public CustomizedKeyboardAgent(Scene scn, String n) {
+    //ssame ...ss
+    scn.super(scn, n);
     keyboardProfile().setShortcut('g', KeyboardAction.DRAW_AXIS);
     keyboardProfile().setShortcut('z', KeyboardAction.DRAW_FRAME_SELECTION_HINT);
     keyboardProfile().setShortcut('a', KeyboardAction.DRAW_GRID);
