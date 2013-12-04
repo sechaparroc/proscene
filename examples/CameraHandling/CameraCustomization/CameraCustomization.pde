@@ -48,9 +48,8 @@ void draw() {
   // Save the current model view matrix
   pushMatrix();
   // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(scene.interactiveFrame().matrix()) is handy but
-  // inefficient
-  iFrame.applyTransformation(); // optimum
+  scene.applyModelView(iFrame.matrix());  //Option 1. or,
+  //iFrame.applyTransformation(); //Option 2.
   // Draw an axis using the Scene static function
   scene.drawAxis(20);
   // Draw a second box attached to the interactive frame
