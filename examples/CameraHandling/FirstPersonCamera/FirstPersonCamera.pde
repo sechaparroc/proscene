@@ -49,7 +49,7 @@ void draw() {
 public void keyPressed() {
   if ( key == 'i') {
     if ( focusIFrame ) {
-      scene.defaultMouseAgent().setDefaultGrabber(scene.viewport().frame());
+      scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
       scene.defaultMouseAgent().enableTracking();
     } 
     else {

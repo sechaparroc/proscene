@@ -48,28 +48,28 @@ public void setup() {
 
   // create a camera path and add some key frames:
   // key frames can be added at runtime with keys [j..n]
-  scene.viewport().frame().setPosition(new Vec(89.71913f, -101.32816f));
-  scene.viewport().frame().setOrientation(new Rot(-1.542718f));
-  scene.viewport().frame().setScaling(0.3391391f);
-  scene.viewport().addKeyFrameToPath(1);
+  scene.viewPoint().frame().setPosition(new Vec(89.71913f, -101.32816f));
+  scene.viewPoint().frame().setOrientation(new Rot(-1.542718f));
+  scene.viewPoint().frame().setScaling(0.3391391f);
+  scene.viewPoint().addKeyFrameToPath(1);
 
-  scene.viewport().frame().setPosition(new Vec(61.501305f, 71.02506f));
-  scene.viewport().frame().setOrientation(new Rot(-1.5142304f));
-  scene.viewport().frame().setScaling(0.13526922f);
-  scene.viewport().addKeyFrameToPath(1);
+  scene.viewPoint().frame().setPosition(new Vec(61.501305f, 71.02506f));
+  scene.viewPoint().frame().setOrientation(new Rot(-1.5142304f));
+  scene.viewPoint().frame().setScaling(0.13526922f);
+  scene.viewPoint().addKeyFrameToPath(1);
 
-  scene.viewport().frame().setPosition(new Vec(-99.00719f, -4.614401f));
-  scene.viewport().frame().setOrientation(new Rot(-0.010666408f));
-  scene.viewport().frame().setScaling(0.8055185f);
-  scene.viewport().addKeyFrameToPath(1);
+  scene.viewPoint().frame().setPosition(new Vec(-99.00719f, -4.614401f));
+  scene.viewPoint().frame().setOrientation(new Rot(-0.010666408f));
+  scene.viewPoint().frame().setScaling(0.8055185f);
+  scene.viewPoint().addKeyFrameToPath(1);
 
   // re-position the camera:
-  scene.viewport().frame().setPosition(new Vec(89.71913f, -101.32816f));
-  scene.viewport().frame().setOrientation(new Rot(-1.542718f));
-  scene.viewport().frame().setScaling(0.3391391f);
+  scene.viewPoint().frame().setPosition(new Vec(89.71913f, -101.32816f));
+  scene.viewPoint().frame().setOrientation(new Rot(-1.542718f));
+  scene.viewPoint().frame().setScaling(0.3391391f);
 
   // drawing of camera paths are toggled with key 'r'.
-  //scene.setViewportPathsAreDrawn(true);
+  //scene.setViewPointPathsAreDrawn(true);
 
   buttons = new ArrayList(6);
   for (int i = 0; i < 5; ++i)
@@ -108,10 +108,10 @@ public void draw() {
 void updateButtons() {
   for (int i = 1; i < buttons.size(); i++) {
     // Check if CameraPathPlayer is still valid
-    if ((buttons.get(i) != null) && (scene.viewport().keyFrameInterpolator(i) == null))
+    if ((buttons.get(i) != null) && (scene.viewPoint().keyFrameInterpolator(i) == null))
       buttons.set(i, null);
     // Or add it if needed
-    if ((scene.viewport().keyFrameInterpolator(i) != null)	&& (buttons.get(i) == null))
+    if ((scene.viewPoint().keyFrameInterpolator(i) != null)	&& (buttons.get(i) == null))
       buttons.set(i, new ClickButton(scene, new PVector(10, +(i) * (h + 7)), i));
   }
 }

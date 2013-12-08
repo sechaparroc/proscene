@@ -100,7 +100,7 @@ void setup() {
   scene.showAll();
 
   //drawing of camera paths are toggled with key 'r'.
-  scene.setViewportPathsAreDrawn(true);
+  scene.setViewPointPathsAreDrawn(true);
 
   buttons = new ArrayList(6);
   for (int i=0; i<5; ++i)

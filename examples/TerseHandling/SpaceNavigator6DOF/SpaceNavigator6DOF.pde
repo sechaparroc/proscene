@@ -99,9 +99,9 @@ void keyPressed() {
       hidAgent.setDefaultGrabber(iFrame);
     }
     else {
-      scene.defaultMouseAgent().setDefaultGrabber(scene.viewport().frame());
+      scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
       scene.defaultMouseAgent().enableTracking();
-      hidAgent.setDefaultGrabber(scene.viewport().frame());
+      hidAgent.setDefaultGrabber(scene.viewPoint().frame());
     }
   }
 }

@@ -155,9 +155,9 @@ void keyPressed() {
       previousAvatar = (InteractiveAvatarFrame)scene.avatar();
       scene.unsetAvatar(); //simply sets avatar as null      
       scene.defaultMouseAgent().setAsArcball();
-      scene.defaultMouseAgent().setDefaultGrabber(scene.viewport().frame());
+      scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
       scene.defaultMouseAgent().enableTracking();
-      scene.viewport().interpolateToFitScene();
+      scene.viewPoint().interpolateToFitScene();
     }
     break;
   }
