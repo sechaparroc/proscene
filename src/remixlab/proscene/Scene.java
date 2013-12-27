@@ -698,27 +698,27 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		  
 		  @Override
 		 	public void hollowCylinder(int detail, float w, float h, Vec m, Vec n) {
-		  	AbstractScene.showDepthWarning("cylinder");
+		  	AbstractScene.showDepthWarning("hollowCylinder");
 		 	}
 		  
 		  @Override
 		  public void cone(int detail, float x, float y, float r, float h) {
-		  	AbstractScene.showDepthWarning("cylinder");
+		  	AbstractScene.showDepthWarning("cone");
 		 	}
 		  
 		  @Override
 		  public void cone(int detail, float x, float y, float r1, float r2, float h) {
-		  	AbstractScene.showDepthWarning("cylinder");
+		  	AbstractScene.showDepthWarning("cone");
 		 	}
 		  
 		  @Override
 		  public void drawCamera(Camera camera, boolean drawFarPlane, float scale) {
-		  	AbstractScene.showDepthWarning("cylinder");
+		  	AbstractScene.showDepthWarning("drawCamera");
 		 	}
 
 		  @Override
 		  public void drawKFIViewPoint(float scale) {		  	
-		  	float halfHeight = scale * 1f;
+		  	float halfHeight = scale * 1.2f;
 				float halfWidth = halfHeight * 1.3f;
 
 				float arrowHeight = 1.5f * halfHeight;
@@ -796,10 +796,10 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				pg().noFill();
 				pg().stroke(170);
 				
-				List<RefFrame> path = kfi.path();				
+				List<ReferenceFrame> path = kfi.path();				
 				if (((mask & 1) != 0) && path.size() > 1 ) {				
 					pg().beginShape();
-					for (RefFrame myFr : path)
+					for (ReferenceFrame myFr : path)
 						pg().vertex(myFr.position().x(), myFr.position().y());
 					pg().endShape();
 				}
@@ -809,7 +809,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 						nbFrames = nbSteps;
 					float goal = 0.0f;
 
-					for (RefFrame myFr : path)
+					for (ReferenceFrame myFr : path)
 						if ((count++) >= goal) {
 							goal += nbSteps / (float) nbFrames;
 							pushModelView();
@@ -1125,7 +1125,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				break;
 			}
 			case ORTHOGRAPHIC: {
-				float[] wh = cam.getOrthoWidthHeight();
+				float[] wh = cam.getBoundaryWidthHeight();
 				//points[0].x = points[1].x = scale * wh[0];
 				//points[0].y = points[1].y = scale * wh[1];
 				
@@ -1305,10 +1305,10 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 				pg3d().noFill();
 				pg3d().stroke(170);
 				
-				List<RefFrame> path = kfi.path();
+				List<ReferenceFrame> path = kfi.path();
 				if (((mask & 1) != 0) && path.size() > 1 ) {				
 					pg3d().beginShape();
-					for (RefFrame myFr : path)
+					for (ReferenceFrame myFr : path)
 						pg3d().vertex(myFr.position().x(), myFr.position().y(), myFr.position().z());
 					pg3d().endShape();
 				}
@@ -1318,7 +1318,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 						nbFrames = nbSteps;
 					float goal = 0.0f;
 
-					for (RefFrame myFr : path)
+					for (ReferenceFrame myFr : path)
 						if ((count++) >= goal) {
 							goal += nbSteps / (float) nbFrames;
 							pushModelView();
@@ -1995,7 +1995,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 		setFrameSelectionHintIsDrawn(false);
 		setViewPointPathsAreDrawn(false);
 		
-		disableFrustumEquationsUpdate();
+		disableBoundaryEquations();
 		
 		enableDefaultKeyboardAgent();
 		enableDefaultMouseAgent();
@@ -2190,7 +2190,7 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	 * to call it.
 	 * <p>
 	 * Sets the processing camera parameters from {@link #viewPoint()} and updates
-	 * the frustum planes equations if {@link #enableFrustumEquationsUpdate(boolean)}
+	 * the frustum planes equations if {@link #enableBoundaryEquations(boolean)}
 	 * has been set to {@code true}.
 	 */
 	public void pre() {
@@ -2535,7 +2535,6 @@ public class Scene extends AbstractScene /**implements PConstants*/ {
 	@Override
 	public void displayInfo(boolean onConsole) {
 		if (onConsole)
-		//PApplet.println(info());
 			System.out.println(info());
 		else { //on applet
 			pg().textFont(parent.createFont("Arial", 12));
