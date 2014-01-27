@@ -16,7 +16,7 @@ import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
 
-boolean enforced = false;	
+boolean enforced = false;  
 boolean grabsInput;
 
 Constants.KeyboardAction keyAction;
@@ -51,7 +51,7 @@ public void draw() {
   iFrame.applyTransformation();
   scene.drawAxis(20);
 
-  // Draw a second box		
+  // Draw a second box    
   if (iFrameGrabsInput()) {
     fill(255, 0, 0);
     box(12, 17, 22);
@@ -65,7 +65,7 @@ public void draw() {
 }
 
 public boolean iFrameGrabsInput() {
-  if (scene.isDefaultMouseAgentInUse())
+  if (scene.isDefaultMouseAgentEnabled())
     return iFrame.grabsAgent(scene.defaultMouseAgent());
   else
     return grabsInput;
@@ -73,31 +73,31 @@ public boolean iFrameGrabsInput() {
 
 @Override
 public void mouseMoved() {
-  if (!scene.isDefaultMouseAgentInUse()) {
+  if (!scene.isDefaultMouseAgentEnabled()) {
     event = new GenericDOF2Event<Constants.DOF2Action>(prevEvent, (float) mouseX, (float) mouseY);
     if (enforced)
       grabsInput = true;
     else
-      grabsInput = iFrame.checkIfGrabsInput(event);		
+      grabsInput = iFrame.checkIfGrabsInput(event);    
     prevEvent = event.get();
   }
 }
 
 @Override
 public void mouseDragged() {
-  if (!scene.isDefaultMouseAgentInUse()) {
+  if (!scene.isDefaultMouseAgentEnabled()) {
     event = new GenericDOF2Event<Constants.DOF2Action>(prevEvent, (float) mouseX, (float) mouseY, mouseAction);
     if (grabsInput)
       scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, iFrame));
     else
-      scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, scene.viewPoint().frame()));
+      scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, scene.eye().frame()));
     prevEvent = event.get();
   }
 }
 
 @Override
 public void keyPressed() {
-  if (!scene.isDefaultKeyboardAgentInUse()) {  
+  if (!scene.isDefaultKeyboardAgentEnabled()) {
     if (key == 'a' || key == 'g') {
       if (key == 'a')
         keyAction = Constants.KeyboardAction.DRAW_GRID;
@@ -108,24 +108,24 @@ public void keyPressed() {
     }
   }
   if ( key == 'k' || key == 'K' ) {
-    if (scene.isDefaultKeyboardAgentInUse()) {
+    if (scene.isDefaultKeyboardAgentEnabled()) {
       scene.disableDefaultKeyboardAgent();
-      println("High level key event handling");
+      println("low level key event handling");
     }
     else {
       scene.enableDefaultKeyboardAgent();
-      println("low level key event handling");
+      println("high level key event handling");
     }
   }
   if (key == 'y') {
     enforced = !enforced;
-    if (scene.terseHandler().isAgentRegistered(scene.defaultMouseAgent()))
+    if(scene.isDefaultMouseAgentEnabled())
       if (enforced) {
         scene.defaultMouseAgent().setDefaultGrabber(iFrame);
         scene.defaultMouseAgent().disableTracking();
       }
       else {
-        scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
+        scene.defaultMouseAgent().setDefaultGrabber(scene.eye().frame());
         scene.defaultMouseAgent().enableTracking();
       }
     else
@@ -135,15 +135,15 @@ public void keyPressed() {
         grabsInput = false;
   }
   if ( key == 'm' || key == 'M' ) {
-    if (scene.isDefaultMouseAgentInUse()) {
+    if (scene.isDefaultMouseAgentEnabled()) {
       scene.disableDefaultMouseAgent();
-      println("High level mouse event handling");
+      println("Low level mouse event handling");
     }
     else {
       scene.enableDefaultMouseAgent();
-      println("low level mouse event handling");
+      println("High level mouse event handling");
     }
-  }		
+  }    
   if (key == 'c')
     if (mouseAction == Constants.DOF2Action.ROTATE)
       mouseAction = Constants.DOF2Action.TRANSLATE;

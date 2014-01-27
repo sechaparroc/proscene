@@ -28,8 +28,8 @@ void setup() {
   size(640, 640, P3D);
   scene= new Scene(this);
   scene.setRadius(500);
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
 
   alist=new ArrayList();
 
@@ -78,30 +78,30 @@ void dessine(int n, float bras) {
     mobiles[n+1].setTranslation(new Vec(or.x,or.y,or.z));
     mobiles[n+1].setRotation(q0);
     dessine(n+1, bra);
-    mobiles[n+1].setTranslation(q0.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)));
+    mobiles[n+1].setTranslation(q0.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)));
     mobiles[n+1].setRotation(q100);
     dessine(n+1, bras/2);
-    mobiles[n+1].setTranslation(Vec.add(q0.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)), Vec.mult(new Vec(oz.x,oz.y,oz.z), bras/2)));
+    mobiles[n+1].setTranslation(Vec.add(q0.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)), Vec.multiply(new Vec(oz.x,oz.y,oz.z), bras/2)));
     mobiles[n+1].setRotation(q0i);
     dessine(n+1, bra);
     //
     mobiles[n+1].setTranslation(new Vec(or.x,or.y,or.z));
     mobiles[n+1].setRotation(q1);
     dessine(n+1, bra);
-    mobiles[n+1].setTranslation(q1.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)));
+    mobiles[n+1].setTranslation(q1.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)));
     mobiles[n+1].setRotation(q100);
     dessine(n+1, bras/2);
-    mobiles[n+1].setTranslation(Vec.add(q1.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)), Vec.mult(new Vec(oz.x,oz.y,oz.z), bras/2))); 
+    mobiles[n+1].setTranslation(Vec.add(q1.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)), Vec.multiply(new Vec(oz.x,oz.y,oz.z), bras/2))); 
     mobiles[n+1].setRotation(q1i);
     dessine(n+1, bra);
     //
     mobiles[n+1].setTranslation(new Vec(or.x,or.y,or.z));
     mobiles[n+1].setRotation(q2);
     dessine(n+1, bra);
-    mobiles[n+1].setTranslation(q2.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)));
+    mobiles[n+1].setTranslation(q2.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)));
     mobiles[n+1].setRotation(q100);
     dessine(n+1, bras/2);
-    mobiles[n+1].setTranslation(Vec.add(q2.rotate(Vec.mult(new Vec(oz.x,oz.y,oz.z), bra)), Vec.mult(new Vec(oz.x,oz.y,oz.z), bras/2))); 
+    mobiles[n+1].setTranslation(Vec.add(q2.rotate(Vec.multiply(new Vec(oz.x,oz.y,oz.z), bra)), Vec.multiply(new Vec(oz.x,oz.y,oz.z), bras/2))); 
     mobiles[n+1].setRotation(q2i);
     dessine(n+1, bra);
   }

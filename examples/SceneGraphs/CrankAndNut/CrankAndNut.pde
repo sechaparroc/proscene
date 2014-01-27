@@ -28,8 +28,8 @@ void setup() {
   size(800, 800, P3D);
   scene=new Scene(this);
   scene.setRadius(220);
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);
+  scene.setAxisVisualHint(false);
+  scene.setGridVisualHint(false);
   scene.camera().setPosition(new Vec(0, 0, 600));
   vis=new InteractiveFrame(scene);
   manette=new InteractiveFrame(scene);

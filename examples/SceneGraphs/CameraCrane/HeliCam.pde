@@ -111,7 +111,7 @@ public class HeliCam {
     // the camera iFrame. Thus, we call it after restoring the gl state.
     // Calling it before the first push matrix above, should do it too.
     if ( parent.drawRobotCamFrustum && scn.equals(parent.mainScene) )
-      scn.drawCamera( parent.heliScene.camera() );
+      scn.drawEye( parent.heliScene.camera() );
   }
 
   public void drawBody(Scene scn) {

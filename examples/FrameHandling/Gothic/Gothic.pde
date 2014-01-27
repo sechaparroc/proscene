@@ -29,8 +29,8 @@ void setup() {
   angl0=0.10;
   h=150;
   planches= new ArrayList();
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   scene.setRadius(1800);
   scene.showAll();
   scene.camera().setPosition(new Vec(0, 4500, 4000));
@@ -118,14 +118,3 @@ void draw() {
     planch.actualiser();
   }
 }
-
-
-
-
-
-
-
-
-
-
-

@@ -113,10 +113,10 @@ public class Patch extends InteractiveFrame {
 
   @Override
     public boolean checkIfGrabsInput(TerseEvent event) {
-    return pointInsideQuad(scene.viewPoint());
+    return pointInsideQuad(scene.camera());
   }
 
-  private boolean pointInsideQuad(ViewPoint camera) {
+  private boolean pointInsideQuad(Camera camera) {
     Vec v1 = camera.projectedCoordinatesOf(new Vec((-getSize() / 2) + position().x(), (-getSize() / 2) + position().y()));
     Vec v2 = camera.projectedCoordinatesOf(new Vec((-getSize() / 2) + position().x(), (getSize() / 2) + position().y()));
     Vec v3 = camera.projectedCoordinatesOf(new Vec((getSize() / 2) + position().x(), (getSize() / 2) + position().y()));

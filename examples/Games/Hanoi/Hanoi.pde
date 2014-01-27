@@ -27,8 +27,8 @@ void setup() {
   font = loadFont("FreeSans-16.vlw");
   textFont(font);
   scene=new Scene(this);
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);  
+  scene.setAxisVisualHint(false);
+  scene.setGridVisualHint(false);  
   scene.setRadius(300);
   onScreen=true;
   frames=new InteractiveFrame[nbdisques];

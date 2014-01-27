@@ -36,7 +36,7 @@ void setup() {
   scene.setRadius(130);
   scene.showAll();
   scene.setCameraType(Camera.Type.PERSPECTIVE);
-  scene.setGridIsDrawn(false);
+  scene.setAxisVisualHint(false);
   scene.drawAxis(30f);
   balles=new Balle[nb];
   for (int i=0;i<nb;i++) {

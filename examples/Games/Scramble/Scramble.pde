@@ -28,8 +28,8 @@ void setup() {
   size(800, 500, P3D); // window size
   //scene = new MyScene(this); // create a Scene instance
   scene = new Scene(this); // create a Scene instance
-  scene.setAxisIsDrawn(false); // hide axis
-  scene.setGridIsDrawn(false); // hide grid
+  scene.setAxisVisualHint(false); // hide axis
+  scene.setGridVisualHint(false); // hide grid
   board = new Board(3, null); // create a new 3x3 board
   scene.camera().setPosition(new Vec(-20, 100, 230)); // move the camera
   scene.camera().lookAt(new Vec(0, 0, 0)); // make the camera look at the center of the board

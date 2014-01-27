@@ -25,6 +25,8 @@ import remixlab.tersehandling.generic.event.GenericDOF2Event;
 import remixlab.tersehandling.generic.event.GenericKeyboardEvent;
 
 Scene scene;
+MouseAgent prosceneMouseAgent;
+KeyboardAgent prosceneKeyboardAgent;
 CustomizedMouseAgent mouseAgent;
 CustomizedKeyboardAgent keyboardAgent;
 InteractiveFrame iFrame;
@@ -35,10 +37,11 @@ void setup() {
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));
 
+  prosceneMouseAgent = scene.defaultMouseAgent();
+  prosceneKeyboardAgent = scene.defaultKeyboardAgent();
+
   mouseAgent = new CustomizedMouseAgent(scene, "MyMouseAgent");
-  scene.terseHandler().unregisterAgent(mouseAgent);
   keyboardAgent = new CustomizedKeyboardAgent(scene, "MyKeyboardAgent");
-  scene.terseHandler().unregisterAgent(keyboardAgent);
 }
 
 void draw() {
@@ -66,25 +69,13 @@ void draw() {
 
 public void keyPressed() {
   if ( key != ' ') return;
-  if ( !scene.terseHandler().isAgentRegistered(mouseAgent) ) {
-    scene.terseHandler().registerAgent(mouseAgent);
-    scene.parent.registerMethod("mouseEvent", mouseAgent);
-    scene.disableDefaultMouseAgent();
+  if ( scene.terseHandler().isAgentRegistered(prosceneMouseAgent) ) {
+    scene.setDefaultMouseAgent(mouseAgent);
+    scene.setDefaultKeyboardAgent(keyboardAgent);
   }
-  else {
-    scene.terseHandler().unregisterAgent(mouseAgent);
-    scene.parent.unregisterMethod("mouseEvent", mouseAgent);
-    scene.enableDefaultMouseAgent();
-  }
-  if ( !scene.terseHandler().isAgentRegistered(keyboardAgent) ) {
-    scene.terseHandler().registerAgent(keyboardAgent);
-    scene.parent.registerMethod("keyEvent", keyboardAgent);
-    scene.disableDefaultKeyboardAgent();
-  }
-  else {
-    scene.terseHandler().unregisterAgent(keyboardAgent);
-    scene.parent.unregisterMethod("keyEvent", keyboardAgent);
-    scene.enableDefaultKeyboardAgent();
+  else { 
+    scene.setDefaultMouseAgent(prosceneMouseAgent);
+    scene.setDefaultKeyboardAgent(prosceneKeyboardAgent);
   }
 }
 
@@ -92,6 +83,7 @@ public class CustomizedMouseAgent extends ProsceneMouse {
   public CustomizedMouseAgent(Scene scn, String n) {
     //inner class'ss weirdeness ...ss
     scn.super(scn, n);
+    terseHandler().unregisterAgent(this);
     cameraProfile().setBinding(TH_LEFT, DOF2Action.TRANSLATE);
     cameraProfile().setBinding(TH_META, TH_RIGHT, DOF2Action.ROTATE);
   }
@@ -101,6 +93,7 @@ public class CustomizedKeyboardAgent extends ProsceneKeyboard {
   public CustomizedKeyboardAgent(Scene scn, String n) {
     //ssame ...ss
     scn.super(scn, n);
+    terseHandler().unregisterAgent(this);
     keyboardProfile().setShortcut('g', KeyboardAction.DRAW_AXIS);
     keyboardProfile().setShortcut('z', KeyboardAction.DRAW_FRAME_SELECTION_HINT);
     keyboardProfile().setShortcut('a', KeyboardAction.DRAW_GRID);

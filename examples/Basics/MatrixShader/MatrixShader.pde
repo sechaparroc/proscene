@@ -59,7 +59,7 @@ void draw() {
 // we need to update the shader:
 void setUniforms() {
   shader(prosceneShader);
-  pmv = Mat.mult(scene.getProjection(), scene.getModelView());
+  pmv = Mat.multiply(scene.projection(), scene.modelView());
   pmatrix.set(pmv.get(new float[16]));
   prosceneShader.set("proscene_transform", pmatrix);
 }

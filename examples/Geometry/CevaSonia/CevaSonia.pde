@@ -24,8 +24,8 @@ void setup() {
   scene =new Scene(this);
   scene.setRadius(500);
   scene.camera().setPosition(new Vec(0, 0, 800));
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   ceva=new Ceva();
   abeille = loadImage("sonia.gif");
 }

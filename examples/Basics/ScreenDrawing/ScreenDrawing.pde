@@ -64,7 +64,7 @@ void draw() {
   noFill();
   beginShape();
   for (int i = 0; i < points.size(); i++)    
-    vertex((float) ((Point) points.get(i)).x, (float) ((Point) points.get(i)).y, 1);
+    vertex((float) ((Point) points.get(i)).x(), (float) ((Point) points.get(i)).y(), 1);
   endShape();  
   popStyle();
   scene.endScreenDrawing();
@@ -81,8 +81,8 @@ void draw() {
 }
 
 void keyPressed() {
-  if ((key == 'x') || (key == 'x')) {
-    if(scene.isDefaultMouseAgentInUse())
+  if ((key == 'x') || (key == 'X')) {
+    if(scene.isDefaultMouseAgentEnabled())
       scene.disableDefaultMouseAgent();
     else
       scene.enableDefaultMouseAgent();
@@ -95,6 +95,6 @@ void keyPressed() {
 }
 
 void mouseDragged() {
-  if(!scene.isDefaultMouseAgentInUse())
+  if(!scene.isDefaultMouseAgentEnabled())
     points.add(new Point(mouseX, mouseY));
 }

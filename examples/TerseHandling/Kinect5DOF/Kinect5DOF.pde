@@ -40,15 +40,15 @@ void setup() {
     public GenericDOF6Event<Constants.DOF6Action> feed() {
       if(!kinect.initialDefined) return null;
       if (cameraMode) { //-> event is absolute
-        setDefaultGrabber(scene.viewPoint().frame()); //set it by default
+        setDefaultGrabber(scene.eye().frame()); //set it by default
         disableTracking();
-        scene.setFrameSelectionHintIsDrawn(false);
+        scene.setFrameVisualHint(false);
         event=new GenericDOF6Event<Constants.DOF6Action>(kinectPos.x, kinectPos.y, kinectPos.z, 0, kinectRot.y, kinectRot.z); 
       }
       else { //frame mode -> event is relative
         setDefaultGrabber(null);
         enableTracking();
-        scene.setFrameSelectionHintIsDrawn(true);
+        scene.setFrameVisualHint(true);
         event = new GenericDOF6Event<Constants.DOF6Action>(prevEvent, kinect.posit.x, kinect.posit.y, kinect.posit.z, 0, kinectRot.y, kinectRot.z);
         prevEvent = event.get();
         //debug:     

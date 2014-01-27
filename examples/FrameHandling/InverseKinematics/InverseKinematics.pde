@@ -49,9 +49,7 @@ void setup() {
   table = loadShape("table.obj");
   scene = new Scene(this);
   scene.setRadius(200);
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);
-  scene.setFrameSelectionHintIsDrawn(true);
+  scene.setVisualHints( Constants.FRAME );
   punto = new InteractiveFrame( scene );
   punto.setPosition( new Vec( 0, -10, 0) );
 }

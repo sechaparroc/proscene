@@ -59,8 +59,8 @@ void setup() {
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
   scene = new Scene(this);
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);  
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);  
   scene.setRadius(260);
   scene.showAll();
   
@@ -99,9 +99,9 @@ void keyPressed() {
       hidAgent.setDefaultGrabber(iFrame);
     }
     else {
-      scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
+      scene.defaultMouseAgent().setDefaultGrabber(scene.eye().frame());
       scene.defaultMouseAgent().enableTracking();
-      hidAgent.setDefaultGrabber(scene.viewPoint().frame());
+      hidAgent.setDefaultGrabber(scene.eye().frame());
     }
   }
 }

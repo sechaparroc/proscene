@@ -36,7 +36,7 @@ public void setup() {
   scene = new Scene(this);
   // press 'i' to switch the interaction between the camera frame and the
   scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
-  scene.setAxisIsDrawn(true);
+  scene.setAxisVisualHint(true);
 
   constraints[0] = new LocalConstraint();
   // Note that a CameraConstraint(camera) would produce the same results:
@@ -79,8 +79,7 @@ AxisPlaneConstraint.Type type) {
   return rType;
 }
 
-public static AxisPlaneConstraint.Type nextRotationConstraintType(
-AxisPlaneConstraint.Type type) {
+public static AxisPlaneConstraint.Type nextRotationConstraintType(AxisPlaneConstraint.Type type) {
   AxisPlaneConstraint.Type rType;
   switch (type) {
   case FREE:
@@ -278,13 +277,13 @@ public void keyPressed() {
   Vec dir = new Vec(0.0f, 0.0f, 0.0f);
   switch (transDir) {
   case 0:
-    dir.x(1.0f);
+    dir.setX(1.0f);
     break;
   case 1:
-    dir.y(1.0f);
+    dir.setY(1.0f);
     break;
   case 2:
-    dir.z(1.0f);
+    dir.setZ(1.0f);
     break;
   }
   constraints[activeConstraint].setTranslationConstraintDirection(dir);
@@ -292,13 +291,13 @@ public void keyPressed() {
   dir.set(0.0f, 0.0f, 0.0f);
   switch (rotDir) {
   case 0:
-    dir.x(1.0f);
+    dir.setX(1.0f);
     break;
   case 1:
-    dir.y(1.0f);
+    dir.setY(1.0f);
     break;
   case 2:
-    dir.z(1.0f);
+    dir.setZ(1.0f);
     break;
   }
   constraints[activeConstraint].setRotationConstraintDirection(dir);

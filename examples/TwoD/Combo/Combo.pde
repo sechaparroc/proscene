@@ -69,7 +69,7 @@ public void draw() {
   auxCanvas.endDraw();
 
   // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.upperLeftCorner.x, auxScene.upperLeftCorner.y);
+  image(auxCanvas, auxScene.upperLeftCorner.x(), auxScene.upperLeftCorner.y());
 }
 
 public void mainDrawing(Scene s) {				
@@ -135,7 +135,7 @@ public void auxDrawing(Scene s) {
   s.pg().pushStyle();
   s.pg().stroke(255, 255, 0);
   s.pg().fill(255, 255, 0, 160);
-  s.drawWindow(scene.window());
+  s.drawEye(scene.window());
   s.pg().popStyle();
 }
 
@@ -154,7 +154,7 @@ public void handleMouse() {
   }
 }
 
-public void printFrame(RefFrame frame) {
+public void printFrame(Frame frame) {
   println("Translation: " + frame.translation());
   println("Angle: " + frame.rotation().angle());
   println("Scaling: " + frame.scaling());
@@ -168,4 +168,3 @@ public void keyPressed() {
     scene.window().flip();
   }
 }
-

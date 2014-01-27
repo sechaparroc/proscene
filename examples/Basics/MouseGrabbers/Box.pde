@@ -12,7 +12,7 @@ public class Box {
 
   Box(Scene scn) {
     scene = scn;
-    parent = (MouseGrabbers) scene.parent;
+    parent = (MouseGrabbers) scene.pApplet();
     iFrame = new InteractiveFrame(scene);
     setSize();
     setColor();
@@ -95,8 +95,7 @@ public class Box {
   }
 
   public void setOrientation(Vec v) {
-    Vec to = Vec.sub(v, iFrame.position());
+    Vec to = Vec.subtract(v, iFrame.position());
     iFrame.setOrientation(new Quat(new Vec(0, 1, 0), to));
   }
 }
-

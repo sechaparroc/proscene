@@ -27,7 +27,7 @@ Scene scene;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.setGridIsDrawn(false);
+  scene.setGridVisualHint(false);
   scene.setRadius(150);
   scene.showAll();
 }

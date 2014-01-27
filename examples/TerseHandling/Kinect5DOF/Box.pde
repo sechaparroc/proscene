@@ -44,9 +44,9 @@ public class Box {
   }
 
   public void setSize() {
-    w = scene.parent.random(10, 40);
-    h = scene.parent.random(10, 40);
-    d = scene.parent.random(10, 40);
+    w = scene.pApplet().random(10, 40);
+    h = scene.pApplet().random(10, 40);
+    d = scene.pApplet().random(10, 40);
   }
 
   public void setSize(float myW, float myH, float myD) {
@@ -60,7 +60,7 @@ public class Box {
   }
 
   public void setColor() {
-    c = color(scene.parent.random(0, 255), scene.parent.random(0, 255), scene.parent.random(0, 255));
+    c = color(scene.pApplet().random(0, 255), scene.pApplet().random(0, 255), scene.pApplet().random(0, 255));
   }
 
   public void setColor(int myC) {
@@ -74,7 +74,7 @@ public class Box {
   public void setPosition() {
     float low = -100;
     float high = 100;
-    iFrame.setPosition(new Vec(scene.parent.random(low, high), scene.parent.random(low, high), scene.parent.random(low, high)));
+    iFrame.setPosition(new Vec(scene.pApplet().random(low, high), scene.pApplet().random(low, high), scene.pApplet().random(low, high)));
   }
 
   public void setPosition(Vec pos) {
@@ -86,8 +86,7 @@ public class Box {
   }
 
   public void setOrientation(Vec v) {
-    Vec to = Vec.sub(v, iFrame.position()); 
+    Vec to = Vec.subtract(v, iFrame.position()); 
     iFrame.setOrientation(new Quat(new Vec(0, 1, 0), to));
   }
 }
-

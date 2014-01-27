@@ -24,8 +24,8 @@ void setup() {
   size(640, 640, P3D);
   scene=new Scene(this); 
   scene.setRadius(800);
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   nb=220;
   reperes=new InteractiveFrame[nb];
   reperes[0]=new InteractiveFrame(scene);

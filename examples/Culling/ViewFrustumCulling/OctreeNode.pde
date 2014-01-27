@@ -48,7 +48,7 @@ public class OctreeNode {
   }
 
   public void drawIfAllChildrenAreVisible(PGraphicsOpenGL pg3d, Camera camera) {
-    Camera.Visibility vis = camera.aaBoxIsVisible(p1, p2);
+    Camera.Visibility vis = camera.boxIsVisible(p1, p2);
     if (vis == Camera.Visibility.VISIBLE)
       draw(pg3d);
     else if (vis == Camera.Visibility.SEMIVISIBLE)
@@ -61,7 +61,7 @@ public class OctreeNode {
 
   public void buildBoxHierarchy(int l) {
     level = l;
-    Vec middle = Vec.mult(Vec.add(p1, p2), 1 / 2.0f);
+    Vec middle = Vec.multiply(Vec.add(p1, p2), 1 / 2.0f);
     for (int i = 0; i < 8; ++i) {
       // point in one of the 8 box corners
       Vec point = new Vec(((i & 4) != 0) ? p1.x() : p2.x(), ((i & 2) != 0) ? p1.y() : p2.y(), ((i & 1) != 0) ? p1.z() : p2.z());			

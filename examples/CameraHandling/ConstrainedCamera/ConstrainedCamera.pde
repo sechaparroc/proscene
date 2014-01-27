@@ -43,7 +43,7 @@ public void setup() {
   activeConstraint = 0;
   scene.camera().frame().setConstraint(constraints[activeConstraint]);
 
-  scene.setAxisIsDrawn(true);
+  scene.setAxisVisualHint(true);
 }
 
 public static AxisPlaneConstraint.Type nextTranslationConstraintType(AxisPlaneConstraint.Type type) {
@@ -200,13 +200,13 @@ public void keyPressed() {
   Vec dir = new Vec(0.0f, 0.0f, 0.0f);
   switch (transDir) {
   case 0 : 
-    dir.x(1.0f); 
+    dir.setX(1.0f); 
     break;
   case 1 : 
-    dir.y(1.0f); 
+    dir.setY(1.0f); 
     break;
   case 2 : 
-    dir.z(1.0f); 
+    dir.setZ(1.0f); 
     break;
   }
 
@@ -215,13 +215,13 @@ public void keyPressed() {
   dir.set(0.0f, 0.0f, 0.0f);
   switch (rotDir) {
   case 0 : 
-    dir.x(1.0f); 
+    dir.setX(1.0f); 
     break;
   case 1 : 
-    dir.y(1.0f); 
+    dir.setY(1.0f); 
     break;
   case 2 : 
-    dir.z(1.0f); 
+    dir.setZ(1.0f); 
     break;
   }
   constraints[activeConstraint].setRotationConstraintDirection(dir);

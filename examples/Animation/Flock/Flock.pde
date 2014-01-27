@@ -55,8 +55,8 @@ boolean changedMode;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);
+  scene.setAxisVisualHint(false);
+  scene.setGridVisualHint(false);
   scene.setBoundingBox(new Vec(0, 0, 0), new Vec(flockWidth, flockHeight, flockDepth));
   scene.showAll();
   // create and fill the list of boids
@@ -100,7 +100,7 @@ void draw() {
   line(flockWidth, 0, 0, flockWidth, 0, flockDepth);
   line(flockWidth, flockHeight, 0, flockWidth, flockHeight, flockDepth);
 
-  triggered = scene.timer().isTrigggered();
+  triggered = scene.timer().trigggered();
   for (int i = 0; i < flock.size(); i++) {
     // create a temporary boid to process and make it the current boid in the list
     Boid tempBoid = (Boid) flock.get(i);
@@ -115,7 +115,7 @@ void adjustFrameRate() {
     frameRate(1000/scene.animationPeriod());
   else
     frameRate(60);
-  if (scene.animationIsStarted())
+  if (scene.isAnimationStarted())
     scene.restartAnimation();
 }
 
@@ -155,9 +155,9 @@ void keyPressed() {
       previousAvatar = (InteractiveAvatarFrame)scene.avatar();
       scene.unsetAvatar(); //simply sets avatar as null      
       scene.defaultMouseAgent().setAsArcball();
-      scene.defaultMouseAgent().setDefaultGrabber(scene.viewPoint().frame());
+      scene.defaultMouseAgent().setDefaultGrabber(scene.eye().frame());
       scene.defaultMouseAgent().enableTracking();
-      scene.viewPoint().interpolateToFitScene();
+      scene.camera().interpolateToFitScene();
     }
     break;
   }

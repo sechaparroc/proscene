@@ -30,8 +30,8 @@ void setup() {
   dwidth=512;
   scene=new Scene(this);
   scene.setRadius(600);
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   souris=new InteractiveFrame(scene);
   planaire =  new WorldConstraint();
   planaire.setRotationConstraintType(AxisPlaneConstraint.Type.FORBIDDEN);

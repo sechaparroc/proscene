@@ -36,8 +36,7 @@ void setup() {
   or=new PVector(0, 0, 0);
   scene=new Scene(this);
   scene.setRadius(1000);
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);
+  scene.setVisualHints(0);
 
   planaire=new LocalConstraint();
   planaire.setTranslationConstraint(AxisPlaneConstraint.Type.PLANE, new Vec(0, 0, 1));

@@ -35,13 +35,11 @@ int nbKeyFrames;
 public void setup() {
   size(640, 360, P3D);
   nbKeyFrames = 4;
-  scene = new Scene(this);  
-  scene.setAxisIsDrawn(false);
-  scene.setGridIsDrawn(false);
+  scene = new Scene(this);
+  //unsets grid and axis altogether
+  scene.setVisualHints( Constants.FRAME );
   scene.setRadius(70);
   scene.showAll();
-  scene.setFrameSelectionHintIsDrawn(true);
-  //scene.setShortcut('f', Scene.KeyboardAction.DRAW_FRAME_SELECTION_HINT);
   kfi = new KeyFrameInterpolator(scene);
   kfi.setLoopInterpolation();
 
@@ -51,6 +49,7 @@ public void setup() {
   for (int i=0; i<nbKeyFrames; i++) {
     keyFrame[i] = new InteractiveFrame(scene);
     keyFrame[i].setPosition(-100 + 200*i/(nbKeyFrames-1), 0, 0);
+    keyFrame[i].setScaling(random(-2.0f, -2.0f), random(-2.0f, 2.0f), random(-2.0f, 2.0f));
     kfi.addKeyFrame(keyFrame[i]);
   }
 

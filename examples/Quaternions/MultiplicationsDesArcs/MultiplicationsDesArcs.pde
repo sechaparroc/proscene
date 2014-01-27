@@ -28,7 +28,7 @@ void setup() {
   size(640, 640, P3D);
   
   scene=new Scene(this);
-  scene.setGridIsDrawn(false);
+  scene.setGridVisualHint(false);
   scene.setRadius(550);  
   scene.camera().setPosition(new Vec(0, 0, 1000));
   scene.showAll();

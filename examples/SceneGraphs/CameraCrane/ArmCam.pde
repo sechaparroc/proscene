@@ -132,7 +132,7 @@ public class ArmCam {
     // the camera iFrame. Thus, we call it after restoring the gl state.
     // Calling it before the first push matrix above, should do it too.
     if ( parent.drawRobotCamFrustum && scn.equals(parent.mainScene) )
-      scn.drawCamera( parent.armScene.camera() );
+      scn.drawEye( parent.armScene.camera() );
   }
 
   public void drawBase(Scene scn) {

@@ -13,34 +13,31 @@ public class ClickButton extends Button2D {
   @Override
   public void performInteraction(TerseEvent event) {
     if (event instanceof ClickEvent)
-      if (((ClickEvent) event).getClickCount() == 1)
+      if (((ClickEvent) event).clickCount() == 1)
         if (path == 0)
-          scene.toggleViewPointPathsAreDrawn();
+          scene.togglePathsVisualHint();
         else
-          scene.viewPoint().playPath(path);
+          scene.eye().playPath(path);
   }
 
   public void display() {
     String text = new String();
     if (path == 0)
-      if (scene.viewPointPathsAreDrawn())
+      if (scene.pathsVisualHint())
         text = "don't edit camera paths";
       else
         text = "edit camera paths";
     else {
       if (grabsAgent(scene.defaultMouseAgent())) {
-        if (scene.viewPoint().keyFrameInterpolator(path)
-            .numberOfKeyFrames() > 1)
-          if (scene.viewPoint().keyFrameInterpolator(path)
-              .interpolationIsStarted())
+        if (scene.eye().keyFrameInterpolator(path).numberOfKeyFrames() > 1)
+          if (scene.eye().keyFrameInterpolator(path).interpolationIsStarted())
             text = "stop path ";
           else
             text = "play path ";
         else
           text = "restore position ";
       } else {
-        if (scene.viewPoint().keyFrameInterpolator(path)
-            .numberOfKeyFrames() > 1)
+        if (scene.eye().keyFrameInterpolator(path).numberOfKeyFrames() > 1)
           text = "path ";
         else
           text = "position ";

@@ -17,7 +17,7 @@ public void setup() {
   size(640, 360, JAVA2D);
   scene = new Scene(this);
   iFrame = new InteractiveFrame(scene);
-  scene.setFrameSelectionHintIsDrawn(true);
+  scene.setFrameVisualHint(true);
 }
 
 public void draw() {	
@@ -47,4 +47,3 @@ public void draw() {
   text("Hello world", 5, 17);
   scene.endScreenDrawing(); //
 }
-

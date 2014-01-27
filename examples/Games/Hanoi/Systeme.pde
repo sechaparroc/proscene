@@ -162,7 +162,7 @@ class Systeme {
       }
       else {
         Vec v=disques[d].repere.position();
-        v.z(125);
+        v.setZ(125);
         disques[d].repere.setPosition(v);
       }
     }

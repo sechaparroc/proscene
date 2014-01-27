@@ -22,8 +22,8 @@ void setup() {
   size(640, 640, P3D);
   scene=new Scene(this); 
   scene.setRadius(800);
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   scene.camera().setPosition(new Vec(0, 490, 140));
   scene.camera().setOrientation(new Quat(new Vec(1, 0, 0), -PI*0.34));
   bande=new Bande();

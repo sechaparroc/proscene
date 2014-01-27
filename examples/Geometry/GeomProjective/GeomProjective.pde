@@ -59,8 +59,8 @@ void setup() {
 
   figure=new Figure(new PVector(a, a, 2*a), new PVector(a, -a, 2*a), new PVector(-a, -a, 2*a), new PVector(-a, a, 2*a));
   scene.camera().setPosition(new Vec(0, 0, 520));
-  scene.setGridIsDrawn(false);
-  scene.setAxisIsDrawn(false);
+  scene.setGridVisualHint(false);
+  scene.setAxisVisualHint(false);
   rectMode(CENTER);
 }
 

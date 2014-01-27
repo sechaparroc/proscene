@@ -91,7 +91,7 @@ public void mouseDragged() {
   if (iFrameGrabsInput)
     scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, iFrame));
   else
-    scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, scene.viewPoint().frame()));
+    scene.terseHandler().enqueueEventTuple(new EventGrabberTuple(event, scene.eye().frame()));
   prevEvent = event.get();
 }
 

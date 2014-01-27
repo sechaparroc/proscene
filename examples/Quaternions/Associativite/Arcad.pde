@@ -24,7 +24,7 @@ class Arcad {
     repere.setZAxis(Scene.toVec(axe));
     repere.setXAxis(Scene.toVec(comb(1, depart, -1, ocentre)));
     repere.setPosition(Scene.toVec(ocentre));
-    dragueur.setPosition(Vec.mult(repere.position(), 1.2));
+    dragueur.setPosition(Vec.multiply(repere.position(), 1.2));
     rotateur.setTranslation(new Vec(raycercle*cos(angle/2.0), raycercle*sin(angle/2.0), 0));
     quat=new Quat(Scene.toVec(axe), angle);
   }
@@ -58,8 +58,8 @@ class Arcad {
     unText1(texte, Scene.toPVector(rotateur.position()));
 
     pushMatrix();//+++++++++++++++++++++++++++++++++++++++++++++++++++++
-    float lon=dragueur.position().mag();
-    if (lon<raySphere) dragueur.setPosition(Vec.mult(dragueur.position(), raySphere/lon));
+    float lon=dragueur.position().magnitude();
+    if (lon<raySphere) dragueur.setPosition(Vec.multiply(dragueur.position(), raySphere/lon));
     dragueur.applyTransformation();
     fill(255, 0, 255);
     sphere(15);

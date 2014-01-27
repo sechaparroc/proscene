@@ -38,8 +38,8 @@ public void setup() {
 
   canvas = createGraphics(width, mainWinHeight, P3D);
   mainScene = new Scene(this, (PGraphics3D) canvas);
-  mainScene.setGridIsDrawn(false);
-  mainScene.setAxisIsDrawn(false);
+  mainScene.setGridVisualHint(false);
+  mainScene.setAxisVisualHint(false);
   mainScene.setRadius(110);
   mainScene.showAll();
   // press 'f' to display frame selection hints
@@ -49,16 +49,16 @@ public void setup() {
   // is to be drawn (see drawing code below) to its constructor.
   armScene = new Scene(this, (PGraphics3D) armCanvas, 0, canvas.height);
   armScene.setRadius(50);
-  armScene.setGridIsDrawn(false);
-  armScene.setAxisIsDrawn(false);
+  armScene.setGridVisualHint(false);
+  armScene.setAxisVisualHint(false);
   heliCanvas = createGraphics(width / 2, (height - canvas.height), P3D);
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   heliScene = new Scene(this, (PGraphics3D) heliCanvas, canvas.width / 2, 
   canvas.height);
   heliScene.setRadius(50);
-  heliScene.setGridIsDrawn(false);
-  heliScene.setAxisIsDrawn(false);
+  heliScene.setGridVisualHint(false);
+  heliScene.setAxisVisualHint(false);
 
   // Frame linking
   armCam = new ArmCam(this, 60, -60, 2);
@@ -84,7 +84,7 @@ public void draw() {
   armScene.endDraw();
   armCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(armCanvas, armScene.upperLeftCorner.x, armScene.upperLeftCorner.y);
+  image(armCanvas, armScene.upperLeftCorner.x(), armScene.upperLeftCorner.y());
 
   heliCanvas.beginDraw();
   drawing(heliScene);
@@ -92,8 +92,8 @@ public void draw() {
   heliScene.endDraw();
   heliCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(heliCanvas, heliScene.upperLeftCorner.x, 
-  heliScene.upperLeftCorner.y);
+  image(heliCanvas, heliScene.upperLeftCorner.x(), 
+  heliScene.upperLeftCorner.y());
 }
 
 public void handleMouse() {
