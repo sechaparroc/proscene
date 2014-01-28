@@ -1,14 +1,9 @@
 /**
- * Standard Camera.
+ * Window Culling.
  * by Jean Pierre Charalambos.
  * 
- * A 'standard' Camera with fixed near and far planes.
- * 
- * Note that the precision of the z-Buffer highly depends on how the zNear()
- * and zFar() values are fitted to your scene (as it is done with the default PROSCENE
- * camera). Loose boundaries will result in imprecision along the viewing direction.
- * 
- * Press 't' in the main viewer (the upper one) to toggle the camera kind.
+ * Doc to come...
+ *
  * Press 'h' to display the global shortcuts in the console.
  * Press 'H' to display the current camera profile keyboard shortcuts
  * and mouse bindings in the console.
@@ -21,16 +16,13 @@ import remixlab.dandelion.geom.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;
-StdCamera cam;
+float circleRadius = 150;
 
 void setup() {
-  size(640, 720, P3D);
+  size(640, 720, JAVA2D);
 
-  canvas = createGraphics(640, 360, P3D);
+  canvas = createGraphics(640, 360, JAVA2D);
   scene = new Scene(this, canvas);
-
-  cam = new StdCamera(scene);
-  scene.camera(cam);
 
   scene.setRadius(200);
   scene.showAll();
@@ -40,11 +32,10 @@ void setup() {
   scene.setGridVisualHint(false);
   scene.addDrawHandler(this, "mainDrawing");
 
-  auxCanvas = createGraphics(640, 360, P3D);
+  auxCanvas = createGraphics(640, 360, JAVA2D);
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
-  auxScene.camera().setType(Camera.Type.ORTHOGRAPHIC);
   auxScene.setAxisVisualHint(false);
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(400);
@@ -53,18 +44,19 @@ void setup() {
 }
 
 public void mainDrawing(Scene s) {
-  PGraphicsOpenGL p = s.pggl();
+  PGraphics p = s.pg();
   p.background(0);
   p.noStroke();
+  p.ellipseMode(RADIUS);
   // the main viewer camera is used to cull the sphere object against its frustum
-  switch (scene.camera().ballIsVisible(new Vec(0, 0, 0), scene.radius()*0.6f)) {
+  switch (scene.window().ballIsVisible(new Vec(0, 0), circleRadius)) {
   case VISIBLE:
     p.fill(0, 255, 0);
-    p.sphere(scene.radius()*0.6f);
+    p.ellipse(0, 0, circleRadius, circleRadius);
     break;
   case SEMIVISIBLE:
     p.fill(255, 0, 0);
-    p.sphere(scene.radius()*0.6f);
+    p.ellipse(0, 0, circleRadius, circleRadius);
     break;
   case INVISIBLE:
     break;
@@ -73,11 +65,11 @@ public void mainDrawing(Scene s) {
 
 void auxiliarDrawing(Scene s) {
   mainDrawing(s);    
-  s.pg3d().pushStyle();
-  s.pg3d().stroke(255, 255, 0);
-  s.pg3d().fill(255, 255, 0, 160);
-  s.drawEye(scene.camera());
-  s.pg3d().popStyle();
+  s.pg().pushStyle();
+  s.pg().stroke(255, 255, 0);
+  s.pg().fill(255, 255, 0, 160);
+  s.drawEye(scene.eye());
+  s.pg().popStyle();
 }
 
 void draw() {
@@ -108,56 +100,5 @@ void handleMouse() {
     scene.disableDefaultKeyboardAgent();
     auxScene.enableDefaultMouseAgent();
     auxScene.enableDefaultKeyboardAgent();
-  }
-}
-
-void keyPressed() {
-  if (key == 't') {
-    cam.toggleMode();
-    this.redraw();
-  }
-  if ( key == 'u' )
-    scene.defaultMouseAgent().cameraWheelProfile().setBinding(WheelAction.ZOOM);
-  if ( key == 'v' )
-    scene.defaultMouseAgent().cameraWheelProfile().setBinding(WheelAction.SCALE);
-}
-
-public class StdCamera extends Camera {
-  boolean standard;
-
-  public StdCamera(AbstractScene scn) {
-    super(scn);
-    standard = false;
-  }
-
-  public void toggleMode() {
-    standard = !standard;
-  }
-
-  public boolean isStandard() {
-    return standard;
-  }
-
-  @Override
-  public float zNear() { 
-    if (standard) 
-      return 0.001f; 
-    else 
-      return super.zNear();
-  }
-
-  @Override
-  public float zFar() {
-    if (standard) 
-      return 1000.0f; 
-    else 
-      return super.zFar();
-  }
-
-  @Override
-  public float rescalingOrthoFactor() {
-    if (isStandard())
-      return 1.0f;
-    return super.rescalingOrthoFactor();
   }
 }
