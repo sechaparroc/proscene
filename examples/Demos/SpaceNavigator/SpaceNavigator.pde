@@ -56,8 +56,8 @@ ControlButton button1; // Buttons
 ControlButton button2;
 
 public class HIDAgent extends Agent {
-  // array of sensitivities that will be multiply the sliders input
-  // pretty much found as trial an error
+  // array of sensitivities that will multiply the sliders input
+  // found pretty much as trial an error
   float [] sens = {10, 10, 10, 10, 10, 10};
   
   public HIDAgent(Scene scn) {
@@ -141,9 +141,7 @@ void keyPressed() {
       scene.camera().setUpVector(Vec.subtract(scene.camera().position(), scene.anchor()));
       //The rest is just to make the scene appear in front of us. We could have just used
       //the space navigator itself to make that happen too.
-      Quat q = new Quat();
-      q.fromEulerAngles(a,0,0);
-      scene.camera().frame().rotate(q);
+      scene.camera().frame().rotate(new Quat(a, 0, 0));
     }
 }
 
