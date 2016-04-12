@@ -21,7 +21,7 @@ import remixlab.dandelion.core.*;
  * @see remixlab.bias.ext.Profile
  */
 public class EyeFrame extends GenericP5Frame {
-  public EyeFrame(Eye eye) {
+  protected EyeFrame(Eye eye) {
     super(eye);
   }
 
