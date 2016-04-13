@@ -1894,8 +1894,22 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   @Override
-  public void drawEye(Eye eye, float scale) {
-    pg().pushStyle();
+  public void drawEye(Eye eye) {
+    drawEye(pg(), eye);
+  }
+  
+  /**
+   * Implementation of {@link #drawEye(Eye)}.
+   * <p>
+   * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
+   */
+  public void drawEye(PGraphics pg, Eye eye) {
+    if(eye.scene() instanceof Scene)
+      if( ((Scene)eye.scene()).pg() == pg ) {
+        System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
+        return;
+      }
+    pg.pushStyle();
     // boolean drawFarPlane = true;
     // int farIndex = drawFarPlane ? 1 : 0;
     int farIndex = is3D() ? 1 : 0;
@@ -1903,7 +1917,7 @@ public class Scene extends AbstractScene implements PConstants {
     if (is3D())
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
         ortho = true;
-    pushModelView();
+    pg.pushMatrix();
     // applyMatrix(camera.frame().worldMatrix());
     // same as the previous line, but maybe more efficient
 
@@ -1918,11 +1932,11 @@ public class Scene extends AbstractScene implements PConstants {
     // take into account the whole hierarchy:
     if (is2D()) {
       // applyWorldTransformation(eye.frame());
-      translate(eye.frame().position().vec[0], eye.frame().position().vec[1]);
-      rotate(eye.frame().orientation().angle());
+      pg.translate(eye.frame().position().vec[0], eye.frame().position().vec[1]);
+      pg.rotate(eye.frame().orientation().angle());
     } else {
-      translate(eye.frame().position().vec[0], eye.frame().position().vec[1], eye.frame().position().vec[2]);
-      rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
+      pg.translate(eye.frame().position().vec[0], eye.frame().position().vec[1], eye.frame().position().vec[2]);
+      pg.rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
           ((Quat) eye.frame().orientation()).axis().vec[1], ((Quat) eye.frame().orientation()).axis().vec[2]);
     }
 
@@ -1933,15 +1947,15 @@ public class Scene extends AbstractScene implements PConstants {
 
     if (is2D() || ortho) {
       float[] wh = eye.getBoundaryWidthHeight();
-      points[0].setX(scale * wh[0]);
-      points[1].setX(scale * wh[0]);
-      points[0].setY(scale * wh[1]);
-      points[1].setY(scale * wh[1]);
+      points[0].setX(wh[0]);
+      points[1].setX(wh[0]);
+      points[0].setY(wh[1]);
+      points[1].setY(wh[1]);
     }
 
     if (is3D()) {
-      points[0].setZ(scale * ((Camera) eye).zNear());
-      points[1].setZ(scale * ((Camera) eye).zFar());
+      points[0].setZ(((Camera) eye).zNear());
+      points[1].setZ(((Camera) eye).zFar());
 
       if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
         points[0].setY(points[0].z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
@@ -1954,30 +1968,30 @@ public class Scene extends AbstractScene implements PConstants {
       // Frustum lines
       switch (((Camera) eye).type()) {
       case PERSPECTIVE: {
-        pg().beginShape(PApplet.LINES);
-        vertex(0.0f, 0.0f, 0.0f);
-        vertex(points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
-        vertex(0.0f, 0.0f, 0.0f);
-        vertex(-points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
-        vertex(0.0f, 0.0f, 0.0f);
-        vertex(-points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
-        vertex(0.0f, 0.0f, 0.0f);
-        vertex(points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
-        pg().endShape();
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, -points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, -points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
+        pg.endShape();
         break;
       }
       case ORTHOGRAPHIC: {
         // if (drawFarPlane) {
-        pg().beginShape(PApplet.LINES);
-        vertex(points[0].x(), points[0].y(), -points[0].z());
-        vertex(points[1].x(), points[1].y(), -points[1].z());
-        vertex(-points[0].x(), points[0].y(), -points[0].z());
-        vertex(-points[1].x(), points[1].y(), -points[1].z());
-        vertex(-points[0].x(), -points[0].y(), -points[0].z());
-        vertex(-points[1].x(), -points[1].y(), -points[1].z());
-        vertex(points[0].x(), -points[0].y(), -points[0].z());
-        vertex(points[1].x(), -points[1].y(), -points[1].z());
-        pg().endShape();
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
+        Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
+        Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
+        Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
+        Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
+        Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
+        Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
+        Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
+        pg.endShape();
         // }
         break;
       }
@@ -1985,16 +1999,16 @@ public class Scene extends AbstractScene implements PConstants {
     }
 
     // Near and (optionally) far plane(s)
-    pg().noStroke();
-    pg().beginShape(PApplet.QUADS);
+    pg.noStroke();
+    pg.beginShape(PApplet.QUADS);
     for (int i = farIndex; i >= 0; --i) {
-      pg().normal(0.0f, 0.0f, (i == 0) ? 1.0f : -1.0f);
-      vertex(points[i].x(), points[i].y(), -points[i].z());
-      vertex(-points[i].x(), points[i].y(), -points[i].z());
-      vertex(-points[i].x(), -points[i].y(), -points[i].z());
-      vertex(points[i].x(), -points[i].y(), -points[i].z());
+      pg.normal(0.0f, 0.0f, (i == 0) ? 1.0f : -1.0f);
+      Scene.vertex(pg, points[i].x(), points[i].y(), -points[i].z());
+      Scene.vertex(pg, -points[i].x(), points[i].y(), -points[i].z());
+      Scene.vertex(pg, -points[i].x(), -points[i].y(), -points[i].z());
+      Scene.vertex(pg, points[i].x(), -points[i].y(), -points[i].z());
     }
-    pg().endShape();
+    pg.endShape();
 
     // Up arrow
     float arrowHeight = 1.5f * points[0].y();
@@ -2004,34 +2018,34 @@ public class Scene extends AbstractScene implements PConstants {
 
     // pg3d().noStroke();
     // Arrow base
-    pg().beginShape(PApplet.QUADS);
+    pg.beginShape(PApplet.QUADS);
     if (isLeftHanded()) {
-      vertex(-baseHalfWidth, -points[0].y(), -points[0].z());
-      vertex(baseHalfWidth, -points[0].y(), -points[0].z());
-      vertex(baseHalfWidth, -baseHeight, -points[0].z());
-      vertex(-baseHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, -points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, -points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, -baseHeight, -points[0].z());
     } else {
-      vertex(-baseHalfWidth, points[0].y(), -points[0].z());
-      vertex(baseHalfWidth, points[0].y(), -points[0].z());
-      vertex(baseHalfWidth, baseHeight, -points[0].z());
-      vertex(-baseHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, baseHeight, -points[0].z());
     }
-    pg().endShape();
+    pg.endShape();
 
     // Arrow
-    pg().beginShape(PApplet.TRIANGLES);
+    pg.beginShape(PApplet.TRIANGLES);
     if (isLeftHanded()) {
-      vertex(0.0f, -arrowHeight, -points[0].z());
-      vertex(-arrowHalfWidth, -baseHeight, -points[0].z());
-      vertex(arrowHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, 0.0f, -arrowHeight, -points[0].z());
+      Scene.vertex(pg, -arrowHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, arrowHalfWidth, -baseHeight, -points[0].z());
     } else {
-      vertex(0.0f, arrowHeight, -points[0].z());
-      vertex(-arrowHalfWidth, baseHeight, -points[0].z());
-      vertex(arrowHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, 0.0f, arrowHeight, -points[0].z());
+      Scene.vertex(pg, -arrowHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
-    pg().endShape();
-    popModelView();
-    pg().popStyle();
+    pg.endShape();
+    pg.popMatrix();
+    pg.popStyle();
   }
 
   @Override
