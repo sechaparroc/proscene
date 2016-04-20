@@ -456,13 +456,34 @@ public class InteractiveFrame extends GenericP5Frame {
     if (isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
       highlight(pg);
     if (shape() != null)
-      pg.shape(shape());
+      //pg.shape(shape());
+      this.shape(pg);//nicer: it allows to draw shape() into an arbitrary pg
     if (this.hasGraphicsHandler())
       this.invokeGraphicsHandler(pg);
     pg.popMatrix();
     if (pg == ((Scene) gScene).pickingBuffer())
       endPickingBuffer();
     pg.popStyle();
+  }
+  
+  //hack from PGraphics.shape()
+  protected void shape(PGraphics pg) {
+    if (shape().isVisible()) {  // don't do expensive matrix ops if invisible
+      // Flushing any remaining geometry generated in the immediate mode
+      // to avoid depth-sorting issues.
+      pg.flush();
+
+      if (pg.shapeMode == PApplet.CENTER) {
+        pg.pushMatrix();
+        translate(-shape().getWidth()/2, -shape().getHeight()/2);
+      }
+
+      shape().draw(pg); // needs to handle recorder too
+
+      if (pg.shapeMode == PApplet.CENTER) {
+        pg.popMatrix();
+      }
+    }
   }
 
   protected void beginPickingBuffer() {
