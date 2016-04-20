@@ -167,7 +167,7 @@ public class MouseAgent extends Agent {
    * @see remixlab.bias.ext.Profile#registerMotionID(int)
    * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
    */
-  protected void setDefaultBindings(GenericP5Frame frame) {
+  protected void setDefaultBindings(InteractiveFrame frame) {
     frame.removeMotionBindings(this);
     frame.removeClickBindings(this);
 

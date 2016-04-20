@@ -231,7 +231,7 @@ public class Scene extends AbstractScene implements PConstants {
     height = pg.height;
     // properly the eye which is a 3 step process:
     eye = is3D() ? new Camera(this) : new Window(this);
-    eye.setFrame(new EyeFrame(eye));
+    eye.setFrame(new InteractiveFrame(eye));
     setEye(eye());// calls showAll();
 
     // 6. Misc stuff:
@@ -245,8 +245,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   @Override
-  public EyeFrame eyeFrame() {
-    return (EyeFrame) eye.frame();
+  public InteractiveFrame eyeFrame() {
+    return (InteractiveFrame) eye.frame();
   }
 
   @Override
@@ -2426,7 +2426,7 @@ public class Scene extends AbstractScene implements PConstants {
   protected void drawScreenRotateHint() {
     if (!(motionAgent() instanceof MouseAgent))
       return;
-    if (!(motionAgent().inputGrabber() instanceof GenericP5Frame))
+    if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
       return;
 
     pg().pushStyle();
@@ -2453,9 +2453,9 @@ public class Scene extends AbstractScene implements PConstants {
   protected void drawZoomWindowHint() {
     if (!(motionAgent() instanceof MouseAgent))
       return;
-    if (!(motionAgent().inputGrabber() instanceof GenericP5Frame))
+    if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
       return;
-    GenericP5Frame iFrame = (GenericP5Frame) motionAgent().inputGrabber();
+    InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
     pg().pushStyle();
     float p1x = iFrame.initEvent.x() /*- originCorner().x()*/;
     float p1y = iFrame.initEvent.y() /*- originCorner().y()*/;
