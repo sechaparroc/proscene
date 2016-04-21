@@ -119,9 +119,15 @@ public class InteractiveFrame extends GenericFrame {
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(Eye).
    */
-  public InteractiveFrame(Eye eye) {
+  protected InteractiveFrame(Eye eye) {
     super(eye);
     init();
+    addGraphicsHandler(this, "drawEye");
+  }
+  
+  public void drawEye(PGraphics pg) {
+    if(isEyeFrame())
+      scene().drawEye(pg, eye());
   }
 
   /**
@@ -993,11 +999,11 @@ public class InteractiveFrame extends GenericFrame {
    * Internal cache optimization method.
    */
   protected boolean update() {
-    if (shape() != null || this.hasGraphicsHandler())
+    if (shape() != null || this.hasGraphicsHandler() && !isEyeFrame())
       return true;
     else
       for (InteractiveFrame frame : scene().frames())
-        if (frame.shape() != null || frame.hasGraphicsHandler())
+        if (frame.shape() != null || frame.hasGraphicsHandler() && !frame.isEyeFrame())
           return true;
     return false;
   }
@@ -1068,8 +1074,7 @@ public class InteractiveFrame extends GenericFrame {
   public void draw() {
     if (shape() == null && !this.hasGraphicsHandler())
       return;
-    PGraphics pg = scene().pg();
-    draw(pg);
+    draw(scene().pg());
   }
 
   /**
