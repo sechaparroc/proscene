@@ -1895,7 +1895,31 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawEye(Eye eye) {
+    pg().pushMatrix();
+    
+    // applyMatrix(camera.frame().worldMatrix());
+    // same as the previous line, but maybe more efficient
+
+    // Frame tmpFrame = new Frame(is3D());
+    // tmpFrame.fromMatrix(eye.frame().worldMatrix());
+    // applyTransformation(tmpFrame);
+    // same as above but easier
+    // scene().applyTransformation(camera.frame());
+
+    // fails due to scaling!
+
+    // take into account the whole hierarchy:
+    if (is2D()) {
+      // applyWorldTransformation(eye.frame());
+      pg().translate(eye.frame().position().vec[0], eye.frame().position().vec[1]);
+      pg().rotate(eye.frame().orientation().angle());
+    } else {
+      pg().translate(eye.frame().position().vec[0], eye.frame().position().vec[1], eye.frame().position().vec[2]);
+      pg().rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
+          ((Quat) eye.frame().orientation()).axis().vec[1], ((Quat) eye.frame().orientation()).axis().vec[2]);
+    }
     drawEye(pg(), eye);
+    pg().popMatrix();
   }
   
   /**
@@ -1917,28 +1941,6 @@ public class Scene extends AbstractScene implements PConstants {
     if (is3D())
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
         ortho = true;
-    pg.pushMatrix();
-    // applyMatrix(camera.frame().worldMatrix());
-    // same as the previous line, but maybe more efficient
-
-    // Frame tmpFrame = new Frame(is3D());
-    // tmpFrame.fromMatrix(eye.frame().worldMatrix());
-    // applyTransformation(tmpFrame);
-    // same as above but easier
-    // scene().applyTransformation(camera.frame());
-
-    // fails due to scaling!
-
-    // take into account the whole hierarchy:
-    if (is2D()) {
-      // applyWorldTransformation(eye.frame());
-      pg.translate(eye.frame().position().vec[0], eye.frame().position().vec[1]);
-      pg.rotate(eye.frame().orientation().angle());
-    } else {
-      pg.translate(eye.frame().position().vec[0], eye.frame().position().vec[1], eye.frame().position().vec[2]);
-      pg.rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
-          ((Quat) eye.frame().orientation()).axis().vec[1], ((Quat) eye.frame().orientation()).axis().vec[2]);
-    }
 
     // 0 is the upper left coordinates of the near corner, 1 for the far one
     Vec[] points = new Vec[2];
@@ -2044,7 +2046,7 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
     pg.endShape();
-    pg.popMatrix();
+    //pg.popMatrix();
     pg.popStyle();
   }
 

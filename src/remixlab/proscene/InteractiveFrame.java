@@ -125,9 +125,13 @@ public class InteractiveFrame extends GenericFrame {
     addGraphicsHandler(this, "drawEye");
   }
   
+  //TODO doc me
   public void drawEye(PGraphics pg) {
-    if(isEyeFrame())
+    if(isEyeFrame()) {
+      //a bit of a hack, but scaling should be canceled 
+      pg.scale(1/magnitude());
       scene().drawEye(pg, eye());
+    }
   }
 
   /**
