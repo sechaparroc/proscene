@@ -38,6 +38,7 @@ ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0--b3-brightgree
 * Object picking.
 * Screen drawing, i.e., drawing of 2d primitives on top of another (2d or 3d) scene.
 * Off-screen rendering mode support.
+* 2D and 3D Interactive [mini-maps](https://en.wikipedia.org/wiki/Mini-map).
 * Handy set of complete documented [examples](https://github.com/remixlab/proscene/tree/master/examples) that illustrates the use of the package.
 * A complete [API reference documentation](http://remixlab.github.io/proscene-javadocs/).
 * Active support and continuous discussions led by the [Processing community](http://forum.processing.org/two/search?Search=proscene).

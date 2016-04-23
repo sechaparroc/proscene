@@ -96,10 +96,11 @@ public class InteractiveFrame extends GenericFrame {
       return false;
 
     InteractiveFrame other = (InteractiveFrame) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(id, other.id).isEquals();
+    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(id, other.id)
+        .isEquals();
   }
-  
-  //profile
+
+  // profile
   protected Profile profile;
 
   // shape
@@ -112,26 +113,36 @@ public class InteractiveFrame extends GenericFrame {
   protected Method drawHandlerMethod;
 
   protected boolean highlight = true;
-  
+
   /**
-   * Calls {@code super(eye)}, creates the frame {@link #profile()} and calls
-   * {@link #setDefaultMouseBindings()} and {@link #setDefaultKeyBindings()}.
+   * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
+   * creates the frame {@link #profile()} and calls {@link #setDefaultMouseBindings()} and
+   * {@link #setDefaultKeyBindings()}.
    * 
+   * @see #drawEye(PGraphics)
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(Eye).
    */
-  protected InteractiveFrame(Eye eye) {
+  public InteractiveFrame(Eye eye) {
     super(eye);
     init();
     addGraphicsHandler(this, "drawEye");
   }
-  
-  //TODO doc me
+
+  /**
+   * Same as {@code pg.scale(1/magnitude()); scene().drawEye(pg, eye());}.
+   * <p>
+   * This method is only meaningful when frame {@link #isEyeFrame()}.
+   * 
+   * @see remixlab.proscene.Scene#drawEye(PGraphics, Eye)
+   * @see #isEyeFrame()
+   */
   public void drawEye(PGraphics pg) {
-    if(isEyeFrame()) {
-      //a bit of a hack, but scaling should be canceled 
-      pg.scale(1/magnitude());
+    if (isEyeFrame()) {
+      // a bit of a hack, but the eye frame scaling should be canceled out
+      pg.scale(1 / magnitude());
       scene().drawEye(pg, eye());
-    }
+    } else
+      AbstractScene.showOnlyEyeWarning("drawEye", true);
   }
 
   /**
@@ -221,11 +232,11 @@ public class InteractiveFrame extends GenericFrame {
     addGraphicsHandler(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
-  
+
   protected void init() {
     id = ++Scene.frameCount;
     shift = new Vec();
-    
+
     setProfile(new Profile(this));
     // TODO
     if (Scene.platform() == Platform.PROCESSING_DESKTOP)
@@ -234,11 +245,11 @@ public class InteractiveFrame extends GenericFrame {
     // setDefaultTouchBindings();
     setDefaultKeyBindings();
   }
-  
+
   protected void init(GenericFrame referenceFrame) {
     id = ++Scene.frameCount;
     shift = new Vec();
-    
+
     setProfile(new Profile(this));
     if (referenceFrame instanceof InteractiveFrame)
       this.profile.from(((InteractiveFrame) referenceFrame).profile);
@@ -267,8 +278,8 @@ public class InteractiveFrame extends GenericFrame {
   public InteractiveFrame get() {
     return new InteractiveFrame(this);
   }
-  
-  // common api  
+
+  // common api
   @Override
   public Scene scene() {
     return (Scene) gScene;
@@ -841,10 +852,14 @@ public class InteractiveFrame extends GenericFrame {
   // public PMatrix getWorldMatrix() {
   // return is2D() ? Scene.toPMatrix2D(worldMatrix()) :
   // Scene.toPMatrix(worldMatrix());
-  // }  
+  // }
   // end api
-  
-  //TODO doc me
+
+  /**
+   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)},
+   * {@link #setShape(InteractiveFrame)} and {@link #addGraphicsHandler(InteractiveFrame)}
+   * on the other frame instance.
+   */
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
     setShape(otherFrame);
@@ -931,6 +946,10 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void highlight(PGraphics pg) {
+    if (isEyeFrame()) {
+      AbstractScene.showOnlyEyeWarning("highlight", false);
+      return;
+    }
     pg.scale(1.1f);
     // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if (pg.stroke)
@@ -951,19 +970,29 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value
    * is zero.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
    * 
    * @see #graphicsShift()
+   * @see #isEyeFrame()
    */
   public void shiftGraphics(Vec shift) {
+    if (isEyeFrame())
+      AbstractScene.showOnlyEyeWarning("shiftGraphics", true);
     this.shift = shift;
   }
 
   /**
    * Returns the {@link #shape()} shift.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
    * 
    * @see #shiftGraphics(Vec)
+   * @see #isEyeFrame()
    */
   public Vec graphicsShift() {
+    if (isEyeFrame())
+      AbstractScene.showOnlyEyeWarning("graphicsShift", true);
     return shift;
   }
 
@@ -983,8 +1012,13 @@ public class InteractiveFrame extends GenericFrame {
     pshape = ps;
     Scene.GRAPHICS = update();
   }
-  
-  //TODO doc
+
+  /**
+   * Sets the frame {@link #shape()} from that of other frame. Useful when sharing the
+   * same shape drawing method among different frame instances is desirable.
+   * 
+   * {@link #addGraphicsHandler(InteractiveFrame)}
+   */
   public void setShape(InteractiveFrame otherFrame) {
     setShape(otherFrame.shape());
   }
@@ -1045,13 +1079,18 @@ public class InteractiveFrame extends GenericFrame {
    * compares the color of the {@link remixlab.proscene.Scene#pickingBuffer()} at
    * {@code (x,y)} with {@link #id()}. Returns true if both colors are the same, and false
    * otherwise.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
    * 
    * @see #setPickingPrecision(PickingPrecision)
+   * @see #isEyeFrame()
    */
   @Override
   public final boolean checkIfGrabsInput(float x, float y) {
-    if (isEyeFrame())
+    if (isEyeFrame()) {
+      AbstractScene.showOnlyEyeWarning("highlight", false);
       return false;
+    }
     if (pickingPrecision() != PickingPrecision.EXACT || (shape() == null && !this.hasGraphicsHandler())
         || !scene().isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
@@ -1063,8 +1102,7 @@ public class InteractiveFrame extends GenericFrame {
     scene().pickingBuffer().popStyle();
     return false;
   }
-  
-  //TODO doc
+
   @Override
   protected boolean checkIfGrabsInput(KeyboardEvent event) {
     return profile.hasBinding(event.shortcut());
@@ -1110,29 +1148,38 @@ public class InteractiveFrame extends GenericFrame {
     pg.pushStyle();
     if (pg == scene().pickingBuffer())
       beginPickingBuffer();
-    pg.pushMatrix();
-    pg.translate(shift.x(), shift.y(), shift.z());
     // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
-    if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
-      highlight(pg);
-    if (shape() != null)
-      //pg.shape(shape());
-      this.shape(pg);//nicer: it allows to draw shape() into an arbitrary pg
-    if (this.hasGraphicsHandler())
-      this.invokeGraphicsHandler(pg);
-    pg.popMatrix();
+    if (!isEyeFrame()) {
+      pg.pushMatrix();
+      pg.translate(shift.x(), shift.y(), shift.z());
+      if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
+        this.highlight(pg);
+      if (shape() != null)
+        this.shape(pg);// nicer: it allows to draw shape() into an arbitrary pg
+      if (this.hasGraphicsHandler())
+        this.invokeGraphicsHandler(pg);
+      pg.popMatrix();
+    }
     if (pg == scene().pickingBuffer())
       endPickingBuffer();
     pg.popStyle();
   }
-  
-  //hack from PGraphics.shape()
+
+  /**
+   * Internal use. Calls the shape drawing method. Called by {@link #draw(PGraphics)} and
+   * by the scene frame hierarchy traversal algorithm.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
+   * 
+   * @see #isEyeFrame()
+   */
   protected void shape(PGraphics pg) {
-    if (shape().isVisible() && !this.isEyeFrame()) {  // don't do expensive matrix ops if invisible
+    if (shape().isVisible() && !this.isEyeFrame()) { // don't do expensive matrix ops if
+                                                     // invisible
       pg.flush();
       if (pg.shapeMode == PApplet.CENTER) {
         pg.pushMatrix();
-        translate(-shape().getWidth()/2, -shape().getHeight()/2);
+        translate(-shape().getWidth() / 2, -shape().getHeight() / 2);
       }
       shape().draw(pg); // needs to handle recorder too
       if (pg.shapeMode == PApplet.CENTER) {
@@ -1159,7 +1206,11 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Internal use. Invokes an external drawing method (if registered). Called by
-   * {@link #draw(PGraphics)}.
+   * {@link #draw(PGraphics)} and by the scene frame hierarchy traversal algorithm.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
+   * 
+   * @see #isEyeFrame()
    */
   protected boolean invokeGraphicsHandler(PGraphics pg) {
     if (drawHandlerObject != null && !this.isEyeFrame()) {
@@ -1199,8 +1250,13 @@ public class InteractiveFrame extends GenericFrame {
       e.printStackTrace();
     }
   }
-  
-  //TODO doc
+
+  /**
+   * Adds the other frame graphics handler to this frame. Useful when sharing the same
+   * frame graphics handler among different frame instances is desirable.
+   * 
+   * @see #setShape(InteractiveFrame)
+   */
   public void addGraphicsHandler(InteractiveFrame otherFrame) {
     addGraphicsHandler(otherFrame.drawHandlerObject, otherFrame.drawHandlerMethod.getName());
   }

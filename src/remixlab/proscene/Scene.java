@@ -1896,7 +1896,7 @@ public class Scene extends AbstractScene implements PConstants {
   @Override
   public void drawEye(Eye eye) {
     pg().pushMatrix();
-    
+
     // applyMatrix(camera.frame().worldMatrix());
     // same as the previous line, but maybe more efficient
 
@@ -1921,15 +1921,15 @@ public class Scene extends AbstractScene implements PConstants {
     drawEye(pg(), eye);
     pg().popMatrix();
   }
-  
+
   /**
    * Implementation of {@link #drawEye(Eye)}.
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
   public void drawEye(PGraphics pg, Eye eye) {
-    if(eye.scene() instanceof Scene)
-      if( ((Scene)eye.scene()).pg() == pg ) {
+    if (eye.scene() instanceof Scene)
+      if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
         return;
       }
@@ -2046,7 +2046,7 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
     pg.endShape();
-    //pg.popMatrix();
+    // pg.popMatrix();
     pg.popStyle();
   }
 
