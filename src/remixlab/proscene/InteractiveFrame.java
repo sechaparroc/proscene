@@ -120,7 +120,7 @@ public class InteractiveFrame extends GenericFrame {
    * {@link #setDefaultKeyBindings()}.
    * 
    * @see #drawEye(PGraphics)
-   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(Eye).
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(Eye)
    */
   public InteractiveFrame(Eye eye) {
     super(eye);
@@ -328,7 +328,7 @@ public class InteractiveFrame extends GenericFrame {
    * Same as {@code scene().mouseAgent().setDefaultBindings(this)}. The default frame muse
    * bindings which may be queried with {@link #info()}.
    * 
-   * @see remixlab.proscene.MouseAgent#setDefaultBindings(GenericP5Frame)
+   * @see remixlab.proscene.MouseAgent#setDefaultBindings(InteractiveFrame)
    */
   public void setDefaultMouseBindings() {
     scene().mouseAgent().setDefaultBindings(this);
@@ -663,7 +663,7 @@ public class InteractiveFrame extends GenericFrame {
    * Sets the frame {@link remixlab.bias.ext.Profile} instance. Note that the
    * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
    * 
-   * @see #setBindings(GenericP5Frame)
+   * @see #setBindings(InteractiveFrame)
    */
   public void setProfile(Profile p) {
     if (p.grabber() == this)
@@ -1151,7 +1151,10 @@ public class InteractiveFrame extends GenericFrame {
     // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if (!isEyeFrame()) {
       pg.pushMatrix();
-      pg.translate(shift.x(), shift.y(), shift.z());
+      if(pg.is3D())
+        pg.translate(shift.x(), shift.y(), shift.z());
+      else
+        pg.translate(shift.x(), shift.y());
       if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
         this.highlight(pg);
       if (shape() != null)
