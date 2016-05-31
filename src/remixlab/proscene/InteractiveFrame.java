@@ -18,19 +18,11 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
-import remixlab.bias.event.ClickShortcut;
-import remixlab.bias.event.KeyboardEvent;
-import remixlab.bias.event.KeyboardShortcut;
-import remixlab.bias.event.MotionShortcut;
-import remixlab.bias.ext.Profile;
-import remixlab.dandelion.core.AbstractScene;
-import remixlab.dandelion.core.Eye;
-import remixlab.dandelion.core.GenericFrame;
+import remixlab.bias.core.*;
+import remixlab.bias.event.*;
+import remixlab.bias.ext.*;
+import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
-import remixlab.dandelion.core.GenericFrame.PickingPrecision;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -579,7 +571,7 @@ public class InteractiveFrame extends GenericFrame {
   // click
 
   /**
-   * Same as {@code }.
+   * Same as {@code profile.setBinding(new ClickShortcut(id, count), action)}.
    * 
    * @see remixlab.bias.ext.Profile
    */
