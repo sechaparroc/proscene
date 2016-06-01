@@ -122,6 +122,7 @@ public class Scene extends AbstractScene implements PConstants {
   protected static int frameCount;
   protected PGraphics pBuffer;
   protected boolean pBufferEnabled;
+  protected PShader pBufferShader;
 
   protected Profile profile;
 
@@ -191,8 +192,14 @@ public class Scene extends AbstractScene implements PConstants {
     // pg().height, JAVA2D);
     pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL)
         ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
-    if (pBuffer != null)
+    if (pBuffer != null) {
       enablePickingBuffer();
+      //pBufferShader = pickingBuffer().loadShader("picking_buffer.frag");
+      //pBuffer.noStroke();
+      //pBuffer.noTexture();
+      pBufferShader = pApplet().loadShader("picking_buffer.frag");
+      pickingBuffer().shader(pBufferShader);
+    }
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));

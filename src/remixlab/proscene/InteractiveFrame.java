@@ -1184,17 +1184,22 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void beginPickingBuffer() {
+    scene().pBufferShader.set("id", new PVector(id & 255, (id >> 8) & 255, (id >> 16) & 255));
+    /*
     PGraphics pickingBuffer = scene().pickingBuffer();
     if (shape() != null)
       shape().disableStyle();
     pickingBuffer.colorMode(PApplet.RGB, 255);
     pickingBuffer.fill(id());
     pickingBuffer.stroke(id());
+    //*/
   }
 
   protected void endPickingBuffer() {
+    /*
     if (shape() != null)
       shape().enableStyle();
+    //*/
   }
 
   // DRAW METHOD REG
