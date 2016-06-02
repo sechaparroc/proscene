@@ -56,7 +56,9 @@ public void setup() {
   frame1.translate(50, 50);
 
   // frame 2
-  frame2 = new InteractiveFrame(scene, createShape(SPHERE, 40));
+  PShape sphere = createShape(SPHERE, 40);
+  sphere.setFill(color(255,255,0));
+  frame2 = new InteractiveFrame(scene, sphere);
   frame2.setMotionBinding(LEFT, "translate");
   frame2.setMotionBinding(RIGHT, "scale");
 
@@ -71,6 +73,7 @@ public void setup() {
 }
 
 public void boxDrawing(PGraphics pg) {
+  pg.fill(255,0,255);
   pg.box(30);
 }
 
@@ -105,21 +108,7 @@ public void draw() {
   popMatrix();
 
   // 2. Draw frames for which visual representations have been set
-  //scene.drawFrames();//also possible
-  int color1 = color(0, 255, 0);
-  int color2 = color(255, 0, 255);
-
-  if (frame2.grabsInput())
-    frame2.shape().setFill(color1);
-  else
-    frame2.shape().setFill(color2);
-  frame2.draw();
-
-  if (frame3.grabsInput())
-    fill(0, 0, 255);
-  else
-    fill(255, 255, 0);
-  frame3.draw();
+  scene.drawFrames();
 }
 
 public void keyPressed() {

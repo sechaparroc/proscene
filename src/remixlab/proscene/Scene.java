@@ -120,9 +120,10 @@ public class Scene extends AbstractScene implements PConstants {
 
   // iFrames
   protected static int frameCount;
-  protected PGraphics pBuffer;
-  protected boolean pBufferEnabled;
-  protected PShader pBufferShader;
+  //pb : picking buffer
+  protected PGraphics pb;
+  protected boolean pickingBufferEnabled;
+  protected PShader pickingBufferShaderTriangle, pickingBufferShaderLine, pickingBufferShaderPoint;
 
   protected Profile profile;
 
@@ -190,15 +191,16 @@ public class Scene extends AbstractScene implements PConstants {
     // pApplet().createGraphics(pg().width, pg().height, pg() instanceof
     // PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width,
     // pg().height, JAVA2D);
-    pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL)
+    pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
         ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
-    if (pBuffer != null) {
+    if (pb != null) {
       enablePickingBuffer();
-      //pBufferShader = pickingBuffer().loadShader("picking_buffer.frag");
-      //pBuffer.noStroke();
-      //pBuffer.noTexture();
-      pBufferShader = pApplet().loadShader("picking_buffer.frag");
-      pickingBuffer().shader(pBufferShader);
+      pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
+      pickingBuffer().shader(pickingBufferShaderTriangle);
+      pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
+      pickingBuffer().shader(pickingBufferShaderLine, LINES);
+      pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
+      pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
     }
 
     // 4. Create agents and register P5 methods
@@ -289,14 +291,14 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #drawFrames(PGraphics)
    */
   public PGraphics pickingBuffer() {
-    return pBuffer;
+    return pb;
   }
 
   /**
    * Enable the {@link #pickingBuffer()}.
    */
   public void enablePickingBuffer() {
-    if (!(pBufferEnabled = pBuffer != null))
+    if (!(pickingBufferEnabled = pb != null))
       System.out.println("PickingBuffer can't be instantiated!");
   }
 
@@ -304,7 +306,7 @@ public class Scene extends AbstractScene implements PConstants {
    * Disable the {@link #pickingBuffer()}.
    */
   public void disablePickingBuffer() {
-    pBufferEnabled = false;
+    pickingBufferEnabled = false;
   }
 
   /**
@@ -312,7 +314,7 @@ public class Scene extends AbstractScene implements PConstants {
    * otherwise.
    */
   public boolean isPickingBufferEnabled() {
-    return pBufferEnabled;
+    return pickingBufferEnabled;
   }
 
   /**

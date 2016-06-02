@@ -943,7 +943,6 @@ public class InteractiveFrame extends GenericFrame {
       return;
     }
     pg.scale(1.1f);
-    // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if (pg.stroke)
       pg.stroke(highlight(pg.strokeColor));
     if (pg.fill)
@@ -1138,9 +1137,14 @@ public class InteractiveFrame extends GenericFrame {
 
   protected void visit(PGraphics pg) {
     pg.pushStyle();
-    if (pg == scene().pickingBuffer())
-      beginPickingBuffer();
-    // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
+    if (pg == scene().pickingBuffer()) {
+      float r = id & 255;
+      float g = (id >> 8) & 255;
+      float b = (id >> 16) & 255;
+      scene().pickingBufferShaderTriangle.set("id", new PVector(r,g,b));
+      scene().pickingBufferShaderLine.set("id", new PVector(r,g,b));
+      scene().pickingBufferShaderPoint.set("id", new PVector(r,g,b));
+    }
     if (!isEyeFrame()) {
       pg.pushMatrix();
       if(pg.is3D())
@@ -1155,8 +1159,6 @@ public class InteractiveFrame extends GenericFrame {
         this.invokeGraphicsHandler(pg);
       pg.popMatrix();
     }
-    if (pg == scene().pickingBuffer())
-      endPickingBuffer();
     pg.popStyle();
   }
 
@@ -1181,25 +1183,6 @@ public class InteractiveFrame extends GenericFrame {
         pg.popMatrix();
       }
     }
-  }
-
-  protected void beginPickingBuffer() {
-    scene().pBufferShader.set("id", new PVector(id & 255, (id >> 8) & 255, (id >> 16) & 255));
-    /*
-    PGraphics pickingBuffer = scene().pickingBuffer();
-    if (shape() != null)
-      shape().disableStyle();
-    pickingBuffer.colorMode(PApplet.RGB, 255);
-    pickingBuffer.fill(id());
-    pickingBuffer.stroke(id());
-    //*/
-  }
-
-  protected void endPickingBuffer() {
-    /*
-    if (shape() != null)
-      shape().enableStyle();
-    //*/
   }
 
   // DRAW METHOD REG
