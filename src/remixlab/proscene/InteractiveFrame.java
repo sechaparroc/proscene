@@ -47,10 +47,9 @@ import remixlab.util.*;
  * exact manner (using the pixels of the projected visual representation themselves)
  * provided that the {@link #pickingPrecision()} is set to {@link PickingPrecision#EXACT}
  * and the scene {@link remixlab.proscene.Scene#pickingBuffer()} is enabled (see
- * {@link remixlab.proscene.Scene#enablePickingBuffer()}). The strategy doesn't support
- * coloring or texturing operations to take place within the visual representation. Use
- * another {@link #pickingPrecision()} if this is the case or if performance is a concern
- * (using a picking buffer requires the geometry to be drawn twice).
+ * {@link remixlab.proscene.Scene#enablePickingBuffer()}). Use another
+ * {@link #pickingPrecision()} strategy if performance is a concern since using a picking
+ * buffer requires the geometry to be drawn twice.
  * <p>
  * If the above conditions are met, the visual representation may be highlighted when
  * picking takes place (see {@link #enableHighlighting()}). Highlighting is enabled by
@@ -954,9 +953,10 @@ public class InteractiveFrame extends GenericFrame {
    * {@link remixlab.proscene.Scene#pickingBuffer()}.
    */
   protected int id() {
-    // see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
-    return scene().pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
-  }
+		// see here:
+		// http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
+		return (255 << 24) | ((id & 255) << 16) | (((id >> 8) & 255) << 8) | (id >> 16) & 255;
+	}
 
   /**
    * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value
@@ -1071,7 +1071,7 @@ public class InteractiveFrame extends GenericFrame {
    * {@code (x,y)} with {@link #id()}. Returns true if both colors are the same, and false
    * otherwise.
    * <p>
-   * This method is only meaningful when frame is not eyeFrame.
+   * This method is only meaningful when {@link #isEyeFrame()} returns false.
    * 
    * @see #setPickingPrecision(PickingPrecision)
    * @see #isEyeFrame()
@@ -1085,12 +1085,9 @@ public class InteractiveFrame extends GenericFrame {
     if (pickingPrecision() != PickingPrecision.EXACT || (shape() == null && !this.hasGraphicsHandler())
         || !scene().isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
-    scene().pickingBuffer().pushStyle();
-    scene().pickingBuffer().colorMode(PApplet.RGB, 255);
     int index = (int) y * gScene.width() + (int) x;
     if ((0 <= index) && (index < scene().pickingBuffer().pixels.length))
       return scene().pickingBuffer().pixels[index] == id();
-    scene().pickingBuffer().popStyle();
     return false;
   }
 
@@ -1211,9 +1208,7 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Attempt to add a graphics handler method to the frame. The default event handler is a
-   * method that returns void and has one single PGraphics parameter. Note that the method
-   * should only deal with geometry and that not coloring procedure may be specified
-   * within it.
+   * method that returns void and has one single PGraphics parameter.
    * 
    * @param obj
    *          the object to handle the event
