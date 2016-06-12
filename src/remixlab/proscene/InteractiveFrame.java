@@ -1138,6 +1138,10 @@ public class InteractiveFrame extends GenericFrame {
       float r = id & 255;
       float g = (id >> 8) & 255;
       float b = (id >> 16) & 255;
+      // TODO: Experimental, graphics handler procedures requires shaders to be re-applied
+      if(this.hasGraphicsHandler()) {
+      	scene().applyPickingBufferShaders();
+      }
       scene().pickingBufferShaderTriangle.set("id", new PVector(r,g,b));
       scene().pickingBufferShaderLine.set("id", new PVector(r,g,b));
       scene().pickingBufferShaderPoint.set("id", new PVector(r,g,b));

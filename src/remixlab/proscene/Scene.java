@@ -196,11 +196,11 @@ public class Scene extends AbstractScene implements PConstants {
     if (pb != null) {
       enablePickingBuffer();
       pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
-      pickingBuffer().shader(pickingBufferShaderTriangle);
       pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
-      pickingBuffer().shader(pickingBufferShaderLine, LINES);
       pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
-      pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
+      // TODO seems overkill, but a bit safer
+      // it's also called from post() and iFrame.visit
+      applyPickingBufferShaders();
     }
 
     // 4. Create agents and register P5 methods
@@ -1325,11 +1325,18 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().beginDraw();
     pickingBuffer().pushStyle();
     pickingBuffer().background(0);
+    applyPickingBufferShaders();
     drawFrames(pickingBuffer());
     pickingBuffer().popStyle();
     pickingBuffer().endDraw();
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
+  }
+  
+  protected void applyPickingBufferShaders() {
+  	pickingBuffer().shader(pickingBufferShaderTriangle);
+    pickingBuffer().shader(pickingBufferShaderLine, LINES);
+    pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
   }
 
   /**
@@ -1383,7 +1390,7 @@ public class Scene extends AbstractScene implements PConstants {
         // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
         // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
         if (isPickingBufferEnabled())
-        pickingBuffer().loadPixels();
+        	pickingBuffer().loadPixels();
     return result;
   }
 
