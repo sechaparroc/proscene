@@ -1358,17 +1358,9 @@ public class Scene extends AbstractScene implements PConstants {
   //save a Proscene scene current camera settings in as a JSON string in a file
   public void saveCamera(/*String fileName*/) {
   	String fileName = "data/config.json";
-  	
-    //TODO eye().fieldOfView ?
-  	/*
-    json.setFloat("fov", camera().fieldOfView() );
-    setVector("position", eye().position() );
-    setVector("viewdirection", eye().viewDirection() );
-    setVector("upvector", eye().upVector() );
-    */
-  	setVector("position", eye().position() );
-    setQuat("orientation", is3D() ? (Quat)eye().orientation() : new Quat(0,0,0,((Rot)eye().orientation()).angle() ) );
-    json.setFloat("magnitude", eyeFrame().magnitude() );
+  	setVector("position", eyeFrame().position() );
+    setQuat("orientation", is3D() ? (Quat)eyeFrame().orientation() : new Quat(0,0,0,((Rot)eyeFrame().orientation()).angle(), false ) );
+  	json.setFloat("magnitude", eyeFrame().magnitude() );
     
     pApplet().saveJSONObject(json, fileName);
   }
@@ -1395,7 +1387,7 @@ public class Scene extends AbstractScene implements PConstants {
   	}
     if(flag) {
     	eyeFrame().setPosition(getVector("position"));
-    	eyeFrame().setOrientation(is3D() ? getQuat("orientation") : new Rot(getQuat("orientation").angle()));
+    	eyeFrame().setOrientation(is3D() ? getQuat("orientation") : new Rot(getQuat("orientation").w()));
     	eyeFrame().setMagnitude( json.getFloat("magnitude") );
     }
   }
@@ -1422,7 +1414,7 @@ public class Scene extends AbstractScene implements PConstants {
       f[i] = Float.parseFloat(s);
       i++;
     }
-    return new Quat(f[0], f[1], f[2], f[3]);
+    return new Quat(f[0], f[1], f[2], f[3], is3D() ? true : false);
   }
   
   public void writeConfig() {
