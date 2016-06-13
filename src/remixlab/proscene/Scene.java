@@ -11,6 +11,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
+import processing.data.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -24,6 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import java.util.Arrays;
 
 // begin: GWT-incompatible
 ///*
@@ -129,6 +131,8 @@ public class Scene extends AbstractScene implements PConstants {
 
   // E X C E P T I O N H A N D L I N G
   protected int beginOffScreenDrawingCalls;
+  
+  JSONObject json;
 
   // CONSTRUCTORS
 
@@ -227,6 +231,8 @@ public class Scene extends AbstractScene implements PConstants {
 
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
+    json = new JSONObject();
+    pApplet().registerMethod("dispose", this);
 
     // Android: remove the following 2 lines if needed to compile the project
     // if (platform() == Platform.PROCESSING_ANDROID)
@@ -1065,6 +1071,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #removeGraphicsHandler()
    * @see #invokeGraphicsHandler()
    */
+  //TODO shoud be this kept, provided that the iFrame provide such handlers?
   public void addGraphicsHandler(Object obj, String methodName) {
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
@@ -1331,6 +1338,79 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().endDraw();
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
+  }
+  
+  @Override
+  //TODO maybe should be defined only here
+  public void init() {
+  	
+  }
+  
+  /**
+   * Should be called automatically, P5 calling dispose is broken.
+   * See: https://github.com/processing/processing/issues/4445
+   */
+  public void dispose() {
+  	System.out.println("calling dispose()!");
+  }
+  
+  //this is how you save the camera, theoretically;
+  //save a Proscene scene current camera settings in as a JSON string in a file
+  public void saveCamera(/*String fileName*/) {
+  	String fileName = "data/config.json";
+  	
+    //TODO eye().fieldOfView ?
+    json.setFloat("fov", camera().fieldOfView() );
+    setVector("position", eye().position() );
+    setVector("viewdirection", eye().viewDirection() );
+    setVector("upvector", eye().upVector() );
+    
+    pApplet().saveJSONObject(json, fileName);
+  }
+  
+  //Add a PVector as a string representation of a float array to a JSON object
+  public void setVector(String attributeName , Vec v) {
+    json.setString( attributeName, Arrays.toString( new float[]{ v.x(), v.y(), v.z()} ) );
+  }
+  
+  //#####this is how you load the camera, theoretically;
+  public void loadCamera(/*String fileName*/) {
+  	String fileName = "data/config.json";
+  	boolean flag = true;
+  	try {
+  		json = pApplet().loadJSONObject(fileName);
+    }
+  	catch (Exception e) {
+  		System.out.println("No such " + fileName + " found!");
+  		flag = false;
+  	}
+    if(flag) {
+    	camera().setFieldOfView( json.getFloat("fov") );
+      camera().setUpVector( getVector("upvector") );
+      camera().setViewDirection( getVector("viewdirection") );
+      camera().setPosition( getVector("position") );
+    }
+  }
+  
+  //Parse a PVector from its string representation as an array of float in a JSON object
+  public Vec getVector(String attributeName) {
+  	String o =  json.getString(attributeName);
+    String[] arr = o.substring(1,o.length()-1).split(", ");
+    float[] f = new float[arr.length];
+    int i = 0;
+    for(String s : arr) {
+      f[i] = Float.parseFloat(s);
+      i++;
+    }
+    return toVec(new PVector(f[0], f[1], f[2]));
+  }
+  
+  public void writeConfig() {
+  	
+  }
+  
+  public void readConfig() {
+  	
   }
   
   protected void applyPickingBufferShaders() {
