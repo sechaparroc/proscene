@@ -1360,10 +1360,15 @@ public class Scene extends AbstractScene implements PConstants {
   	String fileName = "data/config.json";
   	
     //TODO eye().fieldOfView ?
+  	/*
     json.setFloat("fov", camera().fieldOfView() );
     setVector("position", eye().position() );
     setVector("viewdirection", eye().viewDirection() );
     setVector("upvector", eye().upVector() );
+    */
+  	setVector("position", eye().position() );
+    setQuat("orientation", is3D() ? (Quat)eye().orientation() : new Quat(0,0,0,((Rot)eye().orientation()).angle() ) );
+    json.setFloat("magnitude", eyeFrame().magnitude() );
     
     pApplet().saveJSONObject(json, fileName);
   }
@@ -1371,6 +1376,10 @@ public class Scene extends AbstractScene implements PConstants {
   //Add a PVector as a string representation of a float array to a JSON object
   public void setVector(String attributeName , Vec v) {
     json.setString( attributeName, Arrays.toString( new float[]{ v.x(), v.y(), v.z()} ) );
+  }
+  
+  public void setQuat(String attributeName , Quat q) {
+    json.setString( attributeName, Arrays.toString( new float[]{ q.x(), q.y(), q.z(), q.w()} ) );
   }
   
   //#####this is how you load the camera, theoretically;
@@ -1385,10 +1394,9 @@ public class Scene extends AbstractScene implements PConstants {
   		flag = false;
   	}
     if(flag) {
-    	camera().setFieldOfView( json.getFloat("fov") );
-      camera().setUpVector( getVector("upvector") );
-      camera().setViewDirection( getVector("viewdirection") );
-      camera().setPosition( getVector("position") );
+    	eyeFrame().setPosition(getVector("position"));
+    	eyeFrame().setOrientation(is3D() ? getQuat("orientation") : new Rot(getQuat("orientation").angle()));
+    	eyeFrame().setMagnitude( json.getFloat("magnitude") );
     }
   }
   
@@ -1402,7 +1410,19 @@ public class Scene extends AbstractScene implements PConstants {
       f[i] = Float.parseFloat(s);
       i++;
     }
-    return toVec(new PVector(f[0], f[1], f[2]));
+    return new Vec(f[0], f[1], f[2]);
+  }
+  
+  public Quat getQuat(String attributeName) {
+  	String o =  json.getString(attributeName);
+    String[] arr = o.substring(1,o.length()-1).split(", ");
+    float[] f = new float[arr.length];
+    int i = 0;
+    for(String s : arr) {
+      f[i] = Float.parseFloat(s);
+      i++;
+    }
+    return new Quat(f[0], f[1], f[2], f[3]);
   }
   
   public void writeConfig() {
