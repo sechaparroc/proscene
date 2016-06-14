@@ -231,6 +231,7 @@ public class Scene extends AbstractScene implements PConstants {
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
     json = new JSONObject();
+    //TODO buggy in P5
     pApplet().registerMethod("dispose", this);
 
     // Android: remove the following 2 lines if needed to compile the project
@@ -1367,6 +1368,7 @@ public class Scene extends AbstractScene implements PConstants {
   	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
   	json.setJSONObject("camera", toJSONObject(eyeFrame()));
   	JSONArray jsonPaths = new JSONArray();
+  	//keyFrames
   	int i = 0;
   	for (int id : eye().keyFrameInterpolatorMap().keySet()) {
   		JSONObject jsonPath = new JSONObject();
@@ -1381,7 +1383,7 @@ public class Scene extends AbstractScene implements PConstants {
   protected JSONArray toJSONArray(int id) {
   	JSONArray jsonKeyFrames = new JSONArray();
   	for(int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) 
-  		jsonKeyFrames.setJSONObject(i, toJSONObject(eye().keyFrameInterpolator(id).frame()));
+  		jsonKeyFrames.setJSONObject(i, toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i)));
   	return jsonKeyFrames;
   }
   
@@ -1403,6 +1405,26 @@ public class Scene extends AbstractScene implements PConstants {
     	if(is3D())
     		camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
     	eyeFrame().fromFrame(toFrame(json.getJSONObject("camera")));
+    	// keyFrames
+    	JSONArray paths = json.getJSONArray("paths");
+      for (int i = 0; i < paths.size(); i++) {
+        JSONObject path = paths.getJSONObject(i);
+        int id = path.getInt("key");
+        eye().deletePath(id);
+        JSONArray keyFrames = path.getJSONArray("keyframes");
+        for (int j = 0; j < keyFrames.size(); j++) {
+        	GenericFrame keyFrame = eye().detachFrame();
+        	pruneBranch(keyFrame);
+          keyFrame.fromFrame(toFrame(keyFrames.getJSONObject(j)));
+          keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
+          keyFrame.setGrabsInputThreshold(20);
+          if (pathsVisualHint())
+            motionAgent().addGrabber(keyFrame);
+          if (!eye().keyFrameInterpolatorMap().containsKey(id))
+            eye().setKeyFrameInterpolator(id, new KeyFrameInterpolator(this, eyeFrame()));
+          eye().keyFrameInterpolator(id).addKeyFrame(keyFrame);
+        }
+      }
     }
   }
   
