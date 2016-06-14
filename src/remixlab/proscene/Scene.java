@@ -1366,7 +1366,23 @@ public class Scene extends AbstractScene implements PConstants {
   	json.setFloat("visual_hints", visualHints());
   	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
   	json.setJSONObject("camera", toJSONObject(eyeFrame()));
+  	JSONArray jsonPaths = new JSONArray();
+  	int i = 0;
+  	for (int id : eye().keyFrameInterpolatorMap().keySet()) {
+  		JSONObject jsonPath = new JSONObject();
+  		jsonPath.setInt("key", id);
+  		jsonPath.setJSONArray("keyframes", toJSONArray(id));
+  		jsonPaths.setJSONObject(i++, jsonPath);
+  	}
+  	json.setJSONArray("paths", jsonPaths);
     pApplet().saveJSONObject(json, fileName);
+  }
+  
+  protected JSONArray toJSONArray(int id) {
+  	JSONArray jsonKeyFrames = new JSONArray();
+  	for(int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) 
+  		jsonKeyFrames.setJSONObject(i, toJSONObject(eye().keyFrameInterpolator(id).frame()));
+  	return jsonKeyFrames;
   }
   
   public void loadConfig() {
