@@ -1364,6 +1364,7 @@ public class Scene extends AbstractScene implements PConstants {
   
   public void saveConfig(String fileName) {
   	json.setFloat("visual_hints", visualHints());
+  	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
   	json.setJSONObject("camera", toJSONObject(eyeFrame()));
     pApplet().saveJSONObject(json, fileName);
   }
@@ -1383,6 +1384,8 @@ public class Scene extends AbstractScene implements PConstants {
   	}
     if(flag) {
     	setVisualHints(json.getInt("visual_hints"));
+    	if(is3D())
+    		camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
     	eyeFrame().fromFrame(toFrame(json.getJSONObject("camera")));
     }
   }
