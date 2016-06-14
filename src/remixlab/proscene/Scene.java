@@ -1340,10 +1340,13 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().loadPixels();
   }
   
-  @Override
-  //TODO maybe should be defined only here
+  /**
+   * This method is called before the first drawing happen and should be overloaded to
+   * initialize stuff. The default implementation is empty.
+   */
   public void init() {
-  	
+  	//TODO needs a flag maybe?
+  	//loadConfig();
   }
   
   /**
@@ -1352,16 +1355,19 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void dispose() {
   	System.out.println("calling dispose()!");
+    //TODO needs a flag maybe?
+  	saveConfig();
   }
   
-  //this is how you save the camera, theoretically;
-  //save a Proscene scene current camera settings in as a JSON string in a file
-  public void saveCamera(/*String fileName*/) {
-  	String fileName = "data/config.json";
+  public void saveConfig() {
+  	saveConfig("data/config.json");
+  }
+  
+  public void saveConfig(String fileName) {
+  	json.setFloat("visual_hints", visualHints() );
   	setVector("position", eyeFrame().position() );
     setQuat("orientation", is3D() ? (Quat)eyeFrame().orientation() : new Quat(0,0,0,((Rot)eyeFrame().orientation()).angle(), false ) );
   	json.setFloat("magnitude", eyeFrame().magnitude() );
-    
     pApplet().saveJSONObject(json, fileName);
   }
   
@@ -1374,9 +1380,11 @@ public class Scene extends AbstractScene implements PConstants {
     json.setString( attributeName, Arrays.toString( new float[]{ q.x(), q.y(), q.z(), q.w()} ) );
   }
   
-  //#####this is how you load the camera, theoretically;
-  public void loadCamera(/*String fileName*/) {
-  	String fileName = "data/config.json";
+  public void loadConfig() {
+  	loadConfig("data/config.json");
+  }
+  
+  public void loadConfig(String fileName) {
   	boolean flag = true;
   	try {
   		json = pApplet().loadJSONObject(fileName);
@@ -1386,14 +1394,14 @@ public class Scene extends AbstractScene implements PConstants {
   		flag = false;
   	}
     if(flag) {
-    	eyeFrame().setPosition(getVector("position"));
-    	eyeFrame().setOrientation(is3D() ? getQuat("orientation") : new Rot(getQuat("orientation").w()));
+    	setVisualHints(json.getInt("visual_hints"));
+    	eyeFrame().setPosition(vec("position"));
+    	eyeFrame().setOrientation(is3D() ? quat("orientation") : new Rot(quat("orientation").w()));
     	eyeFrame().setMagnitude( json.getFloat("magnitude") );
     }
   }
   
-  //Parse a PVector from its string representation as an array of float in a JSON object
-  public Vec getVector(String attributeName) {
+  protected Vec vec(String attributeName) {  	
   	String o =  json.getString(attributeName);
     String[] arr = o.substring(1,o.length()-1).split(", ");
     float[] f = new float[arr.length];
@@ -1405,7 +1413,7 @@ public class Scene extends AbstractScene implements PConstants {
     return new Vec(f[0], f[1], f[2]);
   }
   
-  public Quat getQuat(String attributeName) {
+  protected Quat quat(String attributeName) {
   	String o =  json.getString(attributeName);
     String[] arr = o.substring(1,o.length()-1).split(", ");
     float[] f = new float[arr.length];
