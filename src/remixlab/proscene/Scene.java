@@ -25,7 +25,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import java.util.Arrays;
 
 // begin: GWT-incompatible
 ///*
@@ -1355,7 +1354,7 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void dispose() {
   	System.out.println("calling dispose()!");
-    //TODO needs a flag maybe?
+    //TODO needs a flag maybe? maybe it could be (un)set with p5 (un)registerMethod
   	saveConfig();
   }
   
@@ -1364,20 +1363,9 @@ public class Scene extends AbstractScene implements PConstants {
   }
   
   public void saveConfig(String fileName) {
-  	json.setFloat("visual_hints", visualHints() );
-  	setVector("position", eyeFrame().position() );
-    setQuat("orientation", is3D() ? (Quat)eyeFrame().orientation() : new Quat(0,0,0,((Rot)eyeFrame().orientation()).angle(), false ) );
-  	json.setFloat("magnitude", eyeFrame().magnitude() );
+  	json.setFloat("visual_hints", visualHints());
+  	json.setJSONObject("camera", toJSONObject(eyeFrame()));
     pApplet().saveJSONObject(json, fileName);
-  }
-  
-  //Add a PVector as a string representation of a float array to a JSON object
-  public void setVector(String attributeName , Vec v) {
-    json.setString( attributeName, Arrays.toString( new float[]{ v.x(), v.y(), v.z()} ) );
-  }
-  
-  public void setQuat(String attributeName , Quat q) {
-    json.setString( attributeName, Arrays.toString( new float[]{ q.x(), q.y(), q.z(), q.w()} ) );
   }
   
   public void loadConfig() {
@@ -1395,42 +1383,59 @@ public class Scene extends AbstractScene implements PConstants {
   	}
     if(flag) {
     	setVisualHints(json.getInt("visual_hints"));
-    	eyeFrame().setPosition(vec("position"));
-    	eyeFrame().setOrientation(is3D() ? quat("orientation") : new Rot(quat("orientation").w()));
-    	eyeFrame().setMagnitude( json.getFloat("magnitude") );
+    	eyeFrame().fromFrame(toFrame(json.getJSONObject("camera")));
     }
   }
   
-  protected Vec vec(String attributeName) {  	
-  	String o =  json.getString(attributeName);
-    String[] arr = o.substring(1,o.length()-1).split(", ");
-    float[] f = new float[arr.length];
-    int i = 0;
-    for(String s : arr) {
-      f[i] = Float.parseFloat(s);
-      i++;
-    }
-    return new Vec(f[0], f[1], f[2]);
+  protected Frame toFrame(JSONObject jsonFrame) {
+  	Frame frame = new Frame(is3D());
+  	float x,y,z;
+  	x = jsonFrame.getJSONArray("position").getFloat(0);
+  	y = jsonFrame.getJSONArray("position").getFloat(1);
+  	z = jsonFrame.getJSONArray("position").getFloat(2);
+  	Vec pos = new Vec(x,y,z);
+  	frame.setPosition(pos);
+  	if(is2D())
+  		frame.setOrientation(new Rot(jsonFrame.getJSONArray("orientation").getFloat(0)));
+  	else {
+  		x = jsonFrame.getJSONArray("orientation").getFloat(0);
+    	y = jsonFrame.getJSONArray("orientation").getFloat(1);
+    	z = jsonFrame.getJSONArray("orientation").getFloat(2);
+    	float w = jsonFrame.getJSONArray("orientation").getFloat(3);
+    	frame.setOrientation(new Quat(x,y,z,w));
+  	}
+  	frame.setMagnitude(jsonFrame.getFloat("magnitude"));
+  	return frame;
   }
   
-  protected Quat quat(String attributeName) {
-  	String o =  json.getString(attributeName);
-    String[] arr = o.substring(1,o.length()-1).split(", ");
-    float[] f = new float[arr.length];
-    int i = 0;
-    for(String s : arr) {
-      f[i] = Float.parseFloat(s);
-      i++;
-    }
-    return new Quat(f[0], f[1], f[2], f[3], is3D() ? true : false);
+  protected JSONObject toJSONObject(Frame frame) {
+  	JSONObject jsonFrame = new JSONObject();
+  	jsonFrame.setFloat("magnitude", eyeFrame().magnitude() );
+  	jsonFrame.setJSONArray("position", toJSONArray(frame.position()));
+  	jsonFrame.setJSONArray("orientation", toJSONArray(frame.orientation()));
+  	return jsonFrame;
   }
   
-  public void writeConfig() {
-  	
+  protected JSONArray toJSONArray(Vec vec) {
+  	JSONArray jsonVec = new JSONArray();
+  	jsonVec.setFloat(0, vec.x());
+  	jsonVec.setFloat(1, vec.y());
+  	jsonVec.setFloat(2, vec.z());
+  	return jsonVec;
   }
   
-  public void readConfig() {
-  	
+  protected JSONArray toJSONArray(Rotation rot) {
+  	JSONArray jsonRot = new JSONArray();
+  	if(is3D()) {
+  		Quat quat = (Quat) rot;
+  		jsonRot.setFloat(0, quat.x());
+    	jsonRot.setFloat(1, quat.y());
+    	jsonRot.setFloat(2, quat.z());
+    	jsonRot.setFloat(3, quat.w());
+  	}
+  	else
+  		jsonRot.setFloat(0, rot.angle());
+  	return jsonRot;
   }
   
   protected void applyPickingBufferShaders() {
