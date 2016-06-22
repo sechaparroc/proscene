@@ -1366,7 +1366,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void saveConfig(String fileName) {
   	json.setFloat("visual_hints", visualHints());
   	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
-  	json.setJSONObject("camera", toJSONObject(eyeFrame()));
+  	json.setJSONObject("eye", toJSONObject(eyeFrame()));
   	JSONArray jsonPaths = new JSONArray();
   	//keyFrames
   	int i = 0;
@@ -1382,8 +1382,11 @@ public class Scene extends AbstractScene implements PConstants {
   
   protected JSONArray toJSONArray(int id) {
   	JSONArray jsonKeyFrames = new JSONArray();
-  	for(int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) 
-  		jsonKeyFrames.setJSONObject(i, toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i)));
+  	for(int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) {
+  		JSONObject jsonKeyFrame = toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i));
+  		jsonKeyFrame.setFloat("time", eye().keyFrameInterpolator(id).keyFrameTime(i));
+  		jsonKeyFrames.setJSONObject(i, jsonKeyFrame);
+  	}
   	return jsonKeyFrames;
   }
   
@@ -1404,7 +1407,7 @@ public class Scene extends AbstractScene implements PConstants {
     	setVisualHints(json.getInt("visual_hints"));
     	if(is3D())
     		camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
-    	eyeFrame().fromFrame(toFrame(json.getJSONObject("camera")));
+    	eyeFrame().fromFrame(toFrame(json.getJSONObject("eye")));
     	// keyFrames
     	JSONArray paths = json.getJSONArray("paths");
       for (int i = 0; i < paths.size(); i++) {
@@ -1422,7 +1425,7 @@ public class Scene extends AbstractScene implements PConstants {
             motionAgent().addGrabber(keyFrame);
           if (!eye().keyFrameInterpolatorMap().containsKey(id))
             eye().setKeyFrameInterpolator(id, new KeyFrameInterpolator(this, eyeFrame()));
-          eye().keyFrameInterpolator(id).addKeyFrame(keyFrame);
+          eye().keyFrameInterpolator(id).addKeyFrame(keyFrame, keyFrames.getJSONObject(j).getFloat("time"));
         }
       }
     }
