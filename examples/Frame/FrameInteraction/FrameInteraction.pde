@@ -69,7 +69,7 @@ public void setup() {
   frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
   //also possible:
   //frame3 = new InteractiveFrame(scene);
-  //frame3.addGraphicsHandler(this, "boxDrawing");
+  //frame3.setShape(this, "boxDrawing");
 }
 
 public void boxDrawing(PGraphics pg) {

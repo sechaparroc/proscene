@@ -39,7 +39,7 @@ import remixlab.util.*;
  * <b>papplet.draw()</b> (refer to the {@link remixlab.dandelion.core.GenericFrame} API
  * class documentation).
  * <li>Setting a visual representation directly to the frame, either by calling
- * {@link #setShape(PShape)} or {@link #addGraphicsHandler(Object, String)} in
+ * {@link #setShape(PShape)} or {@link #setShape(Object, String)} in
  * <b>papplet.setup()</b>, and then calling {@link remixlab.proscene.Scene#drawFrames()}
  * in <b>papplet.draw()</b>.
  * </ol>
@@ -116,7 +116,7 @@ public class InteractiveFrame extends GenericFrame {
   public InteractiveFrame(Eye eye) {
     super(eye);
     init();
-    addGraphicsHandler(this, "drawEye");
+    setShape(this, "drawEye");
   }
 
   /**
@@ -143,7 +143,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
    * @see #shape()
    * @see #setShape(PShape)
-   * @see #addGraphicsHandler(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn) {
     super(scn);
@@ -159,7 +159,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
    * @see #shape()
    * @see #setShape(PShape)
-   * @see #addGraphicsHandler(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame) {
     super(scn, referenceFrame);
@@ -200,12 +200,12 @@ public class InteractiveFrame extends GenericFrame {
    * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see #addGraphicsHandler(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn, Object obj, String methodName) {
     super(scn);
     init();
-    addGraphicsHandler(obj, methodName);
+    setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -215,12 +215,12 @@ public class InteractiveFrame extends GenericFrame {
    * the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
-   * @see #addGraphicsHandler(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame, Object obj, String methodName) {
     super(scn, referenceFrame);
     init(referenceFrame);
-    addGraphicsHandler(obj, methodName);
+    setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -854,7 +854,6 @@ public class InteractiveFrame extends GenericFrame {
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
     setShape(otherFrame);
-    addGraphicsHandler(otherFrame);
   }
 
   /**
@@ -986,69 +985,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("graphicsShift", true);
     return shift;
   }
-
-  // shape
-
-  /**
-   * Returns the shape wrap by this interactive-frame.
-   */
-  public PShape shape() {
-    return pshape;
-  }
-
-  /**
-   * Replaces previous {@link #shape()} with {@code ps}.
-   */
-  public void setShape(PShape ps) {
-    pshape = ps;
-    Scene.GRAPHICS = update();
-  }
-
-  /**
-   * Sets the frame {@link #shape()} from that of other frame. Useful when sharing the
-   * same shape drawing method among different frame instances is desirable.
-   * 
-   * {@link #addGraphicsHandler(InteractiveFrame)}
-   */
-  public void setShape(InteractiveFrame otherFrame) {
-    setShape(otherFrame.shape());
-  }
-
-  /**
-   * Unsets the shape which is wrapped by this interactive-frame.
-   */
-  public PShape unsetShape() {
-    PShape prev = pshape;
-    pshape = null;
-    Scene.GRAPHICS = update();
-    return prev;
-  }
-
-  /**
-   * Internal cache optimization method.
-   */
-  protected boolean update() {
-    if (shape() != null || this.hasGraphicsHandler() && !isEyeFrame())
-      return true;
-    else
-      for (InteractiveFrame frame : scene().frames())
-        if (frame.shape() != null || frame.hasGraphicsHandler() && !frame.isEyeFrame())
-          return true;
-    return false;
-  }
-
-  /**
-   * Internal cache optimization method.
-   */
-  protected boolean update(PickingPrecision precision) {
-    if (precision == PickingPrecision.EXACT)
-      return true;
-    for (InteractiveFrame frame : scene().frames())
-      if (frame.pickingPrecision() == PickingPrecision.EXACT)
-        return true;
-    return false;
-  }
-
+  
   @Override
   public void setPickingPrecision(PickingPrecision precision) {
     if (precision == PickingPrecision.EXACT)
@@ -1082,8 +1019,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return false;
     }
-    if (pickingPrecision() != PickingPrecision.EXACT || (shape() == null && !this.hasGraphicsHandler())
-        || !scene().isPickingBufferEnabled())
+    if (pickingPrecision() != PickingPrecision.EXACT || !hasShape() || !scene().isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
     int index = (int) y * gScene.width() + (int) x;
     if ((0 <= index) && (index < scene().pickingBuffer().pixels.length))
@@ -1102,9 +1038,8 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.proscene.Scene#drawFrames(PGraphics)
    */
   public void draw() {
-    if (shape() == null && !this.hasGraphicsHandler())
-      return;
-    draw(scene().pg());
+    if (hasShape())
+    	draw(scene().pg());
   }
 
   /**
@@ -1118,7 +1053,7 @@ public class InteractiveFrame extends GenericFrame {
    * the frame into the scene main {@link remixlab.proscene.Scene#pg()}.
    */
   public boolean draw(PGraphics pg) {
-    if (shape() == null && !this.hasGraphicsHandler())
+    if (!hasShape())
       return false;
     pg.pushMatrix();
     scene().applyWorldTransformation(pg, this);
@@ -1138,10 +1073,9 @@ public class InteractiveFrame extends GenericFrame {
       float r = id & 255;
       float g = (id >> 8) & 255;
       float b = (id >> 16) & 255;
-      // TODO: Experimental, graphics handler procedures requires shaders to be re-applied
-      if(this.hasGraphicsHandler()) {
+      // TODO: funny, graphics handler procedures requires shaders to be re-applied
+      if(this.drawHandlerMethod != null)
       	scene().applyPickingBufferShaders();
-      }
       scene().pickingBufferShaderTriangle.set("id", new PVector(r,g,b));
       scene().pickingBufferShaderLine.set("id", new PVector(r,g,b));
       scene().pickingBufferShaderPoint.set("id", new PVector(r,g,b));
@@ -1154,10 +1088,8 @@ public class InteractiveFrame extends GenericFrame {
         pg.translate(shift.x(), shift.y());
       if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
         this.highlight(pg);
-      if (shape() != null)
-        this.shape(pg);// nicer: it allows to draw shape() into an arbitrary pg
-      if (this.hasGraphicsHandler())
-        this.invokeGraphicsHandler(pg);
+      if (hasShape())
+        this.shape(pg);
       pg.popMatrix();
     }
     pg.popStyle();
@@ -1172,42 +1104,110 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   protected void shape(PGraphics pg) {
-    if (shape().isVisible() && !this.isEyeFrame()) { // don't do expensive matrix ops if
-                                                     // invisible
-      pg.flush();
-      if (pg.shapeMode == PApplet.CENTER) {
-        pg.pushMatrix();
-        translate(-shape().getWidth() / 2, -shape().getHeight() / 2);
-      }
-      shape().draw(pg); // needs to handle recorder too
-      if (pg.shapeMode == PApplet.CENTER) {
-        pg.popMatrix();
+  	if(this.isEyeFrame())
+  		return;
+  	if(pshape != null) {
+  	  //don't do expensive matrix ops if invisible
+      if (pshape.isVisible() && !this.isEyeFrame()) {
+        pg.flush();
+        if (pg.shapeMode == PApplet.CENTER) {
+          pg.pushMatrix();
+          translate(-pshape.getWidth() / 2, -pshape.getHeight() / 2);
+        }
+        pshape.draw(pg); // needs to handle recorder too
+        if (pg.shapeMode == PApplet.CENTER) {
+          pg.popMatrix();
+        }
       }
     }
-  }
-
-  // DRAW METHOD REG
-
-  /**
-   * Internal use. Invokes an external drawing method (if registered). Called by
-   * {@link #draw(PGraphics)} and by the scene frame hierarchy traversal algorithm.
-   * <p>
-   * This method is only meaningful when frame is not eyeFrame.
-   * 
-   * @see #isEyeFrame()
-   */
-  protected boolean invokeGraphicsHandler(PGraphics pg) {
-    if (drawHandlerObject != null && !this.isEyeFrame()) {
-      try {
+  	else if(drawHandlerMethod != null && drawHandlerObject != null) {
+  		try {
         drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
-        return true;
       } catch (Exception e) {
         PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
         e.printStackTrace();
-        return false;
       }
-    }
+  	}
+  }
+
+  // shape
+  
+  /**
+   * Internal cache optimization method.
+   */
+  protected boolean update() {
+    if (hasShape() && !isEyeFrame())
+      return true;
+    else
+      for (InteractiveFrame frame : scene().frames())
+        if (frame.hasShape() && !frame.isEyeFrame())
+          return true;
     return false;
+  }
+
+  /**
+   * Internal cache optimization method.
+   */
+  protected boolean update(PickingPrecision precision) {
+    if (precision == PickingPrecision.EXACT)
+      return true;
+    for (InteractiveFrame frame : scene().frames())
+      if (frame.pickingPrecision() == PickingPrecision.EXACT)
+        return true;
+    return false;
+  }
+
+
+  /**
+   * Replaces previous {@link #shape()} with {@code ps}.
+   */
+  public void setShape(PShape ps) {
+  	if(hasShape()) {
+  		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
+  		unsetShape();
+  	}
+    pshape = ps;
+    Scene.GRAPHICS = update();
+  }
+
+  /**
+   * Sets the frame {@link #shape()} from that of other frame. Useful when sharing the
+   * same shape drawing method among different frame instances is desirable.
+   * 
+   * Adds the other frame graphics handler to this frame. Useful when sharing the same
+   * frame graphics handler among different frame instances is desirable.
+   * 
+   * //TODO docs
+   * @see #setShape(InteractiveFrame)
+   * 
+   * {@link #addGraphicsHandler(InteractiveFrame)}
+   */
+  public void setShape(InteractiveFrame otherFrame) {
+  	if(otherFrame.pshape != null)
+  		setShape(otherFrame.pshape);
+  	else if(otherFrame.drawHandlerMethod != null)
+  		setShape(otherFrame.drawHandlerObject, otherFrame.drawHandlerMethod.getName());
+  }
+
+  /**
+   * Unsets the shape which is wrapped by this interactive-frame.
+   * 
+   * Unregisters the graphics handler method (if any has previously been added to the
+   * Scene).
+   * 
+   * @see #setShape(Object, String)
+   * @see #invokeGraphicsHandler(PGraphics)
+   * 
+   * //TODO docs pending
+   */
+  public void unsetShape() {
+  	if(pshape!=null)
+  		pshape = null;
+  	else if(drawHandlerMethod != null) {
+  		drawHandlerMethod = null;
+      drawHandlerObject = null;
+  	}
+    Scene.GRAPHICS = update();
   }
 
   /**
@@ -1222,7 +1222,11 @@ public class InteractiveFrame extends GenericFrame {
    * @see #removeGraphicsHandler()
    * @see #invokeGraphicsHandler(PGraphics)
    */
-  public void addGraphicsHandler(Object obj, String methodName) {
+  public void setShape(Object obj, String methodName) {
+  	if(hasShape()) {
+  		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
+  		unsetShape();
+  	}
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
@@ -1234,38 +1238,13 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Adds the other frame graphics handler to this frame. Useful when sharing the same
-   * frame graphics handler among different frame instances is desirable.
-   * 
-   * @see #setShape(InteractiveFrame)
-   */
-  public void addGraphicsHandler(InteractiveFrame otherFrame) {
-    addGraphicsHandler(otherFrame.drawHandlerObject, otherFrame.drawHandlerMethod.getName());
-  }
-
-  /**
-   * Unregisters the graphics handler method (if any has previously been added to the
-   * Scene).
-   * 
-   * @see #addGraphicsHandler(Object, String)
-   * @see #invokeGraphicsHandler(PGraphics)
-   */
-  public void removeGraphicsHandler() {
-    drawHandlerMethod = null;
-    drawHandlerObject = null;
-    Scene.GRAPHICS = update();
-  }
-
-  /**
    * Returns {@code true} if the user has registered a graphics handler method to the
    * Scene and {@code false} otherwise.
    * 
-   * @see #addGraphicsHandler(Object, String)
+   * @see #setShape(Object, String)
    * @see #invokeGraphicsHandler(PGraphics)
    */
-  public boolean hasGraphicsHandler() {
-    if (drawHandlerMethod == null)
-      return false;
-    return true;
+  public boolean hasShape() {
+  	return pshape != null || drawHandlerMethod != null;
   }
 }

@@ -32,10 +32,10 @@ public class Lamp {
     frame(3).setRotation(new Quat(new Vec(1.0f, -0.3f, 0.0f), -1.7f));
     
     //graphics handers
-    frame(0).addGraphicsHandler(this, "drawBase");
-    frame(1).addGraphicsHandler(this, "drawPivotArm");
-    frame(2).addGraphicsHandler(this, "drawPivotArm");
-    frame(3).addGraphicsHandler(this, "drawHead");
+    frame(0).setShape(this, "drawBase");
+    frame(1).setShape(this, "drawPivotArm");
+    frame(2).setShape(this, "drawPivotArm");
+    frame(3).setShape(this, "drawHead");
 
     // Set frame constraints
     WorldConstraint baseConstraint = new WorldConstraint();

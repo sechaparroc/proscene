@@ -165,7 +165,7 @@ public void keyPressed() {
   if(key == ' ')
     showMiniMap = !showMiniMap;
   if(key == 'x')
-    iFrame.addGraphicsHandler(this, "customDrawing");
+    iFrame.setShape(this, "customDrawing");
   if(key == 'y')
-    iFrame.addGraphicsHandler(scene.eyeFrame());
+    iFrame.setShape(scene.eyeFrame());
 }
