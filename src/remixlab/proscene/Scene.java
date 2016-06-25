@@ -1667,6 +1667,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #applyWorldTransformation(PGraphics, Frame)
    * @see #bindMatrices(PGraphics)
    */
+  //TODO may be made static?
   public void applyTransformation(PGraphics pgraphics, Frame frame) {
     if (pgraphics instanceof PGraphics3D) {
       pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
@@ -1691,6 +1692,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #applyTransformation(PGraphics, Frame)
    * @see #bindMatrices(PGraphics)
    */
+  //TODO may be made static?
   public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
     Frame refFrame = frame.referenceFrame();
     if (refFrame != null) {
