@@ -95,13 +95,13 @@ public class InteractiveFrame extends GenericFrame {
   protected Profile profile;
 
   // shape
-  protected PShape pshape;
+  protected PShape pshape, pknPshape;
   protected int id;
   protected Vec shift;
 
   // graphics handler
-  protected Object drawHandlerObject;
-  protected Method drawHandlerMethod;
+  protected Object drawHandlerObject, pknDrawHandlerObject;
+  protected Method drawHandlerMethod, pknDrawHandlerMethod;
 
   protected boolean highlight = true;
 
@@ -1019,7 +1019,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return false;
     }
-    if (pickingPrecision() != PickingPrecision.EXACT || !hasShape() || !scene().isPickingBufferEnabled())
+    if (pickingPrecision() != PickingPrecision.EXACT || !hasPickingShape() || !scene().isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
     int index = (int) y * gScene.width() + (int) x;
     if ((0 <= index) && (index < scene().pickingBuffer().pixels.length))
@@ -1088,8 +1088,10 @@ public class InteractiveFrame extends GenericFrame {
         pg.translate(shift.x(), shift.y());
       if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
         this.highlight(pg);
-      if (hasShape())
+      if (hasShape() && pg != scene().pickingBuffer())
         this.shape(pg);
+      if (hasPickingShape() && pg == scene().pickingBuffer())
+        this.pickingShape(pg);
       pg.popMatrix();
     }
     pg.popStyle();
@@ -1129,6 +1131,33 @@ public class InteractiveFrame extends GenericFrame {
       }
   	}
   }
+  
+  protected void pickingShape(PGraphics pg) {
+  	if(this.isEyeFrame())
+  		return;
+  	if(pknPshape != null) {
+  	  //don't do expensive matrix ops if invisible
+      if (pknPshape.isVisible() && !this.isEyeFrame()) {
+        pg.flush();
+        if (pg.shapeMode == PApplet.CENTER) {
+          pg.pushMatrix();
+          translate(-pknPshape.getWidth() / 2, -pknPshape.getHeight() / 2);
+        }
+        pknPshape.draw(pg); // needs to handle recorder too
+        if (pg.shapeMode == PApplet.CENTER) {
+          pg.popMatrix();
+        }
+      }
+    }
+  	else if(pknDrawHandlerMethod != null && pknDrawHandlerObject != null) {
+  		try {
+        pknDrawHandlerMethod.invoke(pknDrawHandlerObject, new Object[] { pg });
+      } catch (Exception e) {
+        PApplet.println("Something went wrong when invoking your " + pknDrawHandlerMethod.getName() + " method");
+        e.printStackTrace();
+      }
+  	}
+  }
 
   // shape
   
@@ -1136,11 +1165,11 @@ public class InteractiveFrame extends GenericFrame {
    * Internal cache optimization method.
    */
   protected boolean update() {
-    if (hasShape() && !isEyeFrame())
+    if (hasPickingShape() && !isEyeFrame())
       return true;
     else
       for (InteractiveFrame frame : scene().frames())
-        if (frame.hasShape() && !frame.isEyeFrame())
+        if (frame.hasPickingShape() && !frame.isEyeFrame())
           return true;
     return false;
   }
@@ -1157,7 +1186,6 @@ public class InteractiveFrame extends GenericFrame {
     return false;
   }
 
-
   /**
    * Replaces previous {@link #shape()} with {@code ps}.
    */
@@ -1166,7 +1194,17 @@ public class InteractiveFrame extends GenericFrame {
   		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
   		unsetShape();
   	}
+  	else if(!hasPickingShape())
+  		setPickingShape(ps);
     pshape = ps;
+  }
+  
+  public void setPickingShape(PShape ps) {
+  	if(hasPickingShape()) {
+  		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
+  		unsetPickingShape();
+  	}
+    pknPshape = ps;
     Scene.GRAPHICS = update();
   }
 
@@ -1187,6 +1225,13 @@ public class InteractiveFrame extends GenericFrame {
   		setShape(otherFrame.pshape);
   	else if(otherFrame.drawHandlerMethod != null)
   		setShape(otherFrame.drawHandlerObject, otherFrame.drawHandlerMethod.getName());
+  }
+  
+  public void setPickingShape(InteractiveFrame otherFrame) {
+  	if(otherFrame.pknPshape != null)
+  		setPickingShape(otherFrame.pknPshape);
+  	else if(otherFrame.pknDrawHandlerMethod != null)
+  		setPickingShape(otherFrame.pknDrawHandlerObject, otherFrame.pknDrawHandlerMethod.getName());
   }
 
   /**
@@ -1209,6 +1254,16 @@ public class InteractiveFrame extends GenericFrame {
   	}
     Scene.GRAPHICS = update();
   }
+  
+  public void unsetPickingShape() {
+  	if(pknPshape!=null)
+  		pknPshape = null;
+  	else if(pknDrawHandlerMethod != null) {
+  		pknDrawHandlerMethod = null;
+      pknDrawHandlerObject = null;
+  	}
+    Scene.GRAPHICS = update();
+  }
 
   /**
    * Attempt to add a graphics handler method to the frame. The default event handler is a
@@ -1227,9 +1282,26 @@ public class InteractiveFrame extends GenericFrame {
   		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
   		unsetShape();
   	}
+  	else if(!hasPickingShape()) {
+  		setPickingShape(obj, methodName);
+  	}
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
+    } catch (Exception e) {
+      PApplet.println("Something went wrong when registering your " + methodName + " method");
+      e.printStackTrace();
+    }
+  }
+  
+  public void setPickingShape(Object obj, String methodName) {
+  	if(hasPickingShape()) {
+  		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
+  		unsetPickingShape();
+  	}
+    try {
+      pknDrawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      pknDrawHandlerObject = obj;
       Scene.GRAPHICS = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
@@ -1246,5 +1318,9 @@ public class InteractiveFrame extends GenericFrame {
    */
   public boolean hasShape() {
   	return pshape != null || drawHandlerMethod != null;
+  }
+  
+  public boolean hasPickingShape() {
+  	return pknPshape != null || pknDrawHandlerMethod != null;
   }
 }
