@@ -117,6 +117,7 @@ public class InteractiveFrame extends GenericFrame {
     super(eye);
     init();
     setShape(this, "drawEye");
+    setPickingShape(this, "drawEye");
   }
 
   /**
@@ -177,6 +178,7 @@ public class InteractiveFrame extends GenericFrame {
     super(scn);
     init();
     setShape(ps);
+    setPickingShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -191,6 +193,7 @@ public class InteractiveFrame extends GenericFrame {
     super(scn, referenceFrame);
     init(referenceFrame);
     setShape(ps);
+    setPickingShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -206,6 +209,7 @@ public class InteractiveFrame extends GenericFrame {
     super(scn);
     init();
     setShape(obj, methodName);
+    setPickingShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -221,6 +225,7 @@ public class InteractiveFrame extends GenericFrame {
     super(scn, referenceFrame);
     init(referenceFrame);
     setShape(obj, methodName);
+    setPickingShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
 
@@ -259,10 +264,13 @@ public class InteractiveFrame extends GenericFrame {
     setProfile(new Profile(this));
     this.profile.from(otherFrame.profile);
     this.pshape = otherFrame.pshape;
+    this.pknPshape = otherFrame.pknPshape;
     this.id = otherFrame.id;
     this.shift = otherFrame.shift.get();
     this.drawHandlerObject = otherFrame.drawHandlerObject;
     this.drawHandlerMethod = otherFrame.drawHandlerMethod;
+    this.pknDrawHandlerObject = otherFrame.pknDrawHandlerObject;
+    this.pknDrawHandlerMethod = otherFrame.pknDrawHandlerMethod;
   }
 
   @Override
@@ -1074,7 +1082,7 @@ public class InteractiveFrame extends GenericFrame {
       float g = (id >> 8) & 255;
       float b = (id >> 16) & 255;
       // TODO: funny, graphics handler procedures requires shaders to be re-applied
-      if(this.drawHandlerMethod != null)
+      if(this.pknDrawHandlerMethod != null)
       	scene().applyPickingBufferShaders();
       scene().pickingBufferShaderTriangle.set("id", new PVector(r,g,b));
       scene().pickingBufferShaderLine.set("id", new PVector(r,g,b));
@@ -1106,57 +1114,38 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   protected void shape(PGraphics pg) {
-  	if(this.isEyeFrame())
-  		return;
-  	if(pshape != null) {
-  	  //don't do expensive matrix ops if invisible
-      if (pshape.isVisible() && !this.isEyeFrame()) {
-        pg.flush();
-        if (pg.shapeMode == PApplet.CENTER) {
-          pg.pushMatrix();
-          translate(-pshape.getWidth() / 2, -pshape.getHeight() / 2);
-        }
-        pshape.draw(pg); // needs to handle recorder too
-        if (pg.shapeMode == PApplet.CENTER) {
-          pg.popMatrix();
-        }
-      }
-    }
-  	else if(drawHandlerMethod != null && drawHandlerObject != null) {
-  		try {
-        drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
-      } catch (Exception e) {
-        PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
-        e.printStackTrace();
-      }
-  	}
+	  _shape(pg, pshape, drawHandlerObject, drawHandlerMethod);
   }
   
   protected void pickingShape(PGraphics pg) {
-  	if(this.isEyeFrame())
-  		return;
-  	if(pknPshape != null) {
-  	  //don't do expensive matrix ops if invisible
-      if (pknPshape.isVisible() && !this.isEyeFrame()) {
-        pg.flush();
-        if (pg.shapeMode == PApplet.CENTER) {
-          pg.pushMatrix();
-          translate(-pknPshape.getWidth() / 2, -pknPshape.getHeight() / 2);
-        }
-        pknPshape.draw(pg); // needs to handle recorder too
-        if (pg.shapeMode == PApplet.CENTER) {
-          pg.popMatrix();
-        }
-      }
-    }
-  	else if(pknDrawHandlerMethod != null && pknDrawHandlerObject != null) {
-  		try {
-        pknDrawHandlerMethod.invoke(pknDrawHandlerObject, new Object[] { pg });
-      } catch (Exception e) {
-        PApplet.println("Something went wrong when invoking your " + pknDrawHandlerMethod.getName() + " method");
-        e.printStackTrace();
-      }
-  	}
+	  _shape(pg, pknPshape, pknDrawHandlerObject, pknDrawHandlerMethod);
+  }
+  
+  protected void _shape(PGraphics _p, PShape _s, Object _o, Method _m) {
+	  if(this.isEyeFrame())
+	  		return;
+	  	if(_s != null) {
+	  	  //don't do expensive matrix ops if invisible
+	      if (_s.isVisible() && !this.isEyeFrame()) {
+	        _p.flush();
+	        if (_p.shapeMode == PApplet.CENTER) {
+	          _p.pushMatrix();
+	          translate(-_s.getWidth() / 2, -_s.getHeight() / 2);
+	        }
+	        _s.draw(_p); // needs to handle recorder too
+	        if (_p.shapeMode == PApplet.CENTER) {
+	          _p.popMatrix();
+	        }
+	      }
+	    }
+	  	else if(_m != null && _o != null) {
+	  		try {
+	        _m.invoke(_o, new Object[] { _p });
+	      } catch (Exception e) {
+	        PApplet.println("Something went wrong when invoking your " + _m.getName() + " method");
+	        e.printStackTrace();
+	      }
+	  	}
   }
 
   // shape
@@ -1194,8 +1183,11 @@ public class InteractiveFrame extends GenericFrame {
   		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
   		unsetShape();
   	}
+    //TODO weird
+  	/*
   	else if(!hasPickingShape())
   		setPickingShape(ps);
+  		*/
     pshape = ps;
   }
   
@@ -1252,7 +1244,6 @@ public class InteractiveFrame extends GenericFrame {
   		drawHandlerMethod = null;
       drawHandlerObject = null;
   	}
-    Scene.GRAPHICS = update();
   }
   
   public void unsetPickingShape() {
@@ -1282,9 +1273,12 @@ public class InteractiveFrame extends GenericFrame {
   		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
   		unsetShape();
   	}
+  	//TODO weird
+  	/*
   	else if(!hasPickingShape()) {
   		setPickingShape(obj, methodName);
   	}
+  	*/
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
@@ -1296,7 +1290,7 @@ public class InteractiveFrame extends GenericFrame {
   
   public void setPickingShape(Object obj, String methodName) {
   	if(hasPickingShape()) {
-  		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
+  		System.out.println("Warning: overwritting " + pknPshape != null ? "pshape" : "graphics handler");
   		unsetPickingShape();
   	}
     try {
@@ -1307,6 +1301,13 @@ public class InteractiveFrame extends GenericFrame {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
     }
+  }
+  
+  public void resetPickingShape() {
+	  if(this.pshape != null)
+		  setPickingShape(pshape);
+	  else if(this.drawHandlerMethod != null)
+		  setPickingShape(drawHandlerObject, drawHandlerMethod.getName());
   }
 
   /**
