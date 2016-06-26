@@ -862,6 +862,7 @@ public class InteractiveFrame extends GenericFrame {
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
     setShape(otherFrame);
+    setPickingShape(otherFrame);
   }
 
   /**
