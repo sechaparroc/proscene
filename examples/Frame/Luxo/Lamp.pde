@@ -36,6 +36,9 @@ public class Lamp {
     frame(1).setShape(this, "drawPivotArm");
     frame(2).setShape(this, "drawPivotArm");
     frame(3).setShape(this, "drawHead");
+    
+    for (int i = 0; i < 4; ++i)
+      frame(i).resetPickingShape();
 
     // Set frame constraints
     WorldConstraint baseConstraint = new WorldConstraint();

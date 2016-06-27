@@ -949,11 +949,19 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return;
     }
-    pg.scale(1.1f);
-    if (pg.stroke)
-      pg.stroke(highlight(pg.strokeColor));
-    if (pg.fill)
-      pg.fill(highlight(pg.fillColor));
+    if(debug()) {
+    	pg.scale(1.1f);
+        if (pg.stroke)
+          pg.stroke(highlight(pg.strokeColor));
+        if (pg.fill)
+          pg.fill(highlight(pg.fillColor));
+    }
+    else
+      pickingShape(pg);
+  }
+  
+  public boolean debug() {
+	  return pknPshape == pshape && pknDrawHandlerMethod == drawHandlerMethod;
   }
 
   /**
@@ -1095,12 +1103,23 @@ public class InteractiveFrame extends GenericFrame {
         pg.translate(shift.x(), shift.y(), shift.z());
       else
         pg.translate(shift.x(), shift.y());
-      if (isHighlightingEnabled() && this.grabsInput() && pg != scene().pickingBuffer())
-        this.highlight(pg);
-      if (hasShape() && pg != scene().pickingBuffer())
-        this.shape(pg);
-      if (hasPickingShape() && pg == scene().pickingBuffer())
-        this.pickingShape(pg);
+      if(pg != scene().pickingBuffer()) {
+    	  if(debug()) {
+    		  if (isHighlightingEnabled() && this.grabsInput())
+    	  	        highlight(pg);
+    		  if (hasShape())
+    	  	        shape(pg);  
+    	  }
+    	  else {
+    		  if (hasShape())
+      	        shape(pg);
+    		  if (isHighlightingEnabled() && this.grabsInput())
+    	        highlight(pg);  
+    	  }
+      }
+      else
+    	  if (hasPickingShape())
+    	        pickingShape(pg);
       pg.popMatrix();
     }
     pg.popStyle();
@@ -1181,20 +1200,15 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setShape(PShape ps) {
   	if(hasShape()) {
-  		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
+  		System.out.println("Warning: overwritting previous " + (pshape != null ? "pShape" : "graphics handler"));
   		unsetShape();
   	}
-    //TODO weird
-  	/*
-  	else if(!hasPickingShape())
-  		setPickingShape(ps);
-  		*/
     pshape = ps;
   }
   
   public void setPickingShape(PShape ps) {
   	if(hasPickingShape()) {
-  		System.out.println("Warning: overwritting previous " + pshape != null ? "pshape" : "graphics handler");
+  		System.out.println("Warning: overwritting previous " + (pknPshape != null ? "pknpShape" : "pkn graphics handler"));
   		unsetPickingShape();
   	}
     pknPshape = ps;
@@ -1274,12 +1288,6 @@ public class InteractiveFrame extends GenericFrame {
   		System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
   		unsetShape();
   	}
-  	//TODO weird
-  	/*
-  	else if(!hasPickingShape()) {
-  		setPickingShape(obj, methodName);
-  	}
-  	*/
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
@@ -1290,13 +1298,14 @@ public class InteractiveFrame extends GenericFrame {
   }
   
   public void setPickingShape(Object obj, String methodName) {
+	  //TODO check case when front & back method na,es are equal
   	if(hasPickingShape()) {
   		System.out.println("Warning: overwritting " + pknPshape != null ? "pshape" : "graphics handler");
   		unsetPickingShape();
   	}
     try {
-      pknDrawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      pknDrawHandlerObject = obj;
+    	pknDrawHandlerObject = obj;
+      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       Scene.GRAPHICS = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
@@ -1304,7 +1313,20 @@ public class InteractiveFrame extends GenericFrame {
     }
   }
   
+  /*
+  protected void setPickingShape(Object obj, Method method) {
+  	if(hasPickingShape()) {
+  		System.out.println("Warning: overwritting " + pknPshape != null ? "pshape" : "graphics handler");
+  		unsetPickingShape();
+  	}
+  	pknDrawHandlerMethod = method;
+    pknDrawHandlerObject = obj;
+    Scene.GRAPHICS = update();
+  }
+  */
+  
   public void resetPickingShape() {
+	  //TODO fix me
 	  if(this.pshape != null)
 		  setPickingShape(pshape);
 	  else if(this.drawHandlerMethod != null)
