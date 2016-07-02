@@ -871,7 +871,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.proscene.Scene#applyTransformation(PGraphics, Frame)
    */
   public void applyTransformation(PGraphics pg) {
-    scene().applyTransformation(pg, this);
+    Scene.applyTransformation(pg, this);
   }
 
   /**
@@ -880,7 +880,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.proscene.Scene#applyWorldTransformation(PGraphics, Frame)
    */
   public void applyWorldTransformation(PGraphics pg) {
-    scene().applyWorldTransformation(pg, this);
+    Scene.applyWorldTransformation(pg, this);
   }
 
   /**
@@ -1073,7 +1073,7 @@ public class InteractiveFrame extends GenericFrame {
     if (!hasShape())
       return false;
     pg.pushMatrix();
-    scene().applyWorldTransformation(pg, this);
+    Scene.applyWorldTransformation(pg, this);
     visit(pg);
     pg.popMatrix();
     return true;

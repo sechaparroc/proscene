@@ -1354,9 +1354,9 @@ public class Scene extends AbstractScene implements PConstants {
    * See: https://github.com/processing/processing/issues/4445
    */
   public void dispose() {
-  	System.out.println("calling dispose()!");
+  	System.out.println("Debug: calling dispose()!");
     //TODO needs a flag maybe? maybe it could be (un)set with p5 (un)registerMethod
-  	saveConfig();
+  	//saveConfig();
   }
   
   public void saveConfig() {
@@ -1364,7 +1364,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
   
   public void saveConfig(String fileName) {
-  	json.setFloat("visual_hints", visualHints());
+	  json.setFloat("radius", radius());
+  	json.setInt("visualHints", visualHints());
   	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
   	json.setJSONObject("eye", toJSONObject(eyeFrame()));
   	JSONArray jsonPaths = new JSONArray();
@@ -1373,7 +1374,7 @@ public class Scene extends AbstractScene implements PConstants {
   	for (int id : eye().keyFrameInterpolatorMap().keySet()) {
   		JSONObject jsonPath = new JSONObject();
   		jsonPath.setInt("key", id);
-  		jsonPath.setJSONArray("keyframes", toJSONArray(id));
+  		jsonPath.setJSONArray("keyFrames", toJSONArray(id));
   		jsonPaths.setJSONObject(i++, jsonPath);
   	}
   	json.setJSONArray("paths", jsonPaths);
@@ -1404,7 +1405,8 @@ public class Scene extends AbstractScene implements PConstants {
   		flag = false;
   	}
     if(flag) {
-    	setVisualHints(json.getInt("visual_hints"));
+    	setRadius(json.getFloat("radius"));
+    	setVisualHints(json.getInt("visualHints"));
     	if(is3D())
     		camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
     	eyeFrame().fromFrame(toFrame(json.getJSONObject("eye")));
@@ -1414,7 +1416,7 @@ public class Scene extends AbstractScene implements PConstants {
         JSONObject path = paths.getJSONObject(i);
         int id = path.getInt("key");
         eye().deletePath(id);
-        JSONArray keyFrames = path.getJSONArray("keyframes");
+        JSONArray keyFrames = path.getJSONArray("keyFrames");
         for (int j = 0; j < keyFrames.size(); j++) {
         	GenericFrame keyFrame = eye().detachFrame();
         	pruneBranch(keyFrame);
@@ -1667,8 +1669,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #applyWorldTransformation(PGraphics, Frame)
    * @see #bindMatrices(PGraphics)
    */
-  //TODO may be made static?
-  public void applyTransformation(PGraphics pgraphics, Frame frame) {
+  public static void applyTransformation(PGraphics pgraphics, Frame frame) {
     if (pgraphics instanceof PGraphics3D) {
       pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
       pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
@@ -1692,8 +1693,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #applyTransformation(PGraphics, Frame)
    * @see #bindMatrices(PGraphics)
    */
-  //TODO may be made static?
-  public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
+  public static void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
     Frame refFrame = frame.referenceFrame();
     if (refFrame != null) {
       applyWorldTransformation(pgraphics, refFrame);
