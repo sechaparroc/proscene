@@ -121,7 +121,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   // iFrames
   protected static int frameCount;
-  //pb : picking buffer
+  // pb : picking buffer
   protected PGraphics pb;
   protected boolean pickingBufferEnabled;
   protected PShader pickingBufferShaderTriangle, pickingBufferShaderLine, pickingBufferShaderPoint;
@@ -130,7 +130,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   // E X C E P T I O N H A N D L I N G
   protected int beginOffScreenDrawingCalls;
-  
+
   JSONObject json;
 
   // CONSTRUCTORS
@@ -231,7 +231,7 @@ public class Scene extends AbstractScene implements PConstants {
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
     json = new JSONObject();
-    //TODO buggy in P5
+    // TODO buggy in P5
     pApplet().registerMethod("dispose", this);
 
     // Android: remove the following 2 lines if needed to compile the project
@@ -1071,7 +1071,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #removeGraphicsHandler()
    * @see #invokeGraphicsHandler()
    */
-  //TODO shoud be this kept, provided that the iFrame provide such handlers?
+  // TODO shoud be this kept, provided that the iFrame provide such handlers?
   public void addGraphicsHandler(Object obj, String methodName) {
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
@@ -1339,87 +1339,86 @@ public class Scene extends AbstractScene implements PConstants {
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
   }
-  
+
   /**
    * This method is called before the first drawing happen and should be overloaded to
    * initialize stuff. The default implementation is empty.
    */
   public void init() {
-  	//TODO needs a flag maybe?
-  	//loadConfig();
+    // TODO needs a flag maybe?
+    // loadConfig();
   }
-  
+
   /**
-   * Should be called automatically, P5 calling dispose is broken.
-   * See: https://github.com/processing/processing/issues/4445
+   * Should be called automatically, P5 calling dispose is broken. See:
+   * https://github.com/processing/processing/issues/4445
    */
   public void dispose() {
-  	System.out.println("Debug: calling dispose()!");
-    //TODO needs a flag maybe? maybe it could be (un)set with p5 (un)registerMethod
-  	//saveConfig();
+    System.out.println("Debug: calling dispose()!");
+    // TODO needs a flag maybe? maybe it could be (un)set with p5 (un)registerMethod
+    // saveConfig();
   }
-  
+
   public void saveConfig() {
-  	saveConfig("data/config.json");
+    saveConfig("data/config.json");
   }
-  
+
   public void saveConfig(String fileName) {
-	  json.setFloat("radius", radius());
-  	json.setInt("visualHints", visualHints());
-  	json.setBoolean("ortho", is2D() ? true: camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
-  	json.setJSONObject("eye", toJSONObject(eyeFrame()));
-  	JSONArray jsonPaths = new JSONArray();
-  	//keyFrames
-  	int i = 0;
-  	for (int id : eye().keyFrameInterpolatorMap().keySet()) {
-  		JSONObject jsonPath = new JSONObject();
-  		jsonPath.setInt("key", id);
-  		jsonPath.setJSONArray("keyFrames", toJSONArray(id));
-  		jsonPaths.setJSONObject(i++, jsonPath);
-  	}
-  	json.setJSONArray("paths", jsonPaths);
+    json.setFloat("radius", radius());
+    json.setInt("visualHints", visualHints());
+    json.setBoolean("ortho", is2D() ? true : camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
+    json.setJSONObject("eye", toJSONObject(eyeFrame()));
+    JSONArray jsonPaths = new JSONArray();
+    // keyFrames
+    int i = 0;
+    for (int id : eye().keyFrameInterpolatorMap().keySet()) {
+      JSONObject jsonPath = new JSONObject();
+      jsonPath.setInt("key", id);
+      jsonPath.setJSONArray("keyFrames", toJSONArray(id));
+      jsonPaths.setJSONObject(i++, jsonPath);
+    }
+    json.setJSONArray("paths", jsonPaths);
     pApplet().saveJSONObject(json, fileName);
   }
-  
+
   protected JSONArray toJSONArray(int id) {
-  	JSONArray jsonKeyFrames = new JSONArray();
-  	for(int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) {
-  		JSONObject jsonKeyFrame = toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i));
-  		jsonKeyFrame.setFloat("time", eye().keyFrameInterpolator(id).keyFrameTime(i));
-  		jsonKeyFrames.setJSONObject(i, jsonKeyFrame);
-  	}
-  	return jsonKeyFrames;
-  }
-  
-  public void loadConfig() {
-  	loadConfig("data/config.json");
-  }
-  
-  public void loadConfig(String fileName) {
-  	boolean flag = true;
-  	try {
-  		json = pApplet().loadJSONObject(fileName);
+    JSONArray jsonKeyFrames = new JSONArray();
+    for (int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) {
+      JSONObject jsonKeyFrame = toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i));
+      jsonKeyFrame.setFloat("time", eye().keyFrameInterpolator(id).keyFrameTime(i));
+      jsonKeyFrames.setJSONObject(i, jsonKeyFrame);
     }
-  	catch (Exception e) {
-  		System.out.println("No such " + fileName + " found!");
-  		flag = false;
-  	}
-    if(flag) {
-    	setRadius(json.getFloat("radius"));
-    	setVisualHints(json.getInt("visualHints"));
-    	if(is3D())
-    		camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
-    	eyeFrame().fromFrame(toFrame(json.getJSONObject("eye")));
-    	// keyFrames
-    	JSONArray paths = json.getJSONArray("paths");
+    return jsonKeyFrames;
+  }
+
+  public void loadConfig() {
+    loadConfig("data/config.json");
+  }
+
+  public void loadConfig(String fileName) {
+    boolean flag = true;
+    try {
+      json = pApplet().loadJSONObject(fileName);
+    } catch (Exception e) {
+      System.out.println("No such " + fileName + " found!");
+      flag = false;
+    }
+    if (flag) {
+      setRadius(json.getFloat("radius"));
+      setVisualHints(json.getInt("visualHints"));
+      if (is3D())
+        camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
+      eyeFrame().fromFrame(toFrame(json.getJSONObject("eye")));
+      // keyFrames
+      JSONArray paths = json.getJSONArray("paths");
       for (int i = 0; i < paths.size(); i++) {
         JSONObject path = paths.getJSONObject(i);
         int id = path.getInt("key");
         eye().deletePath(id);
         JSONArray keyFrames = path.getJSONArray("keyFrames");
         for (int j = 0; j < keyFrames.size(); j++) {
-        	GenericFrame keyFrame = eye().detachFrame();
-        	pruneBranch(keyFrame);
+          GenericFrame keyFrame = eye().detachFrame();
+          pruneBranch(keyFrame);
           keyFrame.fromFrame(toFrame(keyFrames.getJSONObject(j)));
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
           keyFrame.setGrabsInputThreshold(20);
@@ -1432,60 +1431,59 @@ public class Scene extends AbstractScene implements PConstants {
       }
     }
   }
-  
+
   protected Frame toFrame(JSONObject jsonFrame) {
-  	Frame frame = new Frame(is3D());
-  	float x,y,z;
-  	x = jsonFrame.getJSONArray("position").getFloat(0);
-  	y = jsonFrame.getJSONArray("position").getFloat(1);
-  	z = jsonFrame.getJSONArray("position").getFloat(2);
-  	Vec pos = new Vec(x,y,z);
-  	frame.setPosition(pos);
-  	if(is2D())
-  		frame.setOrientation(new Rot(jsonFrame.getJSONArray("orientation").getFloat(0)));
-  	else {
-  		x = jsonFrame.getJSONArray("orientation").getFloat(0);
-    	y = jsonFrame.getJSONArray("orientation").getFloat(1);
-    	z = jsonFrame.getJSONArray("orientation").getFloat(2);
-    	float w = jsonFrame.getJSONArray("orientation").getFloat(3);
-    	frame.setOrientation(new Quat(x,y,z,w));
-  	}
-  	frame.setMagnitude(jsonFrame.getFloat("magnitude"));
-  	return frame;
+    Frame frame = new Frame(is3D());
+    float x, y, z;
+    x = jsonFrame.getJSONArray("position").getFloat(0);
+    y = jsonFrame.getJSONArray("position").getFloat(1);
+    z = jsonFrame.getJSONArray("position").getFloat(2);
+    Vec pos = new Vec(x, y, z);
+    frame.setPosition(pos);
+    if (is2D())
+      frame.setOrientation(new Rot(jsonFrame.getJSONArray("orientation").getFloat(0)));
+    else {
+      x = jsonFrame.getJSONArray("orientation").getFloat(0);
+      y = jsonFrame.getJSONArray("orientation").getFloat(1);
+      z = jsonFrame.getJSONArray("orientation").getFloat(2);
+      float w = jsonFrame.getJSONArray("orientation").getFloat(3);
+      frame.setOrientation(new Quat(x, y, z, w));
+    }
+    frame.setMagnitude(jsonFrame.getFloat("magnitude"));
+    return frame;
   }
-  
+
   protected JSONObject toJSONObject(Frame frame) {
-  	JSONObject jsonFrame = new JSONObject();
-  	jsonFrame.setFloat("magnitude", eyeFrame().magnitude() );
-  	jsonFrame.setJSONArray("position", toJSONArray(frame.position()));
-  	jsonFrame.setJSONArray("orientation", toJSONArray(frame.orientation()));
-  	return jsonFrame;
+    JSONObject jsonFrame = new JSONObject();
+    jsonFrame.setFloat("magnitude", eyeFrame().magnitude());
+    jsonFrame.setJSONArray("position", toJSONArray(frame.position()));
+    jsonFrame.setJSONArray("orientation", toJSONArray(frame.orientation()));
+    return jsonFrame;
   }
-  
+
   protected JSONArray toJSONArray(Vec vec) {
-  	JSONArray jsonVec = new JSONArray();
-  	jsonVec.setFloat(0, vec.x());
-  	jsonVec.setFloat(1, vec.y());
-  	jsonVec.setFloat(2, vec.z());
-  	return jsonVec;
+    JSONArray jsonVec = new JSONArray();
+    jsonVec.setFloat(0, vec.x());
+    jsonVec.setFloat(1, vec.y());
+    jsonVec.setFloat(2, vec.z());
+    return jsonVec;
   }
-  
+
   protected JSONArray toJSONArray(Rotation rot) {
-  	JSONArray jsonRot = new JSONArray();
-  	if(is3D()) {
-  		Quat quat = (Quat) rot;
-  		jsonRot.setFloat(0, quat.x());
-    	jsonRot.setFloat(1, quat.y());
-    	jsonRot.setFloat(2, quat.z());
-    	jsonRot.setFloat(3, quat.w());
-  	}
-  	else
-  		jsonRot.setFloat(0, rot.angle());
-  	return jsonRot;
+    JSONArray jsonRot = new JSONArray();
+    if (is3D()) {
+      Quat quat = (Quat) rot;
+      jsonRot.setFloat(0, quat.x());
+      jsonRot.setFloat(1, quat.y());
+      jsonRot.setFloat(2, quat.z());
+      jsonRot.setFloat(3, quat.w());
+    } else
+      jsonRot.setFloat(0, rot.angle());
+    return jsonRot;
   }
-  
+
   protected void applyPickingBufferShaders() {
-  	pickingBuffer().shader(pickingBufferShaderTriangle);
+    pickingBuffer().shader(pickingBufferShaderTriangle);
     pickingBuffer().shader(pickingBufferShaderLine, LINES);
     pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
   }
@@ -1541,7 +1539,7 @@ public class Scene extends AbstractScene implements PConstants {
         // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
         // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
         if (isPickingBufferEnabled())
-        	pickingBuffer().loadPixels();
+        pickingBuffer().loadPixels();
     return result;
   }
 
