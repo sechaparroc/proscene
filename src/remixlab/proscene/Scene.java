@@ -1071,7 +1071,6 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #removeGraphicsHandler()
    * @see #invokeGraphicsHandler()
    */
-  // TODO shoud be this kept, provided that the iFrame provide such handlers?
   public void addGraphicsHandler(Object obj, String methodName) {
     try {
       drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });

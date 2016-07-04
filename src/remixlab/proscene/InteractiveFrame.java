@@ -193,6 +193,10 @@ public class InteractiveFrame extends GenericFrame {
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
   }
+  
+  public InteractiveFrame(Scene scn, String methodName) {
+    this(scn, scn, methodName);
+  }  
 
   /**
    * Wraps the function object procedure into this interactive-frame. Calls
@@ -207,6 +211,10 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
+  }
+  
+  public InteractiveFrame(Scene scn, GenericFrame referenceFrame, String methodName) {
+    this(scn, referenceFrame, scn, methodName);
   }
 
   /**
@@ -851,8 +859,8 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)},
-   * {@link #setFrontShape(InteractiveFrame)} and {@link #addGraphicsHandler(InteractiveFrame)}
-   * on the other frame instance.
+   * {@link #setFrontShape(InteractiveFrame)} and
+   * {@link #addGraphicsHandler(InteractiveFrame)} on the other frame instance.
    */
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
@@ -1184,7 +1192,7 @@ public class InteractiveFrame extends GenericFrame {
         return true;
     return false;
   }
-  
+
   public void setShape(PShape ps) {
     setFrontShape(ps);
     setPickingShape(ps);
@@ -1210,7 +1218,7 @@ public class InteractiveFrame extends GenericFrame {
     pknPshape = ps;
     Scene.GRAPHICS = update();
   }
-  
+
   public void setShape(InteractiveFrame otherFrame) {
     setFrontShape(otherFrame);
     setPickingShape(otherFrame);
@@ -1242,7 +1250,7 @@ public class InteractiveFrame extends GenericFrame {
     else if (otherFrame.pknDrawHandlerMethod != null)
       setPickingShape(otherFrame.pknDrawHandlerObject, otherFrame.pknDrawHandlerMethod.getName());
   }
-  
+
   public void unsetShape() {
     unsetFrontShape();
     unsetPickingShape();
@@ -1277,7 +1285,7 @@ public class InteractiveFrame extends GenericFrame {
     }
     Scene.GRAPHICS = update();
   }
-  
+
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
@@ -1302,8 +1310,8 @@ public class InteractiveFrame extends GenericFrame {
     }
     try {
       drawHandlerObject = obj;
-      drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName) ? drawHandlerMethod
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
+          ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
@@ -1327,13 +1335,23 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   public void pairShapes() {
-    // TODO fix me
-    if (this.pshape != null)
-      setPickingShape(pshape);
-    else if (this.drawHandlerMethod != null)
-      setPickingShape(drawHandlerObject, drawHandlerMethod.getName());
+    pairShapes(true);
   }
-  
+
+  public void pairShapes(boolean preserveFront) {
+    if (preserveFront) {
+      if (this.pshape != null)
+        setPickingShape(pshape);
+      else if (this.drawHandlerMethod != null)
+        setPickingShape(drawHandlerObject, drawHandlerMethod.getName());
+    } else {
+      if (this.pknPshape != null)
+        setFrontShape(pknPshape);
+      else if (this.pknDrawHandlerMethod != null)
+        setFrontShape(pknDrawHandlerObject, pknDrawHandlerMethod.getName());
+    }
+  }
+
   public boolean hasShape() {
     return hasFrontShape() || hasPickingShape();
   }
