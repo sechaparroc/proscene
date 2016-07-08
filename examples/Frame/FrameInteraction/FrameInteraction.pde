@@ -13,11 +13,9 @@
  * Visual representations (PShapes or arbitrary graphics procedures) may be related to
  * a frame in two different ways: 1. Applying the frame transformation just before the
  * graphics code happens in draw() (frame1); or, 2. Setting a visual representation to
- * the frame, either by calling frame.setShape(myPShape) or
- * frame.addGraphicsHandler(myProcedure) in setup() (frame2 and frame3, resp.), and
- * then calling scene.drawFrames() in draw() (frame2 and frame3). Note that
- * adding a visual representation to the scene.eyeFrame() is meaningless and therefore
- * not allowed.
+ * the frame, either by calling frame.setShape(myPShape) or frame.setShape(myProcedure)
+ * in setup() (frame2 and frame3, resp.), and then calling scene.drawFrames() in draw()
+ * (frame2 and frame3).
  * 
  * Frame picking is achieved by tracking the pointer and checking whether or not it
  * lies within frame 'selection area': a square around the frame's projected origin

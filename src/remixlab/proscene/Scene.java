@@ -1048,12 +1048,19 @@ public class Scene extends AbstractScene implements PConstants {
     // 3. Draw external registered method
     if (drawHandlerObject != null) {
       try {
+        drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this.pg() });
+        return true;
+      } catch (Exception e1) {
+        try {
         drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
         return true;
-      } catch (Exception e) {
-        PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
-        e.printStackTrace();
-        return false;
+        }
+        catch(Exception e2) {
+          PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+          return false;
+        }
       }
     }
     return false;
@@ -1073,11 +1080,17 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void addGraphicsHandler(Object obj, String methodName) {
     try {
-      drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
+      drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
-    } catch (Exception e) {
-      PApplet.println("Something went wrong when registering your " + methodName + " method");
-      e.printStackTrace();
+    } catch (Exception ex1) {
+      try {
+        drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
+        drawHandlerObject = obj;
+      } catch (Exception ex2) {
+        PApplet.println("Something went wrong when registering your " + methodName + " method");
+        ex1.printStackTrace();
+        ex2.printStackTrace();
+      }
     }
   }
 
@@ -2057,6 +2070,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   @Override
+  //TODO can be static?
   public void drawEye(Eye eye) {
     pg().pushMatrix();
 
@@ -2090,6 +2104,7 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
+  //TODO can be static?
   public void drawEye(PGraphics pg, Eye eye) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
