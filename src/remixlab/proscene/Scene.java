@@ -1201,12 +1201,20 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void disableDepthTest() {
-    pg().hint(PApplet.DISABLE_DEPTH_TEST);
+    disableDepthTest(pg());
+  }
+  
+  public void disableDepthTest(PGraphics p) {
+    p.hint(PApplet.DISABLE_DEPTH_TEST);
   }
 
   @Override
   public void enableDepthTest() {
-    pg().hint(PApplet.ENABLE_DEPTH_TEST);
+    enableDepthTest(pg());
+  }
+  
+  public void enableDepthTest(PGraphics p) {
+    p.hint(PApplet.ENABLE_DEPTH_TEST);
   }
 
   // end: GWT-incompatible
@@ -1721,16 +1729,19 @@ public class Scene extends AbstractScene implements PConstants {
    */
   @Override
   public void beginScreenDrawing() {
+    beginScreenDrawing(pg());
+  }
+  
+  public void beginScreenDrawing(PGraphics p) {
     if (startCoordCalls != 0)
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
           + "endScreenDrawing() and they cannot be nested. Check your implementation!");
-
     startCoordCalls++;
-
-    pg().hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in
-    // AbstractScene.bS
-    disableDepthTest();
-    matrixHelper.beginScreenDrawing();
+    p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
+    disableDepthTest(p);
+    //matrixHelper.beginScreenDrawing();
+    //TODO experimental
+    matrixHelper(p).beginScreenDrawing();
   }
 
   /**
@@ -1739,14 +1750,19 @@ public class Scene extends AbstractScene implements PConstants {
    */
   @Override
   public void endScreenDrawing() {
+    endScreenDrawing(pg());
+  }
+  
+  public void endScreenDrawing(PGraphics p) {
     startCoordCalls--;
     if (startCoordCalls != 0)
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
           + "endScreenDrawing() and they cannot be nested. Check your implementation!");
-
-    matrixHelper.endScreenDrawing();
-    enableDepthTest();
-    pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line
+    //matrixHelper.endScreenDrawing();
+    //TODO experimental
+    matrixHelper(p).endScreenDrawing();
+    enableDepthTest(p);
+    p.hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.eS
   }
 
   // DRAWING
