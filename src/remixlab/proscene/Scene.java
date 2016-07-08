@@ -1733,8 +1733,7 @@ public class Scene extends AbstractScene implements PConstants {
 
     matrixHelper.endScreenDrawing();
     enableDepthTest();
-    pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line not present in
-    // AbstractScene.bS
+    pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line
   }
 
   // DRAWING

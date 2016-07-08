@@ -90,6 +90,42 @@ public class InteractiveFrame extends GenericFrame {
     return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(id, other.id)
         .isEquals();
   }
+  
+  public class ShapeWrapper {
+    PShape shp;
+    Object hObj;
+    Method mthd;
+    
+    protected ShapeWrapper() {
+      shp = null;
+      hObj = null;
+      mthd = null;
+    }
+    
+    protected ShapeWrapper(PShape s) {
+      shp = s;
+      hObj = null;
+      mthd = null;
+    }
+    
+    protected ShapeWrapper(Object o, Method m) {
+      shp = null;
+      hObj = o;
+      mthd = m;
+    }
+    
+    public PShape shape() {
+      return shp;
+    }
+    
+    public Object Object() {
+      return hObj;
+    }
+    
+    public Method method() {
+      return mthd;
+    }
+  }
 
   // profile
   protected Profile profile;
@@ -1285,10 +1321,32 @@ public class InteractiveFrame extends GenericFrame {
     }
     Scene.GRAPHICS = update();
   }
+  
+  public void setShape(String methodName) {
+    setShape(scene(), methodName);
+  }
 
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
+  }
+  
+  public void setFrontShape(String methodName) {
+    setFrontShape(scene(), methodName);
+  }
+  
+  public ShapeWrapper shape() {
+    if(pshape == null && drawHandlerMethod == null)
+      return new ShapeWrapper();
+    else
+      return pshape != null ? new ShapeWrapper(pshape) : new ShapeWrapper(drawHandlerObject, drawHandlerMethod);
+  }
+  
+  public ShapeWrapper pickingShape() {
+    if(pknPshape == null && pknDrawHandlerMethod == null)
+      return new ShapeWrapper();
+    else
+      return pknPshape != null ? new ShapeWrapper(pknPshape) : new ShapeWrapper(pknDrawHandlerObject, pknDrawHandlerMethod);
   }
 
   /**
@@ -1316,6 +1374,10 @@ public class InteractiveFrame extends GenericFrame {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
     }
+  }
+  
+  public void setPickingShape(String methodName) {
+    setPickingShape(scene(), methodName);
   }
 
   public void setPickingShape(Object obj, String methodName) {
