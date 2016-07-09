@@ -152,7 +152,9 @@ public class InteractiveFrame extends GenericFrame {
   public InteractiveFrame(Eye eye) {
     super(eye);
     init();
-    setShape(this, "drawEye");
+    //setShape(this, "drawEye");
+    //TODO experimental
+    setShape("drawEye");
   }
 
   /**
@@ -231,7 +233,12 @@ public class InteractiveFrame extends GenericFrame {
   }
   
   public InteractiveFrame(Scene scn, String methodName) {
-    this(scn, scn, methodName);
+    //this(scn, scn, methodName);
+    //TODO experimental
+    super(scn);
+    init();
+    setShape(methodName);
+    setPickingPrecision(PickingPrecision.EXACT);
   }  
 
   /**
@@ -250,7 +257,12 @@ public class InteractiveFrame extends GenericFrame {
   }
   
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame, String methodName) {
-    this(scn, referenceFrame, scn, methodName);
+    //this(scn, referenceFrame, scn, methodName);
+    //TODO experimental
+    super(scn, referenceFrame);
+    init(referenceFrame);
+    setShape(methodName);
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
@@ -1323,16 +1335,15 @@ public class InteractiveFrame extends GenericFrame {
   }
   
   public void setShape(String methodName) {
-    setShape(scene(), methodName);
+    setFrontShape(methodName);
+    setPickingShape(methodName);
+    //TODO experimental
+    //setShape(scene(), methodName);
   }
 
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
-  }
-  
-  public void setFrontShape(String methodName) {
-    setFrontShape(scene(), methodName);
   }
   
   public ShapeWrapper shape() {
@@ -1347,6 +1358,39 @@ public class InteractiveFrame extends GenericFrame {
       return new ShapeWrapper();
     else
       return pknPshape != null ? new ShapeWrapper(pknPshape) : new ShapeWrapper(pknDrawHandlerObject, pknDrawHandlerMethod);
+  }
+  
+  /*
+  public void setFrontShape(String methodName) {
+    setFrontShape(scene(), methodName);
+  }
+  */
+  
+  //TODO experimental
+  public void setFrontShape(String methodName) {
+    if (hasFrontShape()) {
+      System.out.println("Warning: overwritting " + pshape != null ? "pshape" : "graphics handler");
+      unsetFrontShape();
+    }
+    Object obj = null;
+    try {
+      obj = this;
+      drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
+          ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      drawHandlerObject = obj;
+    } catch (Exception e1) {
+      try {
+        obj = scene();
+        drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
+            ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+        drawHandlerObject = obj;
+      } catch (Exception e2) {
+        obj = null;
+        PApplet.println("Something went wrong when registering your " + methodName + " method");
+        e1.printStackTrace();
+        e2.printStackTrace();
+      }
+    }
   }
 
   /**
@@ -1376,8 +1420,38 @@ public class InteractiveFrame extends GenericFrame {
     }
   }
   
+  /*
   public void setPickingShape(String methodName) {
     setPickingShape(scene(), methodName);
+  }
+  */
+  
+  //TODO experimental
+  public void setPickingShape(String methodName) {
+    if (hasPickingShape()) {
+      System.out.println("Warning: overwritting " + pknPshape != null ? "pshape" : "graphics handler");
+      unsetPickingShape();
+    }
+    Object obj = null;
+    try {
+      obj = this;
+      pknDrawHandlerObject = obj;
+      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod
+          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      Scene.GRAPHICS = update();
+    } catch (Exception e1) {
+      try {
+        obj = scene();
+        pknDrawHandlerObject = obj;
+        pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod
+            : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+        Scene.GRAPHICS = update();
+      } catch (Exception e2) {
+        PApplet.println("Something went wrong when registering your " + methodName + " method");
+        e1.printStackTrace();
+        e2.printStackTrace();
+      }
+    }
   }
 
   public void setPickingShape(Object obj, String methodName) {
