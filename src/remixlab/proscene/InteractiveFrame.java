@@ -179,7 +179,7 @@ public class InteractiveFrame extends GenericFrame {
    * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see #shape()
+   * @see #frontShape()
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
    */
@@ -195,7 +195,7 @@ public class InteractiveFrame extends GenericFrame {
    * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
-   * @see #shape()
+   * @see #frontShape()
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
    */
@@ -1025,7 +1025,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value
+   * Shifts the {@link #frontShape()} respect to the frame {@link #position()}. Default value
    * is zero.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
@@ -1040,7 +1040,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Returns the {@link #shape()} shift.
+   * Returns the {@link #frontShape()} shift.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -1247,7 +1247,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Replaces previous {@link #shape()} with {@code ps}.
+   * Replaces previous {@link #frontShape()} with {@code ps}.
    */
   public void setFrontShape(PShape ps) {
     if (hasFrontShape()) {
@@ -1273,7 +1273,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Sets the frame {@link #shape()} from that of other frame. Useful when sharing the
+   * Sets the frame {@link #frontShape()} from that of other frame. Useful when sharing the
    * same shape drawing method among different frame instances is desirable.
    * 
    * Adds the other frame graphics handler to this frame. Useful when sharing the same
@@ -1346,7 +1346,7 @@ public class InteractiveFrame extends GenericFrame {
     setPickingShape(obj, methodName);
   }
   
-  public ShapeWrapper shape() {
+  public ShapeWrapper frontShape() {
     if(pshape == null && drawHandlerMethod == null)
       return new ShapeWrapper();
     else
@@ -1376,13 +1376,13 @@ public class InteractiveFrame extends GenericFrame {
     try {
       obj = this;
       drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
-          ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+          ? pknDrawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       drawHandlerObject = obj;
     } catch (Exception e1) {
       try {
         obj = scene();
         drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
-            ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+            ? pknDrawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
         drawHandlerObject = obj;
       } catch (Exception e2) {
         obj = null;
@@ -1412,8 +1412,7 @@ public class InteractiveFrame extends GenericFrame {
     }
     try {
       drawHandlerObject = obj;
-      drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName)
-          ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      drawHandlerMethod = (pknDrawHandlerObject == obj && pknDrawHandlerMethod.getName() == methodName) ? pknDrawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
@@ -1436,8 +1435,7 @@ public class InteractiveFrame extends GenericFrame {
     try {
       obj = this;
       pknDrawHandlerObject = obj;
-      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       Scene.GRAPHICS = update();
     } catch (Exception e1) {
       try {
@@ -1461,8 +1459,8 @@ public class InteractiveFrame extends GenericFrame {
     }
     try {
       pknDrawHandlerObject = obj;
-      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      //pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      pknDrawHandlerMethod = (drawHandlerObject == obj && drawHandlerMethod.getName() == methodName) ? drawHandlerMethod : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       Scene.GRAPHICS = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
