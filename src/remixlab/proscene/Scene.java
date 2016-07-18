@@ -2149,6 +2149,14 @@ public class Scene extends AbstractScene implements PConstants {
     drawGrid(pg(), size, nbSubdivisions);
   }
   
+  public void drawGrid(float size) {
+    drawGrid(size, 10);
+  }
+  
+  public void drawGrid(PGraphics pg) {
+    drawGrid(pg, radius()/4, 10);
+  }
+  
   public void drawGrid(PGraphics pg, float size, int nbSubdivisions) {
     pg.pushStyle();
     pg.beginShape(LINES);
@@ -2166,6 +2174,10 @@ public class Scene extends AbstractScene implements PConstants {
   @Override
   public void drawDottedGrid(float size, int nbSubdivisions) {
     drawDottedGrid(pg(), size, nbSubdivisions);
+  }
+  
+  public void drawDottedGrid(PGraphics pg) {
+    drawDottedGrid(pg, radius()/4, 10);
   }
 
   public void drawDottedGrid(PGraphics pg, float size, int nbSubdivisions) {
