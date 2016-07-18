@@ -2479,94 +2479,110 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawCross(float px, float py, float size) {
+    drawCross(pg(), px, py, size);
+  }
+    
+  public void drawCross(PGraphics pg, float px, float py, float size) {
     float half_size = size / 2f;
-    pg().pushStyle();
-    beginScreenDrawing();
-    pg().noFill();
-    pg().beginShape(LINES);
-    vertex(px - half_size, py);
-    vertex(px + half_size, py);
-    vertex(px, py - half_size);
-    vertex(px, py + half_size);
-    pg().endShape();
-    endScreenDrawing();
-    pg().popStyle();
+    pg.pushStyle();
+    beginScreenDrawing(pg);
+    pg.noFill();
+    pg.beginShape(LINES);
+    vertex(pg, px - half_size, py);
+    vertex(pg, px + half_size, py);
+    vertex(pg, px, py - half_size);
+    vertex(pg, px, py + half_size);
+    pg.endShape();
+    endScreenDrawing(pg);
+    pg.popStyle();
   }
 
   @Override
   public void drawFilledCircle(int subdivisions, Vec center, float radius) {
-    pg().pushStyle();
+    drawFilledCircle(pg(), subdivisions, center, radius);
+  }
+  
+  public void drawFilledCircle(PGraphics pg, int subdivisions, Vec center, float radius) {
+    pg.pushStyle();
     float precision = PApplet.TWO_PI / subdivisions;
     float x = center.x();
     float y = center.y();
     float angle, x2, y2;
-    beginScreenDrawing();
-    pg().noStroke();
-    pg().beginShape(TRIANGLE_FAN);
-    vertex(x, y);
+    beginScreenDrawing(pg);
+    pg.noStroke();
+    pg.beginShape(TRIANGLE_FAN);
+    vertex(pg, x, y);
     for (angle = 0.0f; angle <= PApplet.TWO_PI + 1.1 * precision; angle += precision) {
       x2 = x + PApplet.sin(angle) * radius;
       y2 = y + PApplet.cos(angle) * radius;
-      vertex(x2, y2);
+      vertex(pg, x2, y2);
     }
-    pg().endShape();
-    endScreenDrawing();
-    pg().popStyle();
+    pg.endShape();
+    endScreenDrawing(pg);
+    pg.popStyle();
   }
 
   @Override
   public void drawFilledSquare(Vec center, float edge) {
+    drawFilledSquare(pg(), center, edge);
+  }
+
+  public void drawFilledSquare(PGraphics pg, Vec center, float edge) {
     float half_edge = edge / 2f;
-    pg().pushStyle();
+    pg.pushStyle();
     float x = center.x();
     float y = center.y();
-    beginScreenDrawing();
-    pg().noStroke();
-    pg().beginShape(QUADS);
-    vertex(x - half_edge, y + half_edge);
-    vertex(x + half_edge, y + half_edge);
-    vertex(x + half_edge, y - half_edge);
-    vertex(x - half_edge, y - half_edge);
-    pg().endShape();
-    endScreenDrawing();
-    pg().popStyle();
+    beginScreenDrawing(pg);
+    pg.noStroke();
+    pg.beginShape(QUADS);
+    vertex(pg, x - half_edge, y + half_edge);
+    vertex(pg, x + half_edge, y + half_edge);
+    vertex(pg, x + half_edge, y - half_edge);
+    vertex(pg, x - half_edge, y - half_edge);
+    pg.endShape();
+    endScreenDrawing(pg);
+    pg.popStyle();
   }
 
   @Override
   public void drawShooterTarget(Vec center, float length) {
+    drawShooterTarget(pg(), center, length);
+  }
+
+  public void drawShooterTarget(PGraphics pg, Vec center, float length) {
     float half_length = length / 2f;
-    pg().pushStyle();
+    pg.pushStyle();
     float x = center.x();
     float y = center.y();
-    beginScreenDrawing();
-    pg().noFill();
+    beginScreenDrawing(pg);
+    pg.noFill();
 
-    pg().beginShape();
-    vertex((x - half_length), (y - half_length) + (0.6f * half_length));
-    vertex((x - half_length), (y - half_length));
-    vertex((x - half_length) + (0.6f * half_length), (y - half_length));
-    pg().endShape();
+    pg.beginShape();
+    vertex(pg, (x - half_length), (y - half_length) + (0.6f * half_length));
+    vertex(pg, (x - half_length), (y - half_length));
+    vertex(pg, (x - half_length) + (0.6f * half_length), (y - half_length));
+    pg.endShape();
 
-    pg().beginShape();
-    vertex((x + half_length) - (0.6f * half_length), (y - half_length));
-    vertex((x + half_length), (y - half_length));
-    vertex((x + half_length), ((y - half_length) + (0.6f * half_length)));
-    pg().endShape();
+    pg.beginShape();
+    vertex(pg, (x + half_length) - (0.6f * half_length), (y - half_length));
+    vertex(pg, (x + half_length), (y - half_length));
+    vertex(pg, (x + half_length), ((y - half_length) + (0.6f * half_length)));
+    pg.endShape();
 
-    pg().beginShape();
-    vertex((x + half_length), ((y + half_length) - (0.6f * half_length)));
-    vertex((x + half_length), (y + half_length));
-    vertex(((x + half_length) - (0.6f * half_length)), (y + half_length));
-    pg().endShape();
+    pg.beginShape();
+    vertex(pg, (x + half_length), ((y + half_length) - (0.6f * half_length)));
+    vertex(pg, (x + half_length), (y + half_length));
+    vertex(pg, ((x + half_length) - (0.6f * half_length)), (y + half_length));
+    pg.endShape();
 
-    pg().beginShape();
-    vertex((x - half_length) + (0.6f * half_length), (y + half_length));
-    vertex((x - half_length), (y + half_length));
-    vertex((x - half_length), ((y + half_length) - (0.6f * half_length)));
-    pg().endShape();
-    endScreenDrawing();
+    pg.beginShape();
+    vertex(pg, (x - half_length) + (0.6f * half_length), (y + half_length));
+    vertex(pg, (x - half_length), (y + half_length));
+    vertex(pg, (x - half_length), ((y + half_length) - (0.6f * half_length)));
+    pg.endShape();
+    endScreenDrawing(pg);
     drawCross(center.x(), center.y(), 0.6f * length);
-    pg().popStyle();
+    pg.popStyle();
   }
 
   @Override
