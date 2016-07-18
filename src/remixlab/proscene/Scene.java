@@ -1204,6 +1204,11 @@ public class Scene extends AbstractScene implements PConstants {
     disableDepthTest(pg());
   }
   
+  /**
+   * Disables depth test on the PGraphics instance.
+   * 
+   * @see #enableDepthTest(PGraphics)
+   */
   public void disableDepthTest(PGraphics p) {
     p.hint(PApplet.DISABLE_DEPTH_TEST);
   }
@@ -1213,6 +1218,11 @@ public class Scene extends AbstractScene implements PConstants {
     enableDepthTest(pg());
   }
   
+  /**
+   * Enables depth test on the PGraphics instance.
+   * 
+   * @see #disableDepthTest(PGraphics)
+   */
   public void enableDepthTest(PGraphics p) {
     p.hint(PApplet.ENABLE_DEPTH_TEST);
   }
@@ -1370,19 +1380,40 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Should be called automatically, P5 calling dispose is broken. See:
+   * Same as {@link #saveConfig()}.
+   * <p>
+   * Should be called automatically by P5, but it is currently broken. See:
    * https://github.com/processing/processing/issues/4445
+   * 
+   * @see #saveConfig()
+   * @see #saveConfig(String)
+   * @see #loadConfig()
+   * @see #loadConfig(String)
    */
   public void dispose() {
-    System.out.println("Debug: calling dispose()!");
-    // TODO needs a flag maybe? maybe it could be (un)set with p5 (un)registerMethod
-    // saveConfig();
+    System.out.println("Debug: saveConfig() (i.e., dispose()) called!");
+    saveConfig();
   }
 
+  /**
+   * Same as {@code saveConfig("data/config.json")}.
+   *
+   * @see #saveConfig(String)
+   * @see #loadConfig()
+   * @see #loadConfig(String)
+   */
   public void saveConfig() {
     saveConfig("data/config.json");
   }
 
+  /**
+   * Saves the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the {@link remixlab.dandelion.core.Camera#type()}
+   * and the {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} into {@code fileName}.
+   * 
+   * @see #saveConfig()
+   * @see #loadConfig()
+   * @see #loadConfig(String)
+   */
   public void saveConfig(String fileName) {
     json.setFloat("radius", radius());
     json.setInt("visualHints", visualHints());
@@ -1401,20 +1432,25 @@ public class Scene extends AbstractScene implements PConstants {
     pApplet().saveJSONObject(json, fileName);
   }
 
-  protected JSONArray toJSONArray(int id) {
-    JSONArray jsonKeyFrames = new JSONArray();
-    for (int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) {
-      JSONObject jsonKeyFrame = toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i));
-      jsonKeyFrame.setFloat("time", eye().keyFrameInterpolator(id).keyFrameTime(i));
-      jsonKeyFrames.setJSONObject(i, jsonKeyFrame);
-    }
-    return jsonKeyFrames;
-  }
-
+  /**
+   * Same as {@code loadConfig("data/config.json")}.
+   *
+   * @see #loadConfig(String)
+   * @see #saveConfig()
+   * @see #saveConfig(String)
+   */
   public void loadConfig() {
     loadConfig("data/config.json");
   }
 
+  /**
+   * Loads the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the {@link remixlab.dandelion.core.Camera#type()}
+   * and the {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} from {@code fileName}.
+   * 
+   * @see #saveConfig()
+   * @see #saveConfig(String)
+   * @see #loadConfig()
+   */
   public void loadConfig(String fileName) {
     boolean flag = true;
     try {
@@ -1451,7 +1487,23 @@ public class Scene extends AbstractScene implements PConstants {
       }
     }
   }
+  
+  /**
+   * Used internally by {@link #saveConfig(String)}. Converts the {@code id} eye path into a P5 JSONArray.
+   */
+  protected JSONArray toJSONArray(int id) {
+    JSONArray jsonKeyFrames = new JSONArray();
+    for (int i = 0; i < eye().keyFrameInterpolator(id).numberOfKeyFrames(); i++) {
+      JSONObject jsonKeyFrame = toJSONObject(eye().keyFrameInterpolator(id).keyFrame(i));
+      jsonKeyFrame.setFloat("time", eye().keyFrameInterpolator(id).keyFrameTime(i));
+      jsonKeyFrames.setJSONObject(i, jsonKeyFrame);
+    }
+    return jsonKeyFrames;
+  }
 
+  /**
+   * Used internally by {@link #loadConfig(String)}. Converts the P5 JSONObject into a {@code frame}.
+   */
   protected Frame toFrame(JSONObject jsonFrame) {
     Frame frame = new Frame(is3D());
     float x, y, z;
@@ -1473,6 +1525,9 @@ public class Scene extends AbstractScene implements PConstants {
     return frame;
   }
 
+  /**
+   * Used internally by {@link #saveConfig(String)}. Converts {@code frame} into a P5 JSONObject.
+   */
   protected JSONObject toJSONObject(Frame frame) {
     JSONObject jsonFrame = new JSONObject();
     jsonFrame.setFloat("magnitude", eyeFrame().magnitude());
@@ -1481,6 +1536,9 @@ public class Scene extends AbstractScene implements PConstants {
     return jsonFrame;
   }
 
+  /**
+   * Used internally by {@link #saveConfig(String)}. Converts {@code vec} into a P5 JSONArray.
+   */
   protected JSONArray toJSONArray(Vec vec) {
     JSONArray jsonVec = new JSONArray();
     jsonVec.setFloat(0, vec.x());
@@ -1489,6 +1547,9 @@ public class Scene extends AbstractScene implements PConstants {
     return jsonVec;
   }
 
+  /**
+   * Used internally by {@link #saveConfig(String)}. Converts {@code rot} into a P5 JSONArray.
+   */
   protected JSONArray toJSONArray(Rotation rot) {
     JSONArray jsonRot = new JSONArray();
     if (is3D()) {
@@ -1502,6 +1563,9 @@ public class Scene extends AbstractScene implements PConstants {
     return jsonRot;
   }
 
+  /**
+   * Internal used. Applies the {@link #pickingBuffer()} shaders needed by iFrame picking.
+   */
   protected void applyPickingBufferShaders() {
     pickingBuffer().shader(pickingBufferShaderTriangle);
     pickingBuffer().shader(pickingBufferShaderLine, LINES);
@@ -1732,6 +1796,13 @@ public class Scene extends AbstractScene implements PConstants {
     beginScreenDrawing(pg());
   }
   
+  /**
+   * Begins screen drawing on an arbitrary PGraphics instance using {@link #eye()} parameters. Don't forget to
+   * call {@link #endScreenDrawing(PGraphics)} after screen drawing ends.
+   * 
+   * @see #endScreenDrawing(PGraphics)
+   * @see #beginScreenDrawing()
+   */
   public void beginScreenDrawing(PGraphics p) {
     if (startCoordCalls != 0)
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
@@ -1739,9 +1810,13 @@ public class Scene extends AbstractScene implements PConstants {
     startCoordCalls++;
     p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
     disableDepthTest(p);
-    //matrixHelper.beginScreenDrawing();
-    //TODO experimental
-    matrixHelper(p).beginScreenDrawing();
+    // if-else same as:
+    // matrixHelper(p).beginScreenDrawing();
+    // but perhaps a bit more efficient
+    if(p == pg())
+      matrixHelper().beginScreenDrawing();
+    else
+      matrixHelper(p).beginScreenDrawing();
   }
 
   /**
@@ -1753,14 +1828,25 @@ public class Scene extends AbstractScene implements PConstants {
     endScreenDrawing(pg());
   }
   
+  /**
+   * Ends screen drawing on the arbitrary PGraphics instance using {@link #eye()} parameters. The
+   * screen drawing should happen between {@link #beginScreenDrawing(PGraphics)} and this method.
+   * 
+   * @see #beginScreenDrawing(PGraphics)
+   * @see #endScreenDrawing()
+   */
   public void endScreenDrawing(PGraphics p) {
     startCoordCalls--;
     if (startCoordCalls != 0)
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
           + "endScreenDrawing() and they cannot be nested. Check your implementation!");
-    //matrixHelper.endScreenDrawing();
-    //TODO experimental
-    matrixHelper(p).endScreenDrawing();
+    // if-else same as:
+    // matrixHelper(p).endScreenDrawing();
+    // but perhaps a bit more efficient
+    if(p == pg())
+      matrixHelper().endScreenDrawing();
+    else
+      matrixHelper(p).endScreenDrawing();
     enableDepthTest(p);
     p.hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.eS
   }
@@ -1769,17 +1855,21 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawCylinder(float w, float h) {
-    if (is2D()) {
-      AbstractScene.showDepthWarning("drawCylinder");
-      return;
-    }
     drawCylinder(pg(), w, h);
+  }
+  
+  public void drawCylinder(PGraphics pg) {
+    drawCylinder(pg, radius()/6, radius()/3);
   }
 
   /**
    * {@link #drawCylinder(float, float)} on {@code pg}.
    */
   public static void drawCylinder(PGraphics pg, float w, float h) {
+    if (!(pg instanceof PGraphics3D)) {
+      AbstractScene.showDepthWarning("drawCylinder");
+      return;
+    }
     pg.pushStyle();
     float px, py;
 
@@ -1814,10 +1904,6 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
-    if (is2D()) {
-      AbstractScene.showDepthWarning("drawHollowCylinder");
-      return;
-    }
     drawHollowCylinder(pg(), detail, w, h, m, n);
   }
 
@@ -1825,6 +1911,10 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #drawHollowCylinder(int, float, float, Vec, Vec)} on {@code pg}.
    */
   public static void drawHollowCylinder(PGraphics pg, int detail, float w, float h, Vec m, Vec n) {
+    if (!(pg instanceof PGraphics3D)) {
+      AbstractScene.showDepthWarning("drawHollowCylinder");
+      return;
+    }
     pg.pushStyle();
     // eqs taken from: http://en.wikipedia.org/wiki/Line-plane_intersection
     Vec pm0 = new Vec(0, 0, 0);
@@ -1854,13 +1944,11 @@ public class Scene extends AbstractScene implements PConstants {
     pg.endShape();
     pg.popStyle();
   }
-
+  
+  //Cone v1
+  
   @Override
   public void drawCone(int detail, float x, float y, float r, float h) {
-    if (is2D()) {
-      AbstractScene.showDepthWarning("drawCone");
-      return;
-    }
     drawCone(pg(), detail, x, y, r, h);
   }
 
@@ -1881,29 +1969,20 @@ public class Scene extends AbstractScene implements PConstants {
   public static void drawCone(PGraphics pg, float r, float h) {
     drawCone(pg, 12, 0, 0, r, h);
   }
-
-  /**
-   * Same as {@code cone(pg, det, 0, 0, r1, r2, h);}
-   * 
-   * @see #drawCone(PGraphics, int, float, float, float, float, float)
-   */
-  public static void drawCone(PGraphics pg, int det, float r1, float r2, float h) {
-    drawCone(pg, det, 0, 0, r1, r2, h);
-  }
-
-  /**
-   * Same as {@code cone(pg, 18, 0, 0, r1, r2, h);}
-   * 
-   * @see #drawCone(PGraphics, int, float, float, float, float, float)
-   */
-  public static void drawCone(PGraphics pg, float r1, float r2, float h) {
-    drawCone(pg, 18, 0, 0, r1, r2, h);
+  
+  //TODO circunscribir cono en esfera and then find the name
+  public void drawCone(PGraphics pg) {
+    drawCone(pg, 12, 0, 0, radius()/4, radius()/4);
   }
 
   /**
    * {@link #drawCone(int, float, float, float, float)} on {@code pg}.
    */
   public static void drawCone(PGraphics pg, int detail, float x, float y, float r, float h) {
+    if (!(pg instanceof PGraphics3D)) {
+      AbstractScene.showDepthWarning("drawCone");
+      return;
+    }
     pg.pushStyle();
     float unitConeX[] = new float[detail + 1];
     float unitConeY[] = new float[detail + 1];
@@ -1925,13 +2004,31 @@ public class Scene extends AbstractScene implements PConstants {
     pg.popMatrix();
     pg.popStyle();
   }
+  
+  // Cone v2
+  
+  // TODO rename: find real name of this figure
+  
+  /**
+   * Same as {@code cone(pg, det, 0, 0, r1, r2, h);}
+   * 
+   * @see #drawCone(PGraphics, int, float, float, float, float, float)
+   */
+  public static void drawCone(PGraphics pg, int det, float r1, float r2, float h) {
+    drawCone(pg, det, 0, 0, r1, r2, h);
+  }
+
+  /**
+   * Same as {@code cone(pg, 18, 0, 0, r1, r2, h);}
+   * 
+   * @see #drawCone(PGraphics, int, float, float, float, float, float)
+   */
+  public static void drawCone(PGraphics pg, float r1, float r2, float h) {
+    drawCone(pg, 18, 0, 0, r1, r2, h);
+  }
 
   @Override
   public void drawCone(int detail, float x, float y, float r1, float r2, float h) {
-    if (is2D()) {
-      AbstractScene.showDepthWarning("drawCone");
-      return;
-    }
     drawCone(pg(), detail, x, y, r1, r2, h);
   }
 
@@ -1939,6 +2036,10 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #drawCone(int, float, float, float, float, float)} on {@code pg}.
    */
   public static void drawCone(PGraphics pg, int detail, float x, float y, float r1, float r2, float h) {
+    if (!(pg instanceof PGraphics3D)) {
+      AbstractScene.showDepthWarning("drawCone");
+      return;
+    }
     pg.pushStyle();
     float firstCircleX[] = new float[detail + 1];
     float firstCircleY[] = new float[detail + 1];
@@ -1967,18 +2068,26 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawAxes(float length) {
-    pg().pushStyle();
-    pg().colorMode(PApplet.RGB, 255);
+    drawAxes(pg(), length);
+  }
+  
+  public void drawAxes(PGraphics pg) {
+    drawAxes(pg, radius()/5);
+  }
+  
+  public void drawAxes(PGraphics pg, float length) {
+    pg.pushStyle();
+    pg.colorMode(PApplet.RGB, 255);
     float charWidth = length / 40.0f;
     float charHeight = length / 30.0f;
     float charShift = 1.04f * length;
 
-    pg().pushStyle();
-    pg().beginShape(PApplet.LINES);
-    pg().strokeWeight(2);
+    pg.pushStyle();
+    pg.beginShape(PApplet.LINES);
+    pg.strokeWeight(2);
     if (is2D()) {
       // The X
-      pg().stroke(200, 0, 0);
+      pg.stroke(200, 0, 0);
       vertex(charShift + charWidth, -charHeight);
       vertex(charShift - charWidth, charHeight);
       vertex(charShift - charWidth, -charHeight);
@@ -1986,7 +2095,7 @@ public class Scene extends AbstractScene implements PConstants {
 
       // The Y
       charShift *= 1.02;
-      pg().stroke(0, 200, 0);
+      pg.stroke(0, 200, 0);
       vertex(charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
       vertex(0.0f, charShift + 0.0f);
       vertex(-charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
@@ -1995,13 +2104,13 @@ public class Scene extends AbstractScene implements PConstants {
       vertex(0.0f, charShift + -(isRightHanded() ? charHeight : -charHeight));
     } else {
       // The X
-      pg().stroke(200, 0, 0);
+      pg.stroke(200, 0, 0);
       vertex(charShift, charWidth, -charHeight);
       vertex(charShift, -charWidth, charHeight);
       vertex(charShift, -charWidth, -charHeight);
       vertex(charShift, charWidth, charHeight);
       // The Y
-      pg().stroke(0, 200, 0);
+      pg.stroke(0, 200, 0);
       vertex(charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
       vertex(0.0f, charShift, 0.0f);
       vertex(-charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
@@ -2009,7 +2118,7 @@ public class Scene extends AbstractScene implements PConstants {
       vertex(0.0f, charShift, 0.0f);
       vertex(0.0f, charShift, -(isLeftHanded() ? charHeight : -charHeight));
       // The Z
-      pg().stroke(0, 100, 200);
+      pg.stroke(0, 100, 200);
       vertex(-charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
       vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
       vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
@@ -2017,76 +2126,83 @@ public class Scene extends AbstractScene implements PConstants {
       vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
       vertex(charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
     }
-    pg().endShape();
-    pg().popStyle();
+    pg.endShape();
+    pg.popStyle();
 
     // X Axis
-    pg().stroke(200, 0, 0);
+    pg.stroke(200, 0, 0);
     line(0, 0, 0, length, 0, 0);
     // Y Axis
-    pg().stroke(0, 200, 0);
+    pg.stroke(0, 200, 0);
     line(0, 0, 0, 0, length, 0);
 
     // Z Axis
     if (is3D()) {
-      pg().stroke(0, 100, 200);
+      pg.stroke(0, 100, 200);
       line(0, 0, 0, 0, 0, length);
     }
-    pg().popStyle();
+    pg.popStyle();
   }
 
   @Override
   public void drawGrid(float size, int nbSubdivisions) {
-    pg().pushStyle();
-    pg().beginShape(LINES);
+    drawGrid(pg(), size, nbSubdivisions);
+  }
+  
+  public void drawGrid(PGraphics pg, float size, int nbSubdivisions) {
+    pg.pushStyle();
+    pg.beginShape(LINES);
     for (int i = 0; i <= nbSubdivisions; ++i) {
       final float pos = size * (2.0f * i / nbSubdivisions - 1.0f);
-      vertex(pos, -size);
-      vertex(pos, +size);
-      vertex(-size, pos);
-      vertex(size, pos);
+      vertex(pg, pos, -size);
+      vertex(pg, pos, +size);
+      vertex(pg, -size, pos);
+      vertex(pg, size, pos);
     }
-    pg().endShape();
-    pg().popStyle();
+    pg.endShape();
+    pg.popStyle();
   }
-
+  
   @Override
   public void drawDottedGrid(float size, int nbSubdivisions) {
-    pg().pushStyle();
+    drawDottedGrid(pg(), size, nbSubdivisions);
+  }
+
+  public void drawDottedGrid(PGraphics pg, float size, int nbSubdivisions) {
+    pg.pushStyle();
     float posi, posj;
-    pg().beginShape(POINTS);
+    pg.beginShape(POINTS);
     for (int i = 0; i <= nbSubdivisions; ++i) {
       posi = size * (2.0f * i / nbSubdivisions - 1.0f);
       for (int j = 0; j <= nbSubdivisions; ++j) {
         posj = size * (2.0f * j / nbSubdivisions - 1.0f);
-        vertex(posi, posj);
+        vertex(pg, posi, posj);
       }
     }
-    pg().endShape();
+    pg.endShape();
     int internalSub = 5;
     int subSubdivisions = nbSubdivisions * internalSub;
-    float currentWeight = pg().strokeWeight;
-    pg().colorMode(HSB, 255);
-    float hue = pg().hue(pg().strokeColor);
-    float saturation = pg().saturation(pg().strokeColor);
-    float brightness = pg().brightness(pg().strokeColor);
-    pg().stroke(hue, saturation, brightness * 10f / 17f);
-    pg().strokeWeight(currentWeight / 2);
-    pg().beginShape(POINTS);
+    float currentWeight = pg.strokeWeight;
+    pg.colorMode(HSB, 255);
+    float hue = pg.hue(pg.strokeColor);
+    float saturation = pg.saturation(pg.strokeColor);
+    float brightness = pg.brightness(pg.strokeColor);
+    pg.stroke(hue, saturation, brightness * 10f / 17f);
+    pg.strokeWeight(currentWeight / 2);
+    pg.beginShape(POINTS);
     for (int i = 0; i <= subSubdivisions; ++i) {
       posi = size * (2.0f * i / subSubdivisions - 1.0f);
       for (int j = 0; j <= subSubdivisions; ++j) {
         posj = size * (2.0f * j / subSubdivisions - 1.0f);
         if (((i % internalSub) != 0) || ((j % internalSub) != 0))
-          vertex(posi, posj);
+          vertex(pg, posi, posj);
       }
     }
-    pg().endShape();
-    pg().popStyle();
+    pg.endShape();
+    pg.popStyle();
   }
 
   @Override
-  //TODO can be static?
   public void drawEye(Eye eye) {
     pg().pushMatrix();
 
@@ -2120,7 +2236,6 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
-  //TODO can be static?
   public void drawEye(PGraphics pg, Eye eye) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
