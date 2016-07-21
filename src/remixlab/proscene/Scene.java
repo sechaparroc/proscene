@@ -1374,10 +1374,7 @@ public class Scene extends AbstractScene implements PConstants {
    * This method is called before the first drawing happen and should be overloaded to
    * initialize stuff. The default implementation is empty.
    */
-  public void init() {
-    // TODO needs a flag maybe?
-    // loadConfig();
-  }
+  public void init() {}
 
   /**
    * Same as {@link #saveConfig()}.
@@ -1869,12 +1866,19 @@ public class Scene extends AbstractScene implements PConstants {
     drawCylinder(pg(), w, h);
   }
   
+  /**
+   * Same as {@code drawCylinder(pg, radius()/6, radius()/3)}.
+   * <p>
+   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   */
   public void drawCylinder(PGraphics pg) {
     drawCylinder(pg, radius()/6, radius()/3);
   }
 
   /**
-   * {@link #drawCylinder(float, float)} on {@code pg}.
+   * Low-level version of {@link #drawCylinder(float, float)}.
+   * <p>
+   * Calls {@link #drawCylinder(float, float)} on {@code pg}.
    */
   public static void drawCylinder(PGraphics pg, float w, float h) {
     if (!(pg instanceof PGraphics3D)) {
@@ -1912,14 +1916,16 @@ public class Scene extends AbstractScene implements PConstants {
     pg.endShape();
     pg.popStyle();
   }
-
+  
   @Override
   public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
     drawHollowCylinder(pg(), detail, w, h, m, n);
   }
 
   /**
-   * {@link #drawHollowCylinder(int, float, float, Vec, Vec)} on {@code pg}.
+   * Low-level version of {@link #drawHollowCylinder(int, float, float, Vec, Vec)}.
+   * <p>
+   * Calls {@link #drawHollowCylinder(int, float, float, Vec, Vec)} on {@code pg}.
    */
   public static void drawHollowCylinder(PGraphics pg, int detail, float w, float h, Vec m, Vec n) {
     if (!(pg instanceof PGraphics3D)) {
@@ -1981,13 +1987,20 @@ public class Scene extends AbstractScene implements PConstants {
     drawCone(pg, 12, 0, 0, r, h);
   }
   
-  //TODO circunscribir cono en esfera and then find the name
-  public void drawCone(PGraphics pg) {
-    drawCone(pg, 12, 0, 0, radius()/4, radius()/4);
-  }
-
   /**
-   * {@link #drawCone(int, float, float, float, float)} on {@code pg}.
+   * Same as {@code drawCone(pg, 12, 0, 0, radius()/4, sqrt(3) * radius()/4)}.
+   * <p>
+   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   */
+  public void drawCone(PGraphics pg) {
+    float r = radius()/4;
+    drawCone(pg, 12, 0, 0, r, (float)Math.sqrt((float)3) * r);
+  }
+  
+  /**
+   * Low-level version of {@link #drawCone(int, float, float, float, float)}.
+   * <p>
+   * Calls {@link #drawCone(int, float, float, float, float)} on {@code pg}.
    */
   public static void drawCone(PGraphics pg, int detail, float x, float y, float r, float h) {
     if (!(pg instanceof PGraphics3D)) {
@@ -2018,10 +2031,8 @@ public class Scene extends AbstractScene implements PConstants {
   
   // Cone v2
   
-  // TODO rename: find real name of this figure
-  
   /**
-   * Same as {@code cone(pg, det, 0, 0, r1, r2, h);}
+   * Same as {@code cone(pg, det, 0, 0, r1, r2, h)}
    * 
    * @see #drawCone(PGraphics, int, float, float, float, float, float)
    */
@@ -2044,7 +2055,9 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * {@link #drawCone(int, float, float, float, float, float)} on {@code pg}.
+   * Low-level version of {@link #drawCone(int, float, float, float, float, float)}.
+   * <p>
+   * Calls {@link #drawCone(int, float, float, float, float, float)} on {@code pg}.
    */
   public static void drawCone(PGraphics pg, int detail, float x, float y, float r1, float r2, float h) {
     if (!(pg instanceof PGraphics3D)) {
@@ -2082,10 +2095,20 @@ public class Scene extends AbstractScene implements PConstants {
     drawAxes(pg(), length);
   }
   
+  /**
+   * Same as {@code drawAxes(pg, radius()/5)}.
+   * <p>
+   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   */
   public void drawAxes(PGraphics pg) {
     drawAxes(pg, radius()/5);
   }
   
+  /**
+   * Low-level version of {@link #drawAxes(float)}.
+   * <p>
+   * Calls {@link #drawAxes(float)} on {@code pg}.
+   */
   public void drawAxes(PGraphics pg, float length) {
     pg.pushStyle();
     pg.colorMode(PApplet.RGB, 255);
@@ -2160,14 +2183,27 @@ public class Scene extends AbstractScene implements PConstants {
     drawGrid(pg(), size, nbSubdivisions);
   }
   
+  /**
+   * Same as {@code drawGrid(size, 10)}.
+   */
   public void drawGrid(float size) {
     drawGrid(size, 10);
   }
   
+  /**
+   * Same as {@code drawGrid(pg, radius()/4, 10)}.
+   * <p>
+   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   */
   public void drawGrid(PGraphics pg) {
     drawGrid(pg, radius()/4, 10);
   }
   
+  /**
+   * Low-level version of {@link #drawGrid(float)}.
+   * <p>
+   * Calls {@link #drawGrid(float)} on {@code pg}.
+   */
   public void drawGrid(PGraphics pg, float size, int nbSubdivisions) {
     pg.pushStyle();
     pg.beginShape(LINES);
@@ -2187,10 +2223,20 @@ public class Scene extends AbstractScene implements PConstants {
     drawDottedGrid(pg(), size, nbSubdivisions);
   }
   
+  /**
+   * Same as {@code drawDottedGrid(pg, radius()/4, 10)}.
+   * <p>
+   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   */
   public void drawDottedGrid(PGraphics pg) {
     drawDottedGrid(pg, radius()/4, 10);
   }
 
+  /**
+   * Low-level version of {@link #drawDottedGrid(float, int)}.
+   * <p>
+   * Calls {@link #drawDottedGrid(float, int)} on {@code pg}.
+   */
   public void drawDottedGrid(PGraphics pg, float size, int nbSubdivisions) {
     pg.pushStyle();
     float posi, posj;
