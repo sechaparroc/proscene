@@ -1392,18 +1392,24 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void dispose() {
     System.out.println("Debug: saveConfig() (i.e., dispose()) called!");
-    saveConfig();
+    if(!this.isOffscreen())
+      saveConfig();
   }
 
   /**
    * Same as {@code saveConfig("data/config.json")}.
+   * <p>
+   * Note that off-screen scenes require {@link #saveConfig(String)} instead.
    *
    * @see #saveConfig(String)
    * @see #loadConfig()
    * @see #loadConfig(String)
    */
   public void saveConfig() {
-    saveConfig("data/config.json");
+    if(this.isOffscreen())
+      System.out.println("Warning: no config saved! Off-screen scene config requires saveConfig(String fileName) to be called");
+    else
+      saveConfig("data/config.json");
   }
 
   /**
@@ -1434,13 +1440,18 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Same as {@code loadConfig("data/config.json")}.
+   * <p>
+   * Note that off-screen scenes require {@link #loadConfig(String)} instead.
    *
    * @see #loadConfig(String)
    * @see #saveConfig()
    * @see #saveConfig(String)
    */
   public void loadConfig() {
-    loadConfig("data/config.json");
+    if(this.isOffscreen())
+      System.out.println("Warning: no config loaded! Off-screen scene config requires loadConfig(String fileName) to be called");
+    else
+      loadConfig("data/config.json");
   }
 
   /**
@@ -1530,7 +1541,7 @@ public class Scene extends AbstractScene implements PConstants {
    */
   protected JSONObject toJSONObject(Frame frame) {
     JSONObject jsonFrame = new JSONObject();
-    jsonFrame.setFloat("magnitude", eyeFrame().magnitude());
+    jsonFrame.setFloat("magnitude", frame.magnitude());
     jsonFrame.setJSONArray("position", toJSONArray(frame.position()));
     jsonFrame.setJSONArray("orientation", toJSONArray(frame.orientation()));
     return jsonFrame;

@@ -43,29 +43,7 @@ void setup() {
 
   //create a camera path and add some key frames:
   //key frames can be added at runtime with keys [j..n]
-  scene.camera().setPosition(80,0,0);
-  scene.camera().lookAt( scene.camera().sceneCenter() );
-  scene.camera().addKeyFrameToPath(1);
-
-  scene.camera().setPosition(30,30,-80);
-  scene.camera().lookAt( scene.camera().sceneCenter() );
-  scene.camera().addKeyFrameToPath(1);
-
-  scene.camera().setPosition(-30,-30,-80);
-  scene.camera().lookAt( scene.camera().sceneCenter() );
-  scene.camera().addKeyFrameToPath(1);
-
-  scene.camera().setPosition(-80,0,0);
-  scene.camera().lookAt( scene.camera().sceneCenter() );
-  scene.camera().addKeyFrameToPath(1);
-
-  //re-position the camera:
-  scene.camera().setPosition(0,0,1);
-  scene.camera().lookAt( scene.camera().sceneCenter() );
-  scene.showAll();
-
-  //drawing of camera paths are toggled with key 'r'.
-  scene.setPathsVisualHint(true);
+  scene.loadConfig();
 
   buttons = new ArrayList(6);
   for (int i=0; i<5; ++i)
@@ -81,7 +59,7 @@ void setup() {
 void draw() {
   background(0);
   fill(204, 102, 0, 150);
-  scene.drawTorusSolenoid();	
+  scene.drawTorusSolenoid();
 
   updateButtons();
   displayButtons();
