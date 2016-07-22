@@ -91,42 +91,6 @@ public class InteractiveFrame extends GenericFrame {
         .isEquals();
   }
   
-  public class ShapeWrapper {
-    PShape shp;
-    Object hObj;
-    Method mthd;
-    
-    protected ShapeWrapper() {
-      shp = null;
-      hObj = null;
-      mthd = null;
-    }
-    
-    protected ShapeWrapper(PShape s) {
-      shp = s;
-      hObj = null;
-      mthd = null;
-    }
-    
-    protected ShapeWrapper(Object o, Method m) {
-      shp = null;
-      hObj = o;
-      mthd = m;
-    }
-    
-    public PShape shape() {
-      return shp;
-    }
-    
-    public Object Object() {
-      return hObj;
-    }
-    
-    public Method method() {
-      return mthd;
-    }
-  }
-
   // profile
   protected Profile profile;
 
@@ -1344,20 +1308,6 @@ public class InteractiveFrame extends GenericFrame {
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
-  }
-  
-  public ShapeWrapper frontShape() {
-    if(pshape == null && drawHandlerMethod == null)
-      return new ShapeWrapper();
-    else
-      return pshape != null ? new ShapeWrapper(pshape) : new ShapeWrapper(drawHandlerObject, drawHandlerMethod);
-  }
-  
-  public ShapeWrapper pickingShape() {
-    if(pknPshape == null && pknDrawHandlerMethod == null)
-      return new ShapeWrapper();
-    else
-      return pknPshape != null ? new ShapeWrapper(pknPshape) : new ShapeWrapper(pknDrawHandlerObject, pknDrawHandlerMethod);
   }
   
   /*
