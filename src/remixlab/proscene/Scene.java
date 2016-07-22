@@ -1448,7 +1448,7 @@ public class Scene extends AbstractScene implements PConstants {
     if(this.isOffscreen())
       System.out.println("Warning: no config loaded! Off-screen scene config requires loadConfig(String fileName) to be called");
     else
-      loadConfig("data/config.json");
+      loadConfig("config.json");
   }
 
   /**
