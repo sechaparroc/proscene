@@ -25,7 +25,7 @@ boolean            showMiniMap  = true;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P2D;
-public void setup() {
+void setup() {
   size(640, 360, renderer);
   canvas = createGraphics(640, 360, renderer);
   scene = new Scene(this, canvas);
@@ -53,23 +53,7 @@ public void setup() {
   handleAgents();
 }
 
-public void frameDrawing(PGraphics pg) {
-  pg.fill(random(0,255), random(0,255), random(0,255));
-  pg.rect(0, 0, 40, 10, 5);
-}
-
-public void customDrawing(PGraphics pg) {
-  if(auxScene.is3D())
-    pg.box(200);
-  else {
-    pg.pushStyle();
-    pg.rectMode(CENTER);
-    pg.rect(0, 0, 200, 200);
-    pg.popStyle();
-  }
-}
-
-public void draw() {
+void draw() {
   handleAgents();
   InteractiveFrame.sync(scene.eyeFrame(), iFrame);
   InteractiveFrame.sync(frame1, auxFrame1);
@@ -106,6 +90,34 @@ public void draw() {
   }
 }
 
+void keyPressed() {
+  if(key == ' ')
+    showMiniMap = !showMiniMap;
+  if(key == 'x')
+    iFrame.setShape(this, "eyeDrawing");
+  if(key == 'y')
+    iFrame.setShape(scene.eyeFrame());
+}
+
+void frameDrawing(PGraphics pg) {
+  pg.fill(random(0,255), random(0,255), random(0,255));
+  if(scene.is3D())
+	pg.box(40, 10, 5);
+  else
+	pg.rect(0, 0, 40, 10, 5);
+}
+
+void eyeDrawing(PGraphics pg) {
+  if(auxScene.is3D())
+    pg.box(200);
+  else {
+    pg.pushStyle();
+    pg.rectMode(CENTER);
+    pg.rect(0, 0, 200, 200);
+    pg.popStyle();
+  }
+}
+
 void handleAgents() {
   scene.enableMotionAgent();
   auxScene.disableMotionAgent();
@@ -117,13 +129,4 @@ void handleAgents() {
     scene.disableKeyboardAgent();
     auxScene.enableKeyboardAgent();
   }
-}
-
-public void keyPressed() {
-  if(key == ' ')
-    showMiniMap = !showMiniMap;
-  if(key == 'x')
-    iFrame.setShape(this, "customDrawing");
-  if(key == 'y')
-    iFrame.setShape(scene.eyeFrame());
 }
