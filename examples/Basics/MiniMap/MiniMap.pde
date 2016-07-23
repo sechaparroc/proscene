@@ -29,29 +29,33 @@ public void setup() {
   size(640, 360, renderer);
   canvas = createGraphics(640, 360, renderer);
   scene = new Scene(this, canvas);
-  scene.setPickingVisualHint(true);
-  frame1 = new InteractiveFrame(scene);
+  frame1 = new InteractiveFrame(scene, this, "frameDrawing");
   frame1.translate(30, 30);
-  frame2 = new InteractiveFrame(scene, frame1);
+  frame2 = new InteractiveFrame(scene, frame1, this, "frameDrawing");
   frame2.translate(40, 0);
-  frame3 = new InteractiveFrame(scene, frame2);
+  frame3 = new InteractiveFrame(scene, frame2, this, "frameDrawing");
   frame3.translate(40, 0);
 
   auxCanvas = createGraphics(w, h, renderer);
   auxScene = new Scene(this, auxCanvas, oX, oY);
   auxScene.setRadius(200);
   auxScene.showAll();
-
+  
   auxFrame1 = new InteractiveFrame(auxScene);
-  auxFrame1.translate(30, 30);
+  auxFrame1.fromFrame(frame1);
   auxFrame2 = new InteractiveFrame(auxScene, auxFrame1);
-  auxFrame2.translate(40, 0);
+  auxFrame2.fromFrame(frame2);
   auxFrame3 = new InteractiveFrame(auxScene, auxFrame2);
-  auxFrame3.translate(40, 0);
+  auxFrame3.fromFrame(frame3);
 
   iFrame = new InteractiveFrame(auxScene);
   iFrame.fromFrame(scene.eyeFrame());
   handleAgents();
+}
+
+public void frameDrawing(PGraphics pg) {
+  pg.fill(random(0,255), random(0,255), random(0,255));
+  pg.rect(0, 0, 40, 10, 5);
 }
 
 public void customDrawing(PGraphics pg) {
@@ -74,7 +78,7 @@ public void draw() {
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);
-  mainDrawing(scene);
+  scene.drawFrames();
   scene.endDraw();
   canvas.endDraw();
   image(canvas, 0, 0);
@@ -85,67 +89,21 @@ public void draw() {
     auxScene.pg().pushStyle();
     auxScene.pg().stroke(255, 255, 0);
     auxScene.pg().fill(255, 255, 0, 160);
-    iFrame.draw();
     auxScene.pg().popStyle();
-    auxDrawing(auxScene);
+    //auxScene.drawFrames();
+    //works but we want to customize the iFrame color:
+    for(InteractiveFrame frame : auxScene.frames()) {
+      if(frame == iFrame) {
+        auxScene.pg().stroke(255, 255, 0);
+        auxScene.pg().fill(255, 255, 0, 160);
+      }
+      frame.draw();
+    }
     auxScene.endDraw();
     auxCanvas.endDraw();
     // We retrieve the scene upper left coordinates defined above.
     image(auxCanvas, auxScene.originCorner().x(), auxScene.originCorner().y());
   }
-}
-
-public void mainDrawing(Scene s) {  
-  s.pg().pushStyle();
-  s.pushModelView();
-  //the 'correct way' would be:
-  //s.applyTransformation(s == scene ? frame1 : auxFrame1);
-  //but we do the dirty way, since we can apply either frame to either scene:
-  s.applyTransformation(frame1);
-  s.drawAxes(40);
-  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
-  if ((s.motionAgent().trackedGrabber() == frame1) || (s.motionAgent().trackedGrabber() == auxFrame1))
-    s.pg().fill(255, 0, 0);
-  else 
-  s.pg().fill(0, 0, 255);
-  s.pg().rect(0, 0, 40, 10, 5);
-
-  s.pushModelView();
-  //we do it the correct way:
-  s.applyTransformation(s == scene ? frame2 : auxFrame2);
-  //also possible would be:
-  //s.applyTransformation(frame2);
-  s.drawAxes(40);
-  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
-  if ((s.motionAgent().trackedGrabber() == frame2) || (s.motionAgent().trackedGrabber() == auxFrame2))
-    s.pg().fill(255, 0, 0);
-  else
-    s.pg().fill(255, 0, 255);
-  s.pg().rect(0, 0, 40, 10, 5);
-
-  s.pushModelView();
-  //we do it the dirty way:
-  s.applyTransformation(frame3);
-  s.drawAxes(40);
-  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
-  if ((s.motionAgent().trackedGrabber() == frame3) || (s.motionAgent().trackedGrabber() == auxFrame3))
-    s.pg().fill(255, 0, 0);
-  else 
-  s.pg().fill(0, 255, 255);
-  s.pg().rect(0, 0, 40, 10, 5);
-
-  s.popModelView();
-  s.popModelView();
-  s.popModelView();
-  s.pg().popStyle();
-}
-
-public void auxDrawing(Scene s) {
-  mainDrawing(s);
-  s.pg().pushStyle();
-  s.pg().stroke(255, 255, 0);
-  s.pg().fill(255, 255, 0, 160);
-  s.pg().popStyle();
 }
 
 void handleAgents() {
