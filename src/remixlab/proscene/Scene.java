@@ -1052,10 +1052,9 @@ public class Scene extends AbstractScene implements PConstants {
         return true;
       } catch (Exception e1) {
         try {
-        drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
-        return true;
-        }
-        catch(Exception e2) {
+          drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
+          return true;
+        } catch (Exception e2) {
           PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
           e1.printStackTrace();
           e2.printStackTrace();
@@ -1203,7 +1202,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void disableDepthTest() {
     disableDepthTest(pg());
   }
-  
+
   /**
    * Disables depth test on the PGraphics instance.
    * 
@@ -1217,7 +1216,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void enableDepthTest() {
     enableDepthTest(pg());
   }
-  
+
   /**
    * Enables depth test on the PGraphics instance.
    * 
@@ -1374,7 +1373,8 @@ public class Scene extends AbstractScene implements PConstants {
    * This method is called before the first drawing happen and should be overloaded to
    * initialize stuff. The default implementation is empty.
    */
-  public void init() {}
+  public void init() {
+  }
 
   /**
    * Same as {@link #saveConfig()}.
@@ -1389,7 +1389,7 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void dispose() {
     System.out.println("Debug: saveConfig() (i.e., dispose()) called!");
-    if(!this.isOffscreen())
+    if (!this.isOffscreen())
       saveConfig();
   }
 
@@ -1403,15 +1403,18 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #loadConfig(String)
    */
   public void saveConfig() {
-    if(this.isOffscreen())
-      System.out.println("Warning: no config saved! Off-screen scene config requires saveConfig(String fileName) to be called");
+    if (this.isOffscreen())
+      System.out.println(
+          "Warning: no config saved! Off-screen scene config requires saveConfig(String fileName) to be called");
     else
       saveConfig("data/config.json");
   }
 
   /**
-   * Saves the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the {@link remixlab.dandelion.core.Camera#type()}
-   * and the {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} into {@code fileName}.
+   * Saves the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the
+   * {@link remixlab.dandelion.core.Camera#type()} and the
+   * {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} into
+   * {@code fileName}.
    * 
    * @see #saveConfig()
    * @see #loadConfig()
@@ -1445,15 +1448,18 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #saveConfig(String)
    */
   public void loadConfig() {
-    if(this.isOffscreen())
-      System.out.println("Warning: no config loaded! Off-screen scene config requires loadConfig(String fileName) to be called");
+    if (this.isOffscreen())
+      System.out.println(
+          "Warning: no config loaded! Off-screen scene config requires loadConfig(String fileName) to be called");
     else
       loadConfig("config.json");
   }
 
   /**
-   * Loads the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the {@link remixlab.dandelion.core.Camera#type()}
-   * and the {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} from {@code fileName}.
+   * Loads the {@link #eye()}, the {@link #radius()}, the {@link #visualHints()}, the
+   * {@link remixlab.dandelion.core.Camera#type()} and the
+   * {@link remixlab.dandelion.core.Camera#keyFrameInterpolatorArray()} from
+   * {@code fileName}.
    * 
    * @see #saveConfig()
    * @see #saveConfig(String)
@@ -1495,9 +1501,10 @@ public class Scene extends AbstractScene implements PConstants {
       }
     }
   }
-  
+
   /**
-   * Used internally by {@link #saveConfig(String)}. Converts the {@code id} eye path into a P5 JSONArray.
+   * Used internally by {@link #saveConfig(String)}. Converts the {@code id} eye path into
+   * a P5 JSONArray.
    */
   protected JSONArray toJSONArray(int id) {
     JSONArray jsonKeyFrames = new JSONArray();
@@ -1510,7 +1517,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Used internally by {@link #loadConfig(String)}. Converts the P5 JSONObject into a {@code frame}.
+   * Used internally by {@link #loadConfig(String)}. Converts the P5 JSONObject into a
+   * {@code frame}.
    */
   protected Frame toFrame(JSONObject jsonFrame) {
     Frame frame = new Frame(is3D());
@@ -1534,7 +1542,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Used internally by {@link #saveConfig(String)}. Converts {@code frame} into a P5 JSONObject.
+   * Used internally by {@link #saveConfig(String)}. Converts {@code frame} into a P5
+   * JSONObject.
    */
   protected JSONObject toJSONObject(Frame frame) {
     JSONObject jsonFrame = new JSONObject();
@@ -1545,7 +1554,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Used internally by {@link #saveConfig(String)}. Converts {@code vec} into a P5 JSONArray.
+   * Used internally by {@link #saveConfig(String)}. Converts {@code vec} into a P5
+   * JSONArray.
    */
   protected JSONArray toJSONArray(Vec vec) {
     JSONArray jsonVec = new JSONArray();
@@ -1556,7 +1566,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Used internally by {@link #saveConfig(String)}. Converts {@code rot} into a P5 JSONArray.
+   * Used internally by {@link #saveConfig(String)}. Converts {@code rot} into a P5
+   * JSONArray.
    */
   protected JSONArray toJSONArray(Rotation rot) {
     JSONArray jsonRot = new JSONArray();
@@ -1803,10 +1814,11 @@ public class Scene extends AbstractScene implements PConstants {
   public void beginScreenDrawing() {
     beginScreenDrawing(pg());
   }
-  
+
   /**
-   * Begins screen drawing on an arbitrary PGraphics instance using {@link #eye()} parameters. Don't forget to
-   * call {@link #endScreenDrawing(PGraphics)} after screen drawing ends.
+   * Begins screen drawing on an arbitrary PGraphics instance using {@link #eye()}
+   * parameters. Don't forget to call {@link #endScreenDrawing(PGraphics)} after screen
+   * drawing ends.
    * 
    * @see #endScreenDrawing(PGraphics)
    * @see #beginScreenDrawing()
@@ -1816,12 +1828,13 @@ public class Scene extends AbstractScene implements PConstants {
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
           + "endScreenDrawing() and they cannot be nested. Check your implementation!");
     startCoordCalls++;
-    p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
+    p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in
+                                             // AbstractScene.bS
     disableDepthTest(p);
     // if-else same as:
     // matrixHelper(p).beginScreenDrawing();
     // but perhaps a bit more efficient
-    if(p == pg())
+    if (p == pg())
       matrixHelper().beginScreenDrawing();
     else
       matrixHelper(p).beginScreenDrawing();
@@ -1835,10 +1848,11 @@ public class Scene extends AbstractScene implements PConstants {
   public void endScreenDrawing() {
     endScreenDrawing(pg());
   }
-  
+
   /**
-   * Ends screen drawing on the arbitrary PGraphics instance using {@link #eye()} parameters. The
-   * screen drawing should happen between {@link #beginScreenDrawing(PGraphics)} and this method.
+   * Ends screen drawing on the arbitrary PGraphics instance using {@link #eye()}
+   * parameters. The screen drawing should happen between
+   * {@link #beginScreenDrawing(PGraphics)} and this method.
    * 
    * @see #beginScreenDrawing(PGraphics)
    * @see #endScreenDrawing()
@@ -1851,7 +1865,7 @@ public class Scene extends AbstractScene implements PConstants {
     // if-else same as:
     // matrixHelper(p).endScreenDrawing();
     // but perhaps a bit more efficient
-    if(p == pg())
+    if (p == pg())
       matrixHelper().endScreenDrawing();
     else
       matrixHelper(p).endScreenDrawing();
@@ -1865,14 +1879,15 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawCylinder(float w, float h) {
     drawCylinder(pg(), w, h);
   }
-  
+
   /**
    * Same as {@code drawCylinder(pg, radius()/6, radius()/3)}.
    * <p>
-   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   * Note that this method is useful for
+   * {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
    */
   public void drawCylinder(PGraphics pg) {
-    drawCylinder(pg, radius()/6, radius()/3);
+    drawCylinder(pg, radius() / 6, radius() / 3);
   }
 
   /**
@@ -1916,7 +1931,7 @@ public class Scene extends AbstractScene implements PConstants {
     pg.endShape();
     pg.popStyle();
   }
-  
+
   @Override
   public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
     drawHollowCylinder(pg(), detail, w, h, m, n);
@@ -1961,9 +1976,9 @@ public class Scene extends AbstractScene implements PConstants {
     pg.endShape();
     pg.popStyle();
   }
-  
-  //Cone v1
-  
+
+  // Cone v1
+
   @Override
   public void drawCone(int detail, float x, float y, float r, float h) {
     drawCone(pg(), detail, x, y, r, h);
@@ -1986,17 +2001,18 @@ public class Scene extends AbstractScene implements PConstants {
   public static void drawCone(PGraphics pg, float r, float h) {
     drawCone(pg, 12, 0, 0, r, h);
   }
-  
+
   /**
    * Same as {@code drawCone(pg, 12, 0, 0, radius()/4, sqrt(3) * radius()/4)}.
    * <p>
-   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   * Note that this method is useful for
+   * {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
    */
   public void drawCone(PGraphics pg) {
-    float r = radius()/4;
-    drawCone(pg, 12, 0, 0, r, (float)Math.sqrt((float)3) * r);
+    float r = radius() / 4;
+    drawCone(pg, 12, 0, 0, r, (float) Math.sqrt((float) 3) * r);
   }
-  
+
   /**
    * Low-level version of {@link #drawCone(int, float, float, float, float)}.
    * <p>
@@ -2028,9 +2044,9 @@ public class Scene extends AbstractScene implements PConstants {
     pg.popMatrix();
     pg.popStyle();
   }
-  
+
   // Cone v2
-  
+
   /**
    * Same as {@code cone(pg, det, 0, 0, r1, r2, h)}
    * 
@@ -2094,16 +2110,17 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawAxes(float length) {
     drawAxes(pg(), length);
   }
-  
+
   /**
    * Same as {@code drawAxes(pg, radius()/5)}.
    * <p>
-   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   * Note that this method is useful for
+   * {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
    */
   public void drawAxes(PGraphics pg) {
-    drawAxes(pg, radius()/5);
+    drawAxes(pg, radius() / 5);
   }
-  
+
   /**
    * Low-level version of {@link #drawAxes(float)}.
    * <p>
@@ -2182,23 +2199,24 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawGrid(float size, int nbSubdivisions) {
     drawGrid(pg(), size, nbSubdivisions);
   }
-  
+
   /**
    * Same as {@code drawGrid(size, 10)}.
    */
   public void drawGrid(float size) {
     drawGrid(size, 10);
   }
-  
+
   /**
    * Same as {@code drawGrid(pg, radius()/4, 10)}.
    * <p>
-   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   * Note that this method is useful for
+   * {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
    */
   public void drawGrid(PGraphics pg) {
-    drawGrid(pg, radius()/4, 10);
+    drawGrid(pg, radius() / 4, 10);
   }
-  
+
   /**
    * Low-level version of {@link #drawGrid(float)}.
    * <p>
@@ -2217,19 +2235,20 @@ public class Scene extends AbstractScene implements PConstants {
     pg.endShape();
     pg.popStyle();
   }
-  
+
   @Override
   public void drawDottedGrid(float size, int nbSubdivisions) {
     drawDottedGrid(pg(), size, nbSubdivisions);
   }
-  
+
   /**
    * Same as {@code drawDottedGrid(pg, radius()/4, 10)}.
    * <p>
-   * Note that this method is useful for {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
+   * Note that this method is useful for
+   * {@link remixlab.proscene.InteractiveFrame#setShape(String)}.
    */
   public void drawDottedGrid(PGraphics pg) {
-    drawDottedGrid(pg, radius()/4, 10);
+    drawDottedGrid(pg, radius() / 4, 10);
   }
 
   /**
@@ -2538,7 +2557,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawCross(float px, float py, float size) {
     drawCross(pg(), px, py, size);
   }
-    
+
   public void drawCross(PGraphics pg, float px, float py, float size) {
     float half_size = size / 2f;
     pg.pushStyle();
@@ -2558,7 +2577,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawFilledCircle(int subdivisions, Vec center, float radius) {
     drawFilledCircle(pg(), subdivisions, center, radius);
   }
-  
+
   public void drawFilledCircle(PGraphics pg, int subdivisions, Vec center, float radius) {
     pg.pushStyle();
     float precision = PApplet.TWO_PI / subdivisions;

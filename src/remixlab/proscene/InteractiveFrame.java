@@ -29,7 +29,7 @@ import remixlab.util.*;
 /**
  * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
  * instance which allows {@link remixlab.bias.core.Shortcut} to
- * {@link java.lang.reflect.Method} bindings high-level customization. (see all the
+ * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods).
  * <p>
  * Visual representations (PShapes or arbitrary graphics procedures) may be related to an
@@ -39,7 +39,7 @@ import remixlab.util.*;
  * <b>papplet.draw()</b> (refer to the {@link remixlab.dandelion.core.GenericFrame} API
  * class documentation).
  * <li>Setting a visual representation directly to the frame, either by calling
- * {@link #setFrontShape(PShape)} or {@link #setFrontShape(Object, String)} in
+ * {@link #setShape(PShape)} or {@link #setShape(Object, String)} in
  * <b>papplet.setup()</b>, and then calling {@link remixlab.proscene.Scene#drawFrames()}
  * in <b>papplet.draw()</b>.
  * </ol>
@@ -47,9 +47,14 @@ import remixlab.util.*;
  * exact manner (using the pixels of the projected visual representation themselves)
  * provided that the {@link #pickingPrecision()} is set to {@link PickingPrecision#EXACT}
  * and the scene {@link remixlab.proscene.Scene#pickingBuffer()} is enabled (see
- * {@link remixlab.proscene.Scene#enablePickingBuffer()}). Use another
- * {@link #pickingPrecision()} strategy if performance is a concern since using a picking
- * buffer requires the geometry to be drawn twice.
+ * {@link remixlab.proscene.Scene#enablePickingBuffer()}). Using a picking buffer requires
+ * the geometry to be drawn twice, one at the front-buffer and one at the picking-buffer.
+ * If performance is a concern, use another {@link #pickingPrecision()} strategy, or
+ * differentiate the front and the picking shapes (using a simpler representation in the
+ * later case) by calling {@link #setFrontShape(PShape)} and
+ * {@link #setPickingShape(PShape)}, respectively. Note that {@link #setShape(PShape)}
+ * just calls {@link #setFrontShape(PShape)} and {@link #setPickingShape(PShape)} on the
+ * same shape.
  * <p>
  * If the above conditions are met, the visual representation may be highlighted when
  * picking takes place (see {@link #enableHighlighting()}). Highlighting is enabled by
@@ -90,7 +95,7 @@ public class InteractiveFrame extends GenericFrame {
     return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(id, other.id)
         .isEquals();
   }
-  
+
   // profile
   protected Profile profile;
 
@@ -137,13 +142,10 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Constructs an interactive-frame. Calls {@code super(scn}. Sets the
-   * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
+   * Calls {@code super(scn}. Sets the {@link #pickingPrecision()} to
+   * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see #frontShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
    */
   public InteractiveFrame(Scene scn) {
     super(scn);
@@ -157,9 +159,6 @@ public class InteractiveFrame extends GenericFrame {
    * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
-   * @see #frontShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
    */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame) {
     super(scn, referenceFrame);
@@ -168,10 +167,11 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Wraps the pshape into this interactive-frame. Calls {@code super(scn)}. Sets the
+   * Calls {@code super(scn}. Calls {@link #setShape(PShape)} on the {@code ps}. Sets the
    * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
+   * @see #setShape(PShape)
    */
   public InteractiveFrame(Scene scn, PShape ps) {
     super(scn);
@@ -181,11 +181,11 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Wraps the pshape into this interactive-frame which is created as a child of reference
-   * frame. Calls {@code super(scn, referenceFrame)}. Sets the {@link #pickingPrecision()}
-   * to {@link PickingPrecision#EXACT}.
+   * Calls {@code super(scn, referenceFrame)}. Calls {@link #setShape(PShape)} on the
+   * {@code ps}. Sets the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
+   * @see #setShape(String)
    */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame, PShape ps) {
     super(scn, referenceFrame);
@@ -193,22 +193,27 @@ public class InteractiveFrame extends GenericFrame {
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
   }
-  
+
+  /**
+   * Calls {@code super(scn)}. Calls {@link #setShape(String)} on the {@code methodName}.
+   * Sets the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
+   * 
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
+   */
   public InteractiveFrame(Scene scn, String methodName) {
     super(scn);
     init();
     setShape(methodName);
-    if(methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
+    if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
       setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
-   * Wraps the function object procedure into this interactive-frame. Calls
-   * {@code super(scn}. Sets the {@link #pickingPrecision()} to
-   * {@link PickingPrecision#EXACT}.
+   * Calls {@code super(scn}. Calls {@link #setShape(Object, String)}. Sets the
+   * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see #setFrontShape(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn, Object obj, String methodName) {
     super(scn);
@@ -216,7 +221,15 @@ public class InteractiveFrame extends GenericFrame {
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
   }
-  
+
+  /**
+   * Calls {@code super(scn, referenceFrame)}. Calls {@link #setShape(String)} on the
+   * {@code methodName}. Sets the {@link #pickingPrecision()} to
+   * {@link PickingPrecision#EXACT}.
+   * 
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
+   * @see #setShape(String)
+   */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame, String methodName) {
     super(scn, referenceFrame);
     init(referenceFrame);
@@ -225,12 +238,11 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Wraps the the function object procedure into this interactive-frame which is is
-   * created as a child of reference frame. Calls {@code super(scn, referenceFrame}. Sets
-   * the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
+   * Calls {@code super(scn, referenceFrame}. Calls {@link #setShape(Object, String)}.
+   * Sets the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
-   * @see #setFrontShape(Object, String)
+   * @see #setShape(Object, String)
    */
   public InteractiveFrame(Scene scn, GenericFrame referenceFrame, Object obj, String methodName) {
     super(scn, referenceFrame);
@@ -865,9 +877,8 @@ public class InteractiveFrame extends GenericFrame {
   // end api
 
   /**
-   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)},
-   * {@link #setFrontShape(InteractiveFrame)} and
-   * {@link #addGraphicsHandler(InteractiveFrame)} on the other frame instance.
+   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)} and
+   * {@link #setShape(InteractiveFrame)} on the other frame instance.
    */
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
@@ -983,8 +994,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Shifts the {@link #frontShape()} respect to the frame {@link #position()}. Default value
-   * is zero.
+   * Shifts the frame shape respect to the frame {@link #position()}. Default value is
+   * zero.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -998,7 +1009,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Returns the {@link #frontShape()} shift.
+   * Returns the frame shape shift.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -1199,13 +1210,58 @@ public class InteractiveFrame extends GenericFrame {
     return false;
   }
 
+  /**
+   * Same as {@code setFrontShape(ps); setPickingShape(ps);}.
+   * 
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setShape(PShape ps) {
     setFrontShape(ps);
     setPickingShape(ps);
   }
 
   /**
-   * Replaces previous {@link #frontShape()} with {@code ps}.
+   * Replaces previous frame front-shape with {@code ps}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
    */
   public void setFrontShape(PShape ps) {
     if (hasFrontShape()) {
@@ -1215,33 +1271,92 @@ public class InteractiveFrame extends GenericFrame {
     shp1 = ps;
   }
 
+  /**
+   * Replaces previous frame picking-shape with {@code ps}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setPickingShape(PShape ps) {
     if (hasPickingShape()) {
-      System.out
-          .println("Warning: overwritting previous " + (shp2 != null ? "pknpShape" : "pkn graphics handler"));
+      System.out.println("Warning: overwritting previous " + (shp2 != null ? "pknpShape" : "pkn graphics handler"));
       unsetPickingShape();
     }
     shp2 = ps;
     Scene.GRAPHICS = update();
   }
 
+  /**
+   * Same as {@code setFrontShape(otherFrame); setPickingShape(otherFrame);}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setShape(InteractiveFrame otherFrame) {
     setFrontShape(otherFrame);
     setPickingShape(otherFrame);
   }
 
   /**
-   * Sets the frame {@link #frontShape()} from that of other frame. Useful when sharing the
-   * same shape drawing method among different frame instances is desirable.
+   * Sets the frame front-shape from that of other frame. Useful when sharing the same
+   * front-shape drawing method among different frame instances is desirable.
    * 
-   * Adds the other frame graphics handler to this frame. Useful when sharing the same
-   * frame graphics handler among different frame instances is desirable.
-   * 
-   * //TODO docs
-   * 
-   * @see #setFrontShape(InteractiveFrame)
-   * 
-   *      {@link #addGraphicsHandler(InteractiveFrame)}
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
    */
   public void setFrontShape(InteractiveFrame otherFrame) {
     if (otherFrame.shp1 != null)
@@ -1250,6 +1365,32 @@ public class InteractiveFrame extends GenericFrame {
       setFrontShape(otherFrame.obj1, otherFrame.mth1.getName());
   }
 
+  /**
+   * Sets the frame picking-shape from that of other frame. Useful when sharing the same
+   * picking-shape drawing method among different frame instances is desirable.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setPickingShape(InteractiveFrame otherFrame) {
     if (otherFrame.shp2 != null)
       setPickingShape(otherFrame.shp2);
@@ -1257,6 +1398,30 @@ public class InteractiveFrame extends GenericFrame {
       setPickingShape(otherFrame.obj2, otherFrame.mth2.getName());
   }
 
+  /**
+   * Same as {@code unsetFrontShape(); unsetPickingShape();}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void unsetShape() {
     unsetFrontShape();
     unsetPickingShape();
@@ -1269,9 +1434,33 @@ public class InteractiveFrame extends GenericFrame {
    * Scene).
    * 
    * @see #setFrontShape(Object, String)
-   * @see #invokeGraphicsHandler(PGraphics)
    * 
    *      //TODO docs pending
+   */
+
+  /**
+   * Unsets the front-shape which is wrapped by this interactive-frame.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
    */
   public void unsetFrontShape() {
     if (shp1 != null)
@@ -1282,6 +1471,30 @@ public class InteractiveFrame extends GenericFrame {
     }
   }
 
+  /**
+   * Unsets the picking-shape which is wrapped by this interactive-frame.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void unsetPickingShape() {
     if (shp2 != null)
       shp2 = null;
@@ -1291,17 +1504,95 @@ public class InteractiveFrame extends GenericFrame {
     }
     Scene.GRAPHICS = update();
   }
-  
+
+  /**
+   * Same as {@code setFrontShape(methodName); setPickingShape(methodName);}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setShape(String methodName) {
     setFrontShape(methodName);
     setPickingShape(methodName);
   }
 
+  /**
+   * Same as {@code setFrontShape(obj, methodName); setPickingShape(obj, methodName);}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
   }
-  
+
+  /**
+   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
+   * handler is a method that returns void and has one single PGraphics parameter. The
+   * object to handle the front-shape may be either {@code this} frame or the
+   * {@link #scene()} (this method looks for it in that order).
+   * 
+   * @param methodName
+   *          the front-shape graphics-procedure
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setFrontShape(String methodName) {
     if (hasFrontShape()) {
       System.out.println("Warning: overwritting " + shp1 != null ? "pshape" : "graphics handler");
@@ -1310,14 +1601,14 @@ public class InteractiveFrame extends GenericFrame {
     Object obj = null;
     try {
       obj = this;
-      mth1 = (obj2 == obj && mth2.getName() == methodName)
-          ? mth2 : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       obj1 = obj;
     } catch (Exception e1) {
       try {
         obj = scene();
-        mth1 = (obj2 == obj && mth2.getName() == methodName)
-            ? mth2 : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+        mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+            : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
         obj1 = obj;
       } catch (Exception e2) {
         obj = null;
@@ -1329,16 +1620,34 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Attempt to add a graphics handler method to the frame. The default event handler is a
-   * method that returns void and has one single PGraphics parameter.
+   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
+   * handler is a method that returns void and has one single PGraphics parameter.
    * 
    * @param obj
-   *          the object to handle the event
+   *          the object defining the shape graphics-procedure
    * @param methodName
-   *          the method to execute in the object handler class
+   *          the front-shape graphics-procedure
    * 
-   * @see #removeGraphicsHandler()
-   * @see #invokeGraphicsHandler(PGraphics)
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
    */
   public void setFrontShape(Object obj, String methodName) {
     if (hasFrontShape()) {
@@ -1347,13 +1656,44 @@ public class InteractiveFrame extends GenericFrame {
     }
     try {
       obj1 = obj;
-      mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2 : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
     }
   }
-  
+
+  /**
+   * Attempt to add a graphics handler as the frame picking-shape. The default
+   * picking-shape handler is a method that returns void and has one single PGraphics
+   * parameter. The object to handle the picking-shape may be either {@code this} frame or
+   * the {@link #scene()} (this method looks for it in that order).
+   * 
+   * @param methodName
+   *          the shape graphics-procedure
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setPickingShape(String methodName) {
     if (hasPickingShape()) {
       System.out.println("Warning: overwritting " + shp2 != null ? "pshape" : "graphics handler");
@@ -1363,7 +1703,8 @@ public class InteractiveFrame extends GenericFrame {
     try {
       obj = this;
       obj2 = obj;
-      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1 : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
+          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       Scene.GRAPHICS = update();
     } catch (Exception e1) {
       try {
@@ -1380,6 +1721,37 @@ public class InteractiveFrame extends GenericFrame {
     }
   }
 
+  /**
+   * Attempt to add a graphics handler as the frame picking-shape. The default
+   * picking-shape handler is a method that returns void and has one single PGraphics
+   * parameter.
+   * 
+   * @param obj
+   *          the object defining the shape graphics-procedure
+   * @param methodName
+   *          the front-shape graphics-procedure
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void setPickingShape(Object obj, String methodName) {
     if (hasPickingShape()) {
       System.out.println("Warning: overwritting " + shp2 != null ? "pshape" : "graphics handler");
@@ -1387,14 +1759,15 @@ public class InteractiveFrame extends GenericFrame {
     }
     try {
       obj2 = obj;
-      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1 : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
+          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       Scene.GRAPHICS = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
     }
   }
-  
+
   /**
    * @deprecated use {@link #setShape(Object, String)}.
    */
@@ -1402,7 +1775,7 @@ public class InteractiveFrame extends GenericFrame {
   public void addGraphicsHandler(Object obj, String methodName) {
     setShape(obj, methodName);
   }
-  
+
   /**
    * @deprecated use {@link #unsetShape()}.
    */
@@ -1411,10 +1784,60 @@ public class InteractiveFrame extends GenericFrame {
     unsetShape();
   }
 
+  /**
+   * Same as {@code pairShapes(true)}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public void pairShapes() {
     pairShapes(true);
   }
 
+  /**
+   * Makes the front and the picking buffer match. If {@code preserFront} is true then the
+   * picking shape is modified to match the front shape. If {@code preserFront} is false
+   * then the front shape is modified to match the picking shape.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #areShapesPaired()
+   */
   public void pairShapes(boolean preserveFront) {
     if (preserveFront) {
       if (this.shp1 != null)
@@ -1429,22 +1852,113 @@ public class InteractiveFrame extends GenericFrame {
     }
   }
 
+  /**
+   * Same as {@code return hasFrontShape() || hasPickingShape()}.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public boolean hasShape() {
     return hasFrontShape() || hasPickingShape();
   }
 
   /**
-   * Returns {@code true} if the user has registered a graphics handler method to the
-   * Scene and {@code false} otherwise.
+   * Returns {@code true} if there's a graphics representation set as the front shape.
    * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
-   * @see #invokeGraphicsHandler(PGraphics)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
    */
   public boolean hasFrontShape() {
     return shp1 != null || mth1 != null;
   }
 
+  /**
+   * Returns {@code true} if there's a graphics representation set as the picking shape.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
   public boolean hasPickingShape() {
     return shp2 != null || mth2 != null;
   }
+
+  /**
+   * Returns {@code true} if there's a graphics representation set as the front shape.
+   * 
+   * @see #setShape(PShape)
+   * @see #setShape(Object, String)
+   * @see #setShape(String)
+   * @see #setShape(InteractiveFrame)
+   * @see #hasShape()
+   * @see #unsetShape()
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #unsetFrontShape()
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #unsetPickingShape()
+   * @see #pairShapes()
+   * @see #pairShapes(boolean)
+   * @see #areShapesPaired()
+   */
 }
