@@ -1370,13 +1370,6 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * This method is called before the first drawing happen and should be overloaded to
-   * initialize stuff. The default implementation is empty.
-   */
-  public void init() {
-  }
-
-  /**
    * Same as {@link #saveConfig()}.
    * <p>
    * Should be called automatically by P5, but it is currently broken. See:
