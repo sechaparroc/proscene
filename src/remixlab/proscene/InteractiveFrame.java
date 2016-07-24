@@ -196,7 +196,9 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Calls {@code super(scn)}. Calls {@link #setShape(String)} on the {@code methodName}.
-   * Sets the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
+   * Sets the {@link #pickingPrecision()} to {@value PickingPrecision#FIXED} if
+   * {@code methodName=="drawAxes" || methodName=="drawGrid" || methodName=="drawDottedGrid"}.
+   * Otherwise sets it to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
    */
@@ -969,7 +971,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return;
     }
-    if (areShapesPaired()) {
+    if (shp2 == shp1 && mth2 == mth1) {
       pg.scale(1.1f);
       if (pg.stroke)
         pg.stroke(highlight(pg.strokeColor));
@@ -977,10 +979,6 @@ public class InteractiveFrame extends GenericFrame {
         pg.fill(highlight(pg.fillColor));
     } else
       pickingShape(pg);
-  }
-
-  public boolean areShapesPaired() {
-    return shp2 == shp1 && mth2 == mth1;
   }
 
   /**
@@ -1123,7 +1121,7 @@ public class InteractiveFrame extends GenericFrame {
       else
         pg.translate(shift.x(), shift.y());
       if (pg != scene().pickingBuffer()) {
-        if (areShapesPaired()) {
+        if (shp2 == shp1 && mth2 == mth1) {
           if (isHighlightingEnabled() && this.grabsInput())
             highlight(pg);
           if (hasFrontShape())
@@ -1230,9 +1228,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setShape(PShape ps) {
     setFrontShape(ps);
@@ -1259,9 +1257,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setFrontShape(PShape ps) {
     if (hasFrontShape()) {
@@ -1291,9 +1289,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setPickingShape(PShape ps) {
     if (hasPickingShape()) {
@@ -1324,9 +1322,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setShape(InteractiveFrame otherFrame) {
     setFrontShape(otherFrame);
@@ -1354,9 +1352,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setFrontShape(InteractiveFrame otherFrame) {
     if (otherFrame.shp1 != null)
@@ -1387,9 +1385,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setPickingShape(InteractiveFrame otherFrame) {
     if (otherFrame.shp2 != null)
@@ -1418,9 +1416,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void unsetShape() {
     unsetFrontShape();
@@ -1458,9 +1456,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void unsetFrontShape() {
     if (shp1 != null)
@@ -1491,9 +1489,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void unsetPickingShape() {
     if (shp2 != null)
@@ -1525,9 +1523,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setShape(String methodName) {
     setFrontShape(methodName);
@@ -1554,9 +1552,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
@@ -1589,9 +1587,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setFrontShape(String methodName) {
     if (hasFrontShape()) {
@@ -1645,9 +1643,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setFrontShape(Object obj, String methodName) {
     if (hasFrontShape()) {
@@ -1690,9 +1688,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setPickingShape(String methodName) {
     if (hasPickingShape()) {
@@ -1748,9 +1746,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public void setPickingShape(Object obj, String methodName) {
     if (hasPickingShape()) {
@@ -1805,11 +1803,11 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
-  public void pairShapes() {
-    pairShapes(true);
+  public void resetShape() {
+    resetShape(true);
   }
 
   /**
@@ -1835,10 +1833,10 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #isShapeReset()
    */
-  public void pairShapes(boolean preserveFront) {
+  public void resetShape(boolean preserveFront) {
     if (preserveFront) {
       if (this.shp1 != null)
         setPickingShape(shp1);
@@ -1850,6 +1848,10 @@ public class InteractiveFrame extends GenericFrame {
       else if (this.mth2 != null)
         setFrontShape(obj2, mth2.getName());
     }
+  }
+  
+  public boolean isShapeReset() {
+    return shp2 == shp1 && mth2 == mth1;
   }
 
   /**
@@ -1872,9 +1874,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public boolean hasShape() {
     return hasFrontShape() || hasPickingShape();
@@ -1900,9 +1902,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public boolean hasFrontShape() {
     return shp1 != null || mth1 != null;
@@ -1928,9 +1930,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
    * @see #unsetPickingShape()
-   * @see #pairShapes()
-   * @see #pairShapes(boolean)
-   * @see #areShapesPaired()
+   * @see #resetShape()
+   * @see #resetShape(boolean)
+   * @see #isShapeReset()
    */
   public boolean hasPickingShape() {
     return shp2 != null || mth2 != null;
