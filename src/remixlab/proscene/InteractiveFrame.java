@@ -1037,7 +1037,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
     }
-    Scene.PRECISION = update(pickingPrecision());
+    Scene.DATED_BUFFER = update();
   }
 
   /**
@@ -1193,23 +1193,10 @@ public class InteractiveFrame extends GenericFrame {
    * Internal cache optimization method.
    */
   protected boolean update() {
-    if (hasPickingShape() && !isEyeFrame())
-      return true;
-    else
-      for (InteractiveFrame frame : scene().frames())
-        if (frame.hasPickingShape() && !frame.isEyeFrame())
-          return true;
-    return false;
-  }
-
-  /**
-   * Internal cache optimization method.
-   */
-  protected boolean update(PickingPrecision precision) {
-    if (precision == PickingPrecision.EXACT)
+    if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && hasPickingShape())
       return true;
     for (InteractiveFrame frame : scene().frames())
-      if (frame.pickingPrecision() == PickingPrecision.EXACT)
+      if (!frame.isEyeFrame() && frame.pickingPrecision() == PickingPrecision.EXACT && frame.hasPickingShape())
         return true;
     return false;
   }
@@ -1269,7 +1256,7 @@ public class InteractiveFrame extends GenericFrame {
       unsetPickingShape();
     }
     shp2 = ps;
-    Scene.GRAPHICS = update();
+    Scene.DATED_BUFFER = update();
   }
 
   /**
@@ -1387,7 +1374,7 @@ public class InteractiveFrame extends GenericFrame {
       mth2 = null;
       obj2 = null;
     }
-    Scene.GRAPHICS = update();
+    Scene.DATED_BUFFER = update();
   }
 
   /**
@@ -1530,14 +1517,14 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      Scene.GRAPHICS = update();
+      Scene.DATED_BUFFER = update();
     } catch (Exception e1) {
       try {
         obj = scene();
         obj2 = obj;
         mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
             : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-        Scene.GRAPHICS = update();
+        Scene.DATED_BUFFER = update();
       } catch (Exception e2) {
         PApplet.println("Something went wrong when registering your " + methodName + " method");
         e1.printStackTrace();
@@ -1574,7 +1561,7 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      Scene.GRAPHICS = update();
+      Scene.DATED_BUFFER = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();

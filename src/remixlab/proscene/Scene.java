@@ -1354,9 +1354,7 @@ public class Scene extends AbstractScene implements PConstants {
   // into an off-screen scene which is shifted from the papplet origin
   public void post() {
     // draw into picking buffer
-    // TODO experimental, should be tested when no pshape nor graphics are
-    // created, but yet there exists some 'frames'
-    if (!this.isPickingBufferEnabled() || !PRECISION || !GRAPHICS)
+    if (!this.isPickingBufferEnabled() || !DATED_BUFFER)
       return;
     pickingBuffer().beginDraw();
     pickingBuffer().pushStyle();
@@ -1624,7 +1622,7 @@ public class Scene extends AbstractScene implements PConstants {
     return Profile.registerClickID(agent.getClass());
   }
 
-  protected static boolean PRECISION, GRAPHICS;
+  protected static boolean DATED_BUFFER;
   protected static PGraphics targetPGraphics;
 
   @Override
