@@ -1104,9 +1104,9 @@ public class InteractiveFrame extends GenericFrame {
   protected void visit(PGraphics pg) {
     pg.pushStyle();
     if (pg == scene().pickingBuffer()) {
-      float r = id & 255;
-      float g = (id >> 8) & 255;
-      float b = (id >> 16) & 255;
+      float r = (float)(id & 255)/255.f;
+      float g = (float)((id >> 8) & 255)/255.f;
+      float b = (float)((id >> 16) & 255)/255.f;
       // TODO: funny, graphics handler procedures requires shaders to be re-applied
       if (this.mth2 != null)
         scene().applyPickingBufferShaders();
