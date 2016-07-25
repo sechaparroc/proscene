@@ -205,9 +205,15 @@ public class InteractiveFrame extends GenericFrame {
   public InteractiveFrame(Scene scn, String methodName) {
     super(scn);
     init();
+    if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
+      setFrontShape(methodName);
+    else
+      setShape(methodName);
+    /*
     setShape(methodName);
     if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
       setPickingPrecision(PickingPrecision.EXACT);
+    //*/
   }
 
   /**
