@@ -1067,7 +1067,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Attempt to add a 'draw' handler method to the Scene. The default event handler is a
-   * method that returns void and has one single Scene parameter.
+   * method that returns void and has one single Scene or PGraphics parameter.
    * 
    * @param obj
    *          the object to handle the event
