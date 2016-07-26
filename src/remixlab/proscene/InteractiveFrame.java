@@ -136,7 +136,7 @@ public class InteractiveFrame extends GenericFrame {
     if (isEyeFrame()) {
       // a bit of a hack, but the eye frame scaling should be canceled out
       pg.scale(1 / magnitude());
-      scene().drawEye(pg, eye());
+      scene().drawEye(pg, eye(), true);
     } else
       AbstractScene.showOnlyEyeWarning("drawEye", true);
   }

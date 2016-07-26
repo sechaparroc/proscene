@@ -370,6 +370,22 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   // P5-WRAPPERS
+  
+  /**
+   * Same as {@code vertex(pg(), v)}.
+   * 
+   * @see #vertex(PGraphics, float[])
+   */
+  public void vertex(float[] v) {
+    vertex(pg(), v);
+  }
+  
+  /**
+   * Wrapper for PGraphics.vertex(v)
+   */
+  public static void vertex(PGraphics pg, float[] v) {
+    pg.vertex(v);
+  }
 
   /**
    * Same as {@code if (this.is2D()) vertex(pg(), x, y); elsevertex(pg(), x, y, z)}.
@@ -392,6 +408,29 @@ public class Scene extends AbstractScene implements PConstants {
     else
       pg.vertex(x, y);
   }
+  
+  /**
+   * Same as {@code if (this.is2D()) vertex(pg(), x, y, u, v); else vertex(pg(), x, y, z, u, v);}.
+   * 
+   * @see #vertex(PGraphics, float, float, float, float)
+   * @see #vertex(PGraphics, float, float, float, float, float)
+   */
+  public void vertex(float x, float y, float z, float u, float v) {
+    if (this.is2D())
+      vertex(pg(), x, y, u, v);
+    else
+      vertex(pg(), x, y, z, u, v);
+  }
+  
+  /**
+   * Wrapper for PGraphics.vertex(x,y,z,u,v)
+   */
+  public static void vertex(PGraphics pg, float x, float y, float z, float u, float v) {
+    if (pg instanceof PGraphics3D)
+      pg.vertex(x, y, z, u, v);
+    else
+      pg.vertex(x, y, u, v);
+  }
 
   /**
    * Same as {@code vertex(pg(), x, y)}.
@@ -407,6 +446,22 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public static void vertex(PGraphics pg, float x, float y) {
     pg.vertex(x, y);
+  }
+  
+  /**
+   * Same as {@code vertex(pg(), x, y, u, v)}.
+   * 
+   * @see #vertex(PGraphics, float, float, float, float)
+   */
+  public void vertex(float x, float y, float u, float v) {
+    vertex(pg(), x, y, u, v);
+  }
+  
+  /**
+   * Wrapper for PGraphics.vertex(x,y,u,v)
+   */
+  public static void vertex(PGraphics pg, float x, float y, float u, float v) {
+    pg.vertex(x, y, u, v);
   }
 
   /**
@@ -2283,6 +2338,10 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void drawEye(Eye eye) {
+    drawEye(eye, false);
+  }
+  
+  public void drawEye(Eye eye, boolean texture) {
     pg().pushMatrix();
 
     // applyMatrix(camera.frame().worldMatrix());
@@ -2306,16 +2365,20 @@ public class Scene extends AbstractScene implements PConstants {
       pg().rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
           ((Quat) eye.frame().orientation()).axis().vec[1], ((Quat) eye.frame().orientation()).axis().vec[2]);
     }
-    drawEye(pg(), eye);
+    drawEye(pg(), eye, texture);
     pg().popMatrix();
   }
+  
+  public void drawEye(PGraphics pg, Eye eye) {
+    drawEye(pg, eye, false);
+  } 
 
   /**
-   * Implementation of {@link #drawEye(Eye)}.
+   * Implementation of {@link #drawEye(Eye)}. Warning: texture only works with opengl renderers
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
-  public void drawEye(PGraphics pg, Eye eye) {
+  public void drawEye(PGraphics pg, Eye eye, boolean texture) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
@@ -2387,16 +2450,34 @@ public class Scene extends AbstractScene implements PConstants {
       }
       }
     }
-
-    // Near and (optionally) far plane(s)
+    
+    // Planes
+    // far plane
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, -1.0f);
+    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
+    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
+    pg.endShape();
+    // near plane
     pg.noStroke();
-    pg.beginShape(PApplet.QUADS);
-    for (int i = farIndex; i >= 0; --i) {
-      pg.normal(0.0f, 0.0f, (i == 0) ? 1.0f : -1.0f);
-      Scene.vertex(pg, points[i].x(), points[i].y(), -points[i].z());
-      Scene.vertex(pg, -points[i].x(), points[i].y(), -points[i].z());
-      Scene.vertex(pg, -points[i].x(), -points[i].y(), -points[i].z());
-      Scene.vertex(pg, points[i].x(), -points[i].y(), -points[i].z());
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, 1.0f);
+    if(pg instanceof PGraphicsOpenGL && texture) {
+      pg.textureMode(NORMAL);
+      pg.tint(255, 126);  // Apply transparency without changing color
+      pg.texture(((Scene)eye.scene()).pg());
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
+    }
+    else {
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
     }
     pg.endShape();
 
