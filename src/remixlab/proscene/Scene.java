@@ -2385,6 +2385,7 @@ public class Scene extends AbstractScene implements PConstants {
         return;
       }
     pg.pushStyle();
+    
     // boolean drawFarPlane = true;
     // int farIndex = drawFarPlane ? 1 : 0;
     int farIndex = is3D() ? 1 : 0;
@@ -2451,43 +2452,13 @@ public class Scene extends AbstractScene implements PConstants {
       }
     }
     
-    // Planes
-    // far plane
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, -1.0f);
-    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
-    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
-    pg.endShape();
-    // near plane
-    pg.noStroke();
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, 1.0f);
-    if(pg instanceof PGraphicsOpenGL && texture) {
-      pg.textureMode(NORMAL);
-      pg.tint(255, 126);  // Apply transparency without changing color
-      pg.texture(((Scene)eye.scene()).pg());
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
-    }
-    else {
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
-    }
-    pg.endShape();
-
     // Up arrow
     float arrowHeight = 1.5f * points[0].y();
     float baseHeight = 1.2f * points[0].y();
     float arrowHalfWidth = 0.5f * points[0].x();
     float baseHalfWidth = 0.3f * points[0].x();
 
-    // pg3d().noStroke();
+    pg.noStroke();
     // Arrow base
     pg.beginShape(PApplet.QUADS);
     if (isLeftHanded()) {
@@ -2515,7 +2486,36 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
     pg.endShape();
-    // pg.popMatrix();
+    
+    // Planes
+    // far plane
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, -1.0f);
+    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
+    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
+    pg.endShape();
+    // near plane
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, 1.0f);
+    if(pg instanceof PGraphicsOpenGL && texture) {
+      pg.textureMode(NORMAL);
+      pg.tint(255, 126);  // Apply transparency without changing color
+      pg.texture(((Scene)eye.scene()).pg());
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
+    }
+    else {
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
+    }
+    pg.endShape();
+
     pg.popStyle();
   }
 
