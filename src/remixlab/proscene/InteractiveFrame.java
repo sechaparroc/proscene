@@ -1031,7 +1031,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
     }
-    Scene.UNCACHED_BUFFER = update();
+    scene().UNCACHED_BUFFER = update();
   }
 
   /**
@@ -1253,7 +1253,7 @@ public class InteractiveFrame extends GenericFrame {
       unsetPickingShape();
     }
     shp2 = ps;
-    Scene.UNCACHED_BUFFER = update();
+    scene().UNCACHED_BUFFER = update();
   }
 
   /**
@@ -1371,7 +1371,7 @@ public class InteractiveFrame extends GenericFrame {
       mth2 = null;
       obj2 = null;
     }
-    Scene.UNCACHED_BUFFER = update();
+    scene().UNCACHED_BUFFER = update();
   }
 
   /**
@@ -1514,14 +1514,14 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      Scene.UNCACHED_BUFFER = update();
+      scene().UNCACHED_BUFFER = update();
     } catch (Exception e1) {
       try {
         obj = scene();
         obj2 = obj;
         mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
             : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-        Scene.UNCACHED_BUFFER = update();
+        scene().UNCACHED_BUFFER = update();
       } catch (Exception e2) {
         PApplet.println("Something went wrong when registering your " + methodName + " method");
         e1.printStackTrace();
@@ -1558,7 +1558,7 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      Scene.UNCACHED_BUFFER = update();
+      scene().UNCACHED_BUFFER = update();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();

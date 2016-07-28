@@ -1677,7 +1677,7 @@ public class Scene extends AbstractScene implements PConstants {
     return Profile.registerClickID(agent.getClass());
   }
 
-  protected static boolean UNCACHED_BUFFER;
+  protected boolean UNCACHED_BUFFER;
   protected static PGraphics targetPGraphics;
 
   @Override
