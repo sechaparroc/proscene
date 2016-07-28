@@ -12,37 +12,39 @@
  * Click and drag the ellipse or the rect with the left mouse to control the torus and box
  * color and shape.
  * Press ' ' (the spacebar) to toggle the application canvas aid.
- * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ * Press 'oH' to display the key shortcuts and mouse bindings in the console.
  */
 
 import remixlab.bias.event.*;
 import remixlab.proscene.*;
 
-int                w       = 200;
-int                h       = 120;
-int                oX      = 640 - w;
-int                oY      = 360 - h;
-PGraphics          ctrlCanvas;
-Scene              ctrlScene;
-public PShape      eShape;
-InteractiveFrame   e;
-InteractiveRect    r;
-PGraphics          canvas;
-Scene              scene;
-boolean            showControl  = true;
+int w = 1110;
+int h = 510;
+int oW = w/3;
+int oH = h/3;
+int oX = w - oW;
+int oY = h - oH;
+PGraphics canvas, ctrlCanvas;
+Scene scene, ctrlScene;
+public PShape eShape;
+InteractiveFrame e;
+InteractiveRect r;
+boolean showControl  = true;
 
-float  radiusX  = 40, radiusY = 40;
-int    colour  = color(255, 0, 0);
+float radiusX = 40, radiusY = 40;
+int colour = color(255, 0, 0);
 
-public void setup() {
-  size(640, 360, P2D);
-  
+void settings() {
+  size(w, h, P2D);
+}
+
+void setup() {  
   rectMode(CENTER);
 
-  canvas = createGraphics(640, 360, P3D);
+  canvas = createGraphics(w, h, P3D);
   scene = new Scene(this, canvas);
 
-  ctrlCanvas = createGraphics(w, h, P2D);
+  ctrlCanvas = createGraphics(oW, oH, P2D);
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
 
   e = new InteractiveFrame(ctrlScene);
@@ -53,7 +55,7 @@ public void setup() {
   e.setKeyBinding(this, 'x', "colorBlue");
   e.setKeyBinding(this, 'y', "colorRed");
   //ctrlScene.keyAgent().setDefaultGrabber(e);
-  
+
   r = new InteractiveRect(ctrlScene);
   r.setMotionBinding(MouseAgent.WHEEL_ID, "changeShape");
   r.setMotionBinding(LEFT, "changeShape");
@@ -63,49 +65,50 @@ public void setup() {
   ctrlScene.keyAgent().setDefaultGrabber(r);
 }
 
-public void changeShape(InteractiveFrame frame, DOF1Event event) {
+void changeShape(InteractiveFrame frame, DOF1Event event) {
   radiusX += event.dx()*5;
   updateEllipse(frame);
 }
 
-public void changeShape(InteractiveFrame frame, DOF2Event event) {
+void changeShape(InteractiveFrame frame, DOF2Event event) {
   radiusX += event.dx();
   radiusY += event.dy();
   updateEllipse(frame);
 }
 
-public void changeColor(InteractiveFrame frame) {
+void changeColor(InteractiveFrame frame) {
   colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
   updateEllipse(frame);
 }
 
-public void colorBlue(InteractiveFrame frame) {
+void colorBlue(InteractiveFrame frame) {
   colour = color(0, 0, 255);
   updateEllipse(frame);
 }
 
-public void colorRed(InteractiveFrame frame) {
+void colorRed(InteractiveFrame frame) {
   colour = color(255, 0, 0);
   updateEllipse(frame);
 }
 
-public void updateEllipse(InteractiveFrame frame) {
-  frame.setShape(createShape(ELLIPSE, -60, 0, 2 * radiusX, 2 * radiusY));
-  frame.shape().setFill(color(colour));
+void updateEllipse(InteractiveFrame frame) {
+  PShape ps = createShape(ELLIPSE, -60, 0, 2 * radiusX, 2 * radiusY);
+  frame.setShape(ps);
+  ps.setFill(color(colour));
 }
 
-public void draw() {
+void draw() {
   handleAgents();
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);
   canvas.fill(colour);
   canvas.pushMatrix();
-  canvas.translate(-80,0,0);
-  scene.drawTorusSolenoid((int) map(PI * radiusX * radiusY, 20, w * h, 2, 50), 100, radiusY/2, radiusX/2);
+  canvas.translate(-80, 0, 0);
+  scene.drawTorusSolenoid((int) map(PI * radiusX * radiusY, 20, oW * oH, 2, 50), 100, radiusY/2, radiusX/2);
   canvas.popMatrix();
   canvas.pushMatrix();
-  canvas.translate(80,0,0);
+  canvas.translate(80, 0, 0);
   canvas.fill(r.colour);
   canvas.box(r.halfWidth, r.halfHeight, (r.halfWidth + r.halfHeight) / 2);
   canvas.popMatrix();
@@ -136,7 +139,7 @@ void handleAgents() {
   }
 }
 
-public void keyPressed() {
+void keyPressed() {
   if (key == ' ')
     showControl = !showControl;
 }

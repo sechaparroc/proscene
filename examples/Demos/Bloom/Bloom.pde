@@ -11,11 +11,10 @@
 
 import remixlab.proscene.*;
 
-PShader BloomShader, XConvShader, YConvShader;
-PGraphics BloomGraphics, SrcGraphics, XConvGraphics, YConvGraphics;
-Scene SrcScene;
+PShader bloomShader, xConvShader, yConvShader;
+PGraphics bloomGraphics, srcGraphics, xConvGraphics, yConvGraphics;
+Scene srcScene;
 boolean original;
-color cols[];
 float posns[], kernel[];
 InteractiveFrame[] frames;
 int numCubes;
@@ -24,7 +23,6 @@ public void setup() {
   size(700, 700, P3D);
   colorMode(HSB, 255);
   numCubes = 100;
-  cols = new color[numCubes];
   posns = new float[numCubes * 3];
   buildKernel(4.0);
   
@@ -32,87 +30,70 @@ public void setup() {
     posns[3*i]=random(-1000, 1000);
     posns[3*i+1]=random(-1000, 1000);
     posns[3*i+2]=random(-1000, 1000);
-    cols[i]= color(255 * i / 100.0, 255, 255, 255);
   }
   
-  SrcGraphics = createGraphics(width, height, P3D);
-  SrcScene = new Scene(this, SrcGraphics);
-  SrcScene.setRadius(1000);
-  SrcScene.showAll();
+  srcGraphics = createGraphics(width, height, P3D);
+  srcScene = new Scene(this, srcGraphics);
+  srcScene.setRadius(1000);
+  srcScene.showAll();
   frames = new InteractiveFrame[numCubes];
   
   for (int i = 0; i < frames.length; i++) {
-    frames[i] = new InteractiveFrame(SrcScene, Shape(i));
+    frames[i] = new InteractiveFrame(srcScene, Shape(i));
     frames[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
-    pushStyle();
-    frames[i].shape().setFill(cols[i]);
-    popStyle();
   }
   
-  XConvShader = loadShader("convfrag.glsl","convvert.glsl");
-  XConvShader.set("imageIncrement", 0.002953125, 0.0);
-  XConvShader.set("kernel", kernel);
-  XConvShader.set("resolution", width, height);
-  XConvGraphics = createGraphics(width, height, P3D);
-  XConvGraphics.shader(XConvShader);
+  xConvShader = loadShader("convfrag.glsl","convvert.glsl");
+  xConvShader.set("imageIncrement", 0.002953125, 0.0);
+  xConvShader.set("kernel", kernel);
+  xConvShader.set("resolution", width, height);
+  xConvGraphics = createGraphics(width, height, P3D);
+  xConvGraphics.shader(xConvShader);
   
-  YConvShader = loadShader("convfrag.glsl","convvert.glsl");
-  YConvShader.set("imageIncrement", 0.0, 0.002953125);
-  YConvShader.set("kernel", kernel);
-  YConvShader.set("resolution", width, height);
-  YConvGraphics = createGraphics(width, height, P3D);
-  YConvGraphics.shader(YConvShader);
+  yConvShader = loadShader("convfrag.glsl","convvert.glsl");
+  yConvShader.set("imageIncrement", 0.0, 0.002953125);
+  yConvShader.set("kernel", kernel);
+  yConvShader.set("resolution", width, height);
+  yConvGraphics = createGraphics(width, height, P3D);
+  yConvGraphics.shader(yConvShader);
   
-  BloomShader = loadShader("bloom.glsl");
-  BloomGraphics = createGraphics(width, height, P3D);
-  BloomGraphics.shader(BloomShader);
+  bloomShader = loadShader("bloom.glsl");
+  bloomGraphics = createGraphics(width, height, P3D);
+  bloomGraphics.shader(bloomShader);
    
   frameRate(1000);
 }
 
 public void draw() {
   background(0);
-  PGraphics pg = SrcGraphics;
-  
-  for (int i = 0; i < frames.length; i++) 
-    if (frames[i].grabsInput())
-      {
-        frames[i].shape().setFill(color(255, 255, 255, 255));
-      }
-    else {
-      pushStyle();
-      colorMode(HSB, 255);
-      frames[i].shape().setFill(cols[i]);
-      popStyle();
-    }
-    
+  PGraphics pg = srcGraphics;
   pg.beginDraw();
-  SrcScene.beginDraw();
+  srcScene.beginDraw();
   pg.background(0);
   pg.lights();
-  SrcScene.drawFrames();
-  SrcScene.endDraw();
+  srcScene.drawFrames();
+  srcScene.endDraw();
   pg.endDraw();
   
-  XConvGraphics.beginDraw();
-  XConvShader.set("readTex", SrcScene.pg());
-  XConvGraphics.image(pg, 0, 0);
-  XConvGraphics.endDraw();
+  xConvGraphics.beginDraw();
+  xConvShader.set("readTex", srcScene.pg());
+  xConvGraphics.image(pg, 0, 0);
+  xConvGraphics.endDraw();
     
-  YConvGraphics.beginDraw();
-  YConvShader.set("readTex", XConvGraphics);
-  YConvGraphics.image(pg, 0, 0);
-  YConvGraphics.endDraw();    
+  yConvGraphics.beginDraw();
+  yConvShader.set("readTex", xConvGraphics);
+  yConvGraphics.image(pg, 0, 0);
+  yConvGraphics.endDraw();    
     
-  BloomGraphics.beginDraw();
-  BloomShader.set("nuevoTex", YConvGraphics);
-  BloomGraphics.image(pg, 0, 0);
-  BloomGraphics.endDraw();    
+  bloomGraphics.beginDraw();
+  bloomShader.set("nuevoTex", yConvGraphics);
+  bloomGraphics.image(pg, 0, 0);
+  bloomGraphics.endDraw();    
   
   if (original) {
-    image(SrcScene.pg(), 0, 0);
+    image(srcScene.pg(), 0, 0);
   } else {     
-    image(BloomGraphics, 0, 0);
+    image(bloomGraphics, 0, 0);
   }
 }
 
@@ -125,15 +106,12 @@ void buildKernel(float sigma) {
   kernel = new float[kernelSize];
   float halfWidth = ( kernelSize - 1 ) * 0.5;
   float sum = 0.0;
-  for (int i = 0; i < kernelSize; ++i )
-  {
+  for (int i = 0; i < kernelSize; ++i ) {
     kernel[i]=gauss(i - halfWidth, sigma);
     sum += kernel[i];
-  }      
-  for (int i = 0; i < kernelSize; ++i )
-  {
-    kernel[ i ] /= sum;
   }
+  for (int i = 0; i < kernelSize; ++i )
+    kernel[ i ] /= sum;
 }
 
 PShape Shape(int n) {
@@ -143,6 +121,7 @@ PShape Shape(int n) {
   else
     fig = createShape(SPHERE, 30);
   fig.setStroke(255);
+  fig.setFill(color(random(0,255), random(0,255), random(0,255)));
   return fig;
 }
 

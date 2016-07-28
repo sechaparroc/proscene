@@ -1407,9 +1407,10 @@ public class Scene extends AbstractScene implements PConstants {
   // TODO WARNING: hack: as drawing should never happen here
   // but that's the only way to draw visual hints correctly
   // into an off-screen scene which is shifted from the papplet origin
+  // pickingBuffer().beginDraw() (and endDraw()) make the problem appear
   public void post() {
     // draw into picking buffer
-    if (!this.isPickingBufferEnabled() || !UNCACHED_BUFFER)
+    if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
     pickingBuffer().beginDraw();
     pickingBuffer().pushStyle();
@@ -1677,8 +1678,8 @@ public class Scene extends AbstractScene implements PConstants {
     return Profile.registerClickID(agent.getClass());
   }
 
-  protected boolean UNCACHED_BUFFER;
-  protected static PGraphics targetPGraphics;
+  protected boolean unchachedBuffer;
+  protected PGraphics targetPGraphics;
 
   @Override
   protected boolean addLeadingFrame(GenericFrame gFrame) {

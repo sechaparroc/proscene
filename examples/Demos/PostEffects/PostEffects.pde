@@ -16,7 +16,6 @@ PShader noiseShader, kaleidoShader, raysShader, dofShader, pixelShader, edgeShad
 PGraphics drawGraphics, dofGraphics, noiseGraphics, kaleidoGraphics, raysGraphics, pixelGraphics, edgeGraphics, graphics, colorGraphics, fxaaGraphics, horizontalGraphics;
 Scene scene;
 boolean bdepth, brays, bpixel, bedge, bdof, bkaleido, bnoise, bfxaa, bhorizontal;
-color cols[];
 float posns[];
 int startTime;
 InteractiveFrame[] models;
@@ -27,13 +26,11 @@ public void setup() {
   font = loadFont("FreeSans-13.vlw");
   textFont(font);
   colorMode(HSB, 255);
-  cols = new color[100];
   posns = new float[300];  
   for (int i = 0; i<100; i++){
     posns[3*i]=random(-1000, 1000);
     posns[3*i+1]=random(-1000, 1000);
     posns[3*i+2]=random(-1000, 1000);
-    cols[i]= color(255 * i / 100.0, 255, 255, 255);
   }  
   graphics = createGraphics(width, height, P3D);  
   scene = new Scene(this, graphics);
@@ -41,10 +38,6 @@ public void setup() {
   for (int i = 0; i < models.length; i++) {
     models[i] = new InteractiveFrame(scene, boxShape());
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
-    pushStyle();
-    colorMode(HSB, 255);
-    models[i].shape().setFill(cols[i]);
-    popStyle();
   }
   scene.setRadius(1000);
   scene.showAll();
@@ -107,15 +100,6 @@ public void draw() {
   PGraphics pg = graphics;
 
   // 1. Draw into main buffer
-  for (int i = 0; i < models.length; i++) 
-    if (models[i].grabsInput())
-      models[i].shape().setFill(color(255, 255, 255, 255));
-    else {
-      pushStyle();
-      colorMode(HSB, 255);
-      models[i].shape().setFill(cols[i]);
-      popStyle();
-    }
   pg.beginDraw();
   scene.beginDraw();
   pg.background(0);
@@ -211,7 +195,9 @@ void drawText() {
 }
 
 PShape boxShape() {
-  return createShape(BOX, 60);
+  PShape box = createShape(BOX, 60);
+  box.setFill(color(random(0,255), random(0,255), random(0,255)));
+  return box;
 }
 
 void keyPressed() {

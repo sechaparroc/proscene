@@ -1031,7 +1031,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
     }
-    scene().UNCACHED_BUFFER = update();
+    updatePickingBufferCache();
   }
 
   /**
@@ -1098,7 +1098,7 @@ public class InteractiveFrame extends GenericFrame {
 
   @Override
   public void visit() {
-    visit(Scene.targetPGraphics);
+    visit(scene().targetPGraphics);
   }
 
   protected void visit(PGraphics pg) {
@@ -1189,13 +1189,17 @@ public class InteractiveFrame extends GenericFrame {
    * Returns {@code true} if the {@link remixlab.proscene.Scene#pickingBuffer()} needs an
    * update and {@code false} otherwise.
    */
-  protected boolean update() {
-    if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && hasPickingShape())
-      return true;
+  protected void updatePickingBufferCache() {
+    if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && hasPickingShape()) {
+      scene().unchachedBuffer = true;
+      return;
+    }
     for (InteractiveFrame frame : scene().frames())
-      if (!frame.isEyeFrame() && frame.pickingPrecision() == PickingPrecision.EXACT && frame.hasPickingShape())
-        return true;
-    return false;
+      if (!frame.isEyeFrame() && frame.pickingPrecision() == PickingPrecision.EXACT && frame.hasPickingShape()) {
+        scene().unchachedBuffer = true;
+        return;
+      }
+    scene().unchachedBuffer = false;
   }
 
   /**
@@ -1253,7 +1257,7 @@ public class InteractiveFrame extends GenericFrame {
       unsetPickingShape();
     }
     shp2 = ps;
-    scene().UNCACHED_BUFFER = update();
+    updatePickingBufferCache();
   }
 
   /**
@@ -1371,7 +1375,7 @@ public class InteractiveFrame extends GenericFrame {
       mth2 = null;
       obj2 = null;
     }
-    scene().UNCACHED_BUFFER = update();
+    updatePickingBufferCache();
   }
 
   /**
@@ -1514,14 +1518,14 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      scene().UNCACHED_BUFFER = update();
+      updatePickingBufferCache();
     } catch (Exception e1) {
       try {
         obj = scene();
         obj2 = obj;
         mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
             : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-        scene().UNCACHED_BUFFER = update();
+        updatePickingBufferCache();
       } catch (Exception e2) {
         PApplet.println("Something went wrong when registering your " + methodName + " method");
         e1.printStackTrace();
@@ -1558,7 +1562,7 @@ public class InteractiveFrame extends GenericFrame {
       obj2 = obj;
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      scene().UNCACHED_BUFFER = update();
+      updatePickingBufferCache();
     } catch (Exception e) {
       PApplet.println("Something went wrong when registering your " + methodName + " method");
       e.printStackTrace();
@@ -1579,6 +1583,14 @@ public class InteractiveFrame extends GenericFrame {
   @Deprecated
   public void removeGraphicsHandler() {
     unsetShape();
+  }
+  
+  /**
+   * @deprecated keep pshape and method references at application space.
+   */
+  @Deprecated
+  public PShape shape() {
+    return shp1;
   }
 
   /**
