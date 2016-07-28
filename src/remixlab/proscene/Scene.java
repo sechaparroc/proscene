@@ -2370,6 +2370,11 @@ public class Scene extends AbstractScene implements PConstants {
     pg().popMatrix();
   }
   
+  /**
+   * Same as {@code drawEye(pg, eye, false)}.
+   * 
+   * @see #drawEye(PGraphics, Eye, boolean)
+   */
   public void drawEye(PGraphics pg, Eye eye) {
     drawEye(pg, eye, false);
   } 
@@ -2461,6 +2466,14 @@ public class Scene extends AbstractScene implements PConstants {
 
     pg.noStroke();
     // Arrow base
+    if(texture) {
+      pg.pushStyle();//end at arrow
+      pg.colorMode(PApplet.RGB, 255);
+      float r = pg.red(pg.fillColor);
+      float g = pg.green(pg.fillColor);
+      float b = pg.blue(pg.fillColor);
+      pg.fill(r, g, b, 126);// same transparency as near plane texture
+    }
     pg.beginShape(PApplet.QUADS);
     if (isLeftHanded()) {
       Scene.vertex(pg, -baseHalfWidth, -points[0].y(), -points[0].z());
@@ -2486,6 +2499,8 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, -arrowHalfWidth, baseHeight, -points[0].z());
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
+    if(texture)
+      pg.pushStyle();//begin at arrow base
     pg.endShape();
     
     // Planes

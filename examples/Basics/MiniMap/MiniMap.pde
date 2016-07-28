@@ -77,19 +77,10 @@ void draw() {
     auxCanvas.beginDraw();
     auxScene.beginDraw();
     auxCanvas.background(29, 153, 243);
-    auxScene.pg().pushStyle();
-    auxScene.pg().stroke(255, 255, 0);
-    auxScene.pg().fill(255, 255, 0, 160);
-    auxScene.pg().popStyle();
-    //auxScene.drawFrames();
-    //works but we want to customize the iFrame color:
-    for (InteractiveFrame frame : auxScene.frames()) {
-      if (frame == iFrame) {
-        auxScene.pg().stroke(255, 255, 0);
-        auxScene.pg().fill(255, 255, 0, 160);
-      }
-      frame.draw();
-    }
+    // all frames but iFrame defined their own color 'frameDrawing'
+    // and thus this color only will affects the iFrame
+    auxScene.pg().fill(255, 0, 255);
+    auxScene.drawFrames();
     auxScene.endDraw();
     auxCanvas.endDraw();
     // We retrieve the scene upper left coordinates defined above.
