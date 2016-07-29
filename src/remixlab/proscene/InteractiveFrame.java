@@ -950,34 +950,14 @@ public class InteractiveFrame extends GenericFrame {
     return highlight;
   }
 
-  protected int highlight(int color) {
-    int c = 0;
-    float hue, saturation, brightness;
-    scene().pApplet().pushStyle();
-    scene().pApplet().colorMode(PApplet.HSB, 4);
-
-    hue = scene().pApplet().hue(color);
-    saturation = scene().pApplet().saturation(color);
-    brightness = scene().pApplet().brightness(color);
-    brightness = brightness < 1 ? 2 : brightness < 2 ? 3 : 4;
-    c = scene().pApplet().color(hue, saturation, brightness);
-
-    scene().pApplet().popStyle();
-    return c;
-  }
-
   protected void highlight(PGraphics pg) {
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return;
     }
-    if (shp2 == shp1 && mth2 == mth1) {
-      pg.scale(1.1f);
-      if (pg.stroke)
-        pg.stroke(highlight(pg.strokeColor));
-      if (pg.fill)
-        pg.fill(highlight(pg.fillColor));
-    } else
+    if (isShapeReset())
+      pg.scale(1.2f);
+    else
       pickingShape(pg);
   }
 
@@ -1050,7 +1030,7 @@ public class InteractiveFrame extends GenericFrame {
   @Override
   public final boolean checkIfGrabsInput(float x, float y) {
     if (isEyeFrame()) {
-      AbstractScene.showOnlyEyeWarning("highlight", false);
+      AbstractScene.showOnlyEyeWarning("checkIfGrabsInput", false);
       return false;
     }
     if (pickingPrecision() != PickingPrecision.EXACT || !hasPickingShape() || !scene().isPickingBufferEnabled())
@@ -1121,7 +1101,7 @@ public class InteractiveFrame extends GenericFrame {
       else
         pg.translate(shift.x(), shift.y());
       if (pg != scene().pickingBuffer()) {
-        if (shp2 == shp1 && mth2 == mth1) {
+        if (isShapeReset()) {
           if (isHighlightingEnabled() && this.grabsInput())
             highlight(pg);
           if (hasFrontShape())
