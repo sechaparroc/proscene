@@ -370,7 +370,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   // P5-WRAPPERS
-  
+
   /**
    * Same as {@code vertex(pg(), v)}.
    * 
@@ -379,7 +379,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void vertex(float[] v) {
     vertex(pg(), v);
   }
-  
+
   /**
    * Wrapper for PGraphics.vertex(v)
    */
@@ -408,9 +408,10 @@ public class Scene extends AbstractScene implements PConstants {
     else
       pg.vertex(x, y);
   }
-  
+
   /**
-   * Same as {@code if (this.is2D()) vertex(pg(), x, y, u, v); else vertex(pg(), x, y, z, u, v);}.
+   * Same as
+   * {@code if (this.is2D()) vertex(pg(), x, y, u, v); else vertex(pg(), x, y, z, u, v);}.
    * 
    * @see #vertex(PGraphics, float, float, float, float)
    * @see #vertex(PGraphics, float, float, float, float, float)
@@ -421,7 +422,7 @@ public class Scene extends AbstractScene implements PConstants {
     else
       vertex(pg(), x, y, z, u, v);
   }
-  
+
   /**
    * Wrapper for PGraphics.vertex(x,y,z,u,v)
    */
@@ -447,7 +448,7 @@ public class Scene extends AbstractScene implements PConstants {
   public static void vertex(PGraphics pg, float x, float y) {
     pg.vertex(x, y);
   }
-  
+
   /**
    * Same as {@code vertex(pg(), x, y, u, v)}.
    * 
@@ -456,7 +457,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void vertex(float x, float y, float u, float v) {
     vertex(pg(), x, y, u, v);
   }
-  
+
   /**
    * Wrapper for PGraphics.vertex(x,y,u,v)
    */
@@ -1695,6 +1696,9 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Returns the collection of interactive frames the scene handles.
+   * <p>
+   * Note that iterating through the scene frames is not as efficient as simply calling
+   * {@link #drawFrames()}.
    */
   public ArrayList<InteractiveFrame> frames() {
     ArrayList<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
@@ -2341,7 +2345,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawEye(Eye eye) {
     drawEye(eye, false);
   }
-  
+
   public void drawEye(Eye eye, boolean texture) {
     pg().pushMatrix();
 
@@ -2369,7 +2373,7 @@ public class Scene extends AbstractScene implements PConstants {
     drawEye(pg(), eye, texture);
     pg().popMatrix();
   }
-  
+
   /**
    * Same as {@code drawEye(pg, eye, false)}.
    * 
@@ -2378,10 +2382,11 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawEye(PGraphics pg, Eye eye) {
     drawEye(pg, eye, false);
   }
-  
-  //TODO next beta
+
+  // TODO next beta
   // should we go like this and call iFrame.drawEye accordingly
-  // and/or add an optional iFrame parameter to iFrame.setShape? see current sketch: 'Mini'
+  // and/or add an optional iFrame parameter to iFrame.setShape? see current sketch:
+  // 'Mini'
   // fix highlight in appCtrl
   public void drawEye(PGraphics pg, InteractiveFrame frame, boolean texture) {
     if (frame.isEyeFrame()) {
@@ -2393,7 +2398,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Implementation of {@link #drawEye(Eye)}. Warning: texture only works with opengl renderers
+   * Implementation of {@link #drawEye(Eye)}. Warning: texture only works with opengl
+   * renderers
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
@@ -2404,7 +2410,7 @@ public class Scene extends AbstractScene implements PConstants {
         return;
       }
     pg.pushStyle();
-    
+
     // boolean drawFarPlane = true;
     // int farIndex = drawFarPlane ? 1 : 0;
     int farIndex = is3D() ? 1 : 0;
@@ -2470,7 +2476,7 @@ public class Scene extends AbstractScene implements PConstants {
       }
       }
     }
-    
+
     // Up arrow
     float arrowHeight = 1.5f * points[0].y();
     float baseHeight = 1.2f * points[0].y();
@@ -2479,8 +2485,8 @@ public class Scene extends AbstractScene implements PConstants {
 
     pg.noStroke();
     // Arrow base
-    if(texture) {
-      pg.pushStyle();//end at arrow
+    if (texture) {
+      pg.pushStyle();// end at arrow
       pg.colorMode(PApplet.RGB, 255);
       float r = pg.red(pg.fillColor);
       float g = pg.green(pg.fillColor);
@@ -2512,10 +2518,10 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, -arrowHalfWidth, baseHeight, -points[0].z());
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
-    if(texture)
-      pg.pushStyle();//begin at arrow base
+    if (texture)
+      pg.pushStyle();// begin at arrow base
     pg.endShape();
-    
+
     // Planes
     // far plane
     pg.beginShape(PApplet.QUAD);
@@ -2528,16 +2534,15 @@ public class Scene extends AbstractScene implements PConstants {
     // near plane
     pg.beginShape(PApplet.QUAD);
     pg.normal(0.0f, 0.0f, 1.0f);
-    if(pg instanceof PGraphicsOpenGL && texture) {
+    if (pg instanceof PGraphicsOpenGL && texture) {
       pg.textureMode(NORMAL);
-      pg.tint(255, 126);  // Apply transparency without changing color
-      pg.texture(((Scene)eye.scene()).pg());
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
-    }
-    else {
+      pg.tint(255, 126); // Apply transparency without changing color
+      pg.texture(((Scene) eye.scene()).pg());
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(), 1, 1);
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(), 0, 1);
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(), 0, 0);
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(), 1, 0);
+    } else {
       Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
       Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
       Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());

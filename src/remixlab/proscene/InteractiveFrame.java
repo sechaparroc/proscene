@@ -57,29 +57,15 @@ import remixlab.util.*;
  * same shape.
  * <p>
  * If the above conditions are met, the visual representation may be highlighted when
- * picking takes place (see {@link #enableHighlighting()}). Highlighting is enabled by
- * default when {@link remixlab.proscene.Scene#drawFrames()} is called. To implement a
- * different highlighting strategy, {@link #disableHighlighting()} and then iterate
- * through the scene frames using code like this:
- * 
- * <pre>
- * {@code
- * for (InteractiveFrame frame : scene.frames()) {
- *   fill(scene.mouseAgent().inputGrabber() == frame ? highlightedColor : normalColor);
- *   frame.draw();
- * }
- * }
- * </pre>
- * 
- * Note that iterating through the scene frames is not as efficient as simply calling
- * {@link remixlab.proscene.Scene#drawFrames()}.
+ * picking takes place (see {@link #setHighlighting(HighlightingMode)}).
  * 
  * @see remixlab.dandelion.core.GenericFrame
  */
 public class InteractiveFrame extends GenericFrame {
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(profile).append(id).toHashCode();
+    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(profile).append(shift).append(highlight)
+        .append(id).toHashCode();
   }
 
   @Override
@@ -92,9 +78,16 @@ public class InteractiveFrame extends GenericFrame {
       return false;
 
     InteractiveFrame other = (InteractiveFrame) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(id, other.id)
-        .isEquals();
+    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(shift, other.shift)
+        .append(highlight, other.highlight).append(id, other.id).isEquals();
   }
+
+  /**
+   * Enumerates the highlighting modes.
+   */
+  public enum HighlightingMode {
+    NONE, FRONT, FRONT_PICKING, PICKING
+  };
 
   // profile
   protected Profile profile;
@@ -108,7 +101,7 @@ public class InteractiveFrame extends GenericFrame {
   protected Object obj1, obj2;
   protected Method mth1, mth2;
 
-  protected boolean highlight = true;
+  HighlightingMode highlight = HighlightingMode.NONE;
 
   /**
    * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
@@ -178,6 +171,7 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   /**
@@ -192,6 +186,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   /**
@@ -208,6 +203,7 @@ public class InteractiveFrame extends GenericFrame {
     setShape(methodName);
     if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
       setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   /**
@@ -222,6 +218,7 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   /**
@@ -237,6 +234,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(methodName);
     setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   /**
@@ -251,6 +249,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
+    setHighlighting(HighlightingMode.FRONT);
   }
 
   protected void init() {
@@ -287,6 +286,7 @@ public class InteractiveFrame extends GenericFrame {
     super(otherFrame);
     setProfile(new Profile(this));
     this.profile.from(otherFrame.profile);
+    this.highlight = otherFrame.highlight;
     this.shp1 = otherFrame.shp1;
     this.shp2 = otherFrame.shp2;
     this.id = otherFrame.id;
@@ -906,60 +906,44 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Enables highlighting of the frame visual representation when picking takes place.
+   * Enables highlighting of the frame visual representation when picking takes place
+   * ({@link #grabsInput()} returns {@code true}) according to {@code mode} as follows:
    * 
-   * @see #disableHighlighting()
-   * @see #toggleHighlighting()
-   * @see #isHighlightingEnabled()
-   */
-  public void enableHighlighting() {
-    highlight = true;
-  }
-
-  /**
-   * Disables highlighting of the frame visual representation when picking takes place.
+   * <ol>
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#NONE}: no highlighting
+   * takes place.</li>
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT}: the
+   * front-shape (see {@link #setFrontShape(PShape)}) is scaled by a {@code 1.15}
+   * factor.</li>
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#PICKING}: the
+   * picking-shape (see {@link #setPickingShape(PShape)} is displayed instead of the
+   * front-shape.</li>
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_PICKING}: both,
+   * the front and the picking shapes are displayed.</li>
+   * </ol>
    * 
-   * @see #enableHighlighting()
-   * @see #toggleHighlighting()
-   * @see #isHighlightingEnabled()
+   * @see #highlighting()
    */
-  public void disableHighlighting() {
-    highlight = false;
-  }
-
-  /**
-   * Toggles highlighting of the frame visual representation when picking takes place.
-   * 
-   * @see #enableHighlighting()
-   * @see #disableHighlighting()
-   * @see #isHighlightingEnabled()
-   */
-  public void toggleHighlighting() {
-    highlight = !highlight;
-  }
-
-  /**
-   * Returns true if highlighting of the frame visual representation when picking takes
-   * place is enablesd.
-   * 
-   * @see #enableHighlighting()
-   * @see #disableHighlighting()
-   * @see #isHighlightingEnabled()
-   */
-  public boolean isHighlightingEnabled() {
-    return highlight;
-  }
-
-  protected void highlight(PGraphics pg) {
-    if (isEyeFrame()) {
-      AbstractScene.showOnlyEyeWarning("highlight", false);
+  public void setHighlighting(HighlightingMode mode) {
+    if (mode == HighlightingMode.FRONT_PICKING && (isShapeReset() || !hasFrontShape() || !hasPickingShape()))
+      System.out.println(
+          "Warning: FRONT_PICKING highlighting mode requires the frame to have different non-null front and picking shapes");
+    if (mode == HighlightingMode.PICKING && !hasPickingShape())
+      System.out.println("Warning: PICKING highlighting mode requires the frame to have a non-null picking shape");
+    highlight = mode;
+    if (isEyeFrame() && mode != HighlightingMode.NONE) {
+      AbstractScene.showOnlyEyeWarning("setHighlightingMode", false);
       return;
     }
-    System.out.println("highlight called!");
-    if (isShapeReset())
-      pg.scale(1.2f);
-    else
-      pickingShape(pg);
+  }
+
+  /**
+   * Returns the highlighting mode.
+   * 
+   * @see #setHighlighting(HighlightingMode)
+   */
+  public HighlightingMode highlighting() {
+    return highlight;
   }
 
   /**
@@ -1085,9 +1069,9 @@ public class InteractiveFrame extends GenericFrame {
   protected void visit(PGraphics pg) {
     pg.pushStyle();
     if (pg == scene().pickingBuffer()) {
-      float r = (float)(id & 255)/255.f;
-      float g = (float)((id >> 8) & 255)/255.f;
-      float b = (float)((id >> 16) & 255)/255.f;
+      float r = (float) (id & 255) / 255.f;
+      float g = (float) ((id >> 8) & 255) / 255.f;
+      float b = (float) ((id >> 16) & 255) / 255.f;
       // TODO: funny, graphics handler procedures requires shaders to be re-applied
       if (this.mth2 != null)
         scene().applyPickingBufferShaders();
@@ -1102,18 +1086,28 @@ public class InteractiveFrame extends GenericFrame {
       else
         pg.translate(shift.x(), shift.y());
       if (pg != scene().pickingBuffer()) {
-        if (isShapeReset()) {
-          if (isHighlightingEnabled() && this.grabsInput())
-            highlight(pg);
-          if (hasFrontShape())
-            shape(pg);
-        } else {
-          if (hasFrontShape())
-            shape(pg);
-          if (isHighlightingEnabled() && this.grabsInput())
-            highlight(pg);
+        switch (highlighting()) {
+        case FRONT_PICKING:
+          frontShape(pg);
+          if (!isShapeReset() && grabsInput())
+            pickingShape(pg);
+          break;
+        case NONE:
+          frontShape(pg);
+          break;
+        case PICKING:
+          if (grabsInput())
+            pickingShape(pg);
+          else
+            frontShape(pg);
+          break;
+        case FRONT:
+          if (grabsInput())
+            pg.scale(1.15f);
+          frontShape(pg);
+          break;
         }
-      } else if (hasPickingShape())
+      } else
         pickingShape(pg);
       pg.popMatrix();
     }
@@ -1128,7 +1122,7 @@ public class InteractiveFrame extends GenericFrame {
    * 
    * @see #isEyeFrame()
    */
-  protected void shape(PGraphics pg) {
+  protected void frontShape(PGraphics pg) {
     _shape(pg, shp1, obj1, mth1);
   }
 
@@ -1565,7 +1559,7 @@ public class InteractiveFrame extends GenericFrame {
   public void removeGraphicsHandler() {
     unsetShape();
   }
-  
+
   /**
    * @deprecated keep pshape and method references at application space.
    */
