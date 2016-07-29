@@ -34,7 +34,7 @@ public class InteractiveRect extends InteractiveFrame {
     updateRect();
   }
 
-  void updateRect() {a
+  void updateRect() {
     PShape ps = createShape(RECT, 80, 0, 2 * halfWidth, 2 * halfHeight); 
     setShape(ps);
     ps.setFill(color(colour));

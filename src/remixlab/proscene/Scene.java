@@ -2377,7 +2377,20 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void drawEye(PGraphics pg, Eye eye) {
     drawEye(pg, eye, false);
-  } 
+  }
+  
+  //TODO next beta
+  // should we go like this and call iFrame.drawEye accordingly
+  // and/or add an optional iFrame parameter to iFrame.setShape? see current sketch: 'Mini'
+  // fix highlight in appCtrl
+  public void drawEye(PGraphics pg, InteractiveFrame frame, boolean texture) {
+    if (frame.isEyeFrame()) {
+      // a bit of a hack, but the eye frame scaling should be canceled out
+      pg.scale(1 / frame.magnitude());
+      drawEye(pg, frame.eye(), texture);
+    } else
+      AbstractScene.showOnlyEyeWarning("drawEye", true);
+  }
 
   /**
    * Implementation of {@link #drawEye(Eye)}. Warning: texture only works with opengl renderers

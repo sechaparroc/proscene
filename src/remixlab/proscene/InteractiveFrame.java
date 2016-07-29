@@ -955,6 +955,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("highlight", false);
       return;
     }
+    System.out.println("highlight called!");
     if (isShapeReset())
       pg.scale(1.2f);
     else
