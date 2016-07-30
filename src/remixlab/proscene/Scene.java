@@ -131,8 +131,6 @@ public class Scene extends AbstractScene implements PConstants {
   // E X C E P T I O N H A N D L I N G
   protected int beginOffScreenDrawingCalls;
 
-  JSONObject json;
-
   // CONSTRUCTORS
 
   /**
@@ -230,7 +228,6 @@ public class Scene extends AbstractScene implements PConstants {
 
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
-    json = new JSONObject();
     // TODO buggy in P5
     pApplet().registerMethod("dispose", this);
 
@@ -1469,6 +1466,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #loadConfig(String)
    */
   public void saveConfig(String fileName) {
+    JSONObject json = new JSONObject();
     json.setFloat("radius", radius());
     json.setInt("visualHints", visualHints());
     json.setBoolean("ortho", is2D() ? true : camera().type() == Camera.Type.ORTHOGRAPHIC ? true : false);
@@ -1514,14 +1512,13 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #loadConfig()
    */
   public void loadConfig(String fileName) {
-    boolean flag = true;
+    JSONObject json = null;
     try {
       json = pApplet().loadJSONObject(fileName);
     } catch (Exception e) {
       System.out.println("No such " + fileName + " found!");
-      flag = false;
     }
-    if (flag) {
+    if (json != null) {
       setRadius(json.getFloat("radius"));
       setVisualHints(json.getInt("visualHints"));
       if (is3D())

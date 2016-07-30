@@ -57,7 +57,7 @@ import remixlab.util.*;
  * same shape.
  * <p>
  * If the above conditions are met, the visual representation may be highlighted when
- * picking takes place (see {@link #setHighlighting(HighlightingMode)}).
+ * picking takes place (see {@link #setHighlightingMode(HighlightingMode)}).
  * 
  * @see remixlab.dandelion.core.GenericFrame
  */
@@ -86,7 +86,7 @@ public class InteractiveFrame extends GenericFrame {
    * Enumerates the highlighting modes.
    */
   public enum HighlightingMode {
-    NONE, FRONT, FRONT_PICKING, PICKING
+    NONE, FRONT_SHAPE, FRONT_PICKING_SHAPES, PICKING_SHAPE
   };
 
   // profile
@@ -171,7 +171,7 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -186,7 +186,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -203,7 +203,7 @@ public class InteractiveFrame extends GenericFrame {
     setShape(methodName);
     if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
       setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -218,7 +218,7 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -234,7 +234,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -249,7 +249,7 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlighting(HighlightingMode.FRONT);
+    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   protected void init() {
@@ -912,24 +912,24 @@ public class InteractiveFrame extends GenericFrame {
    * <ol>
    * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#NONE}: no highlighting
    * takes place.</li>
-   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT}: the
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_SHAPE}: the
    * front-shape (see {@link #setFrontShape(PShape)}) is scaled by a {@code 1.15}
    * factor.</li>
-   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#PICKING}: the
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#PICKING_SHAPE}: the
    * picking-shape (see {@link #setPickingShape(PShape)} is displayed instead of the
    * front-shape.</li>
-   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_PICKING}: both,
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_PICKING_SHAPES}: both,
    * the front and the picking shapes are displayed.</li>
    * </ol>
    * 
    * @see #highlighting()
    */
-  public void setHighlighting(HighlightingMode mode) {
-    if (mode == HighlightingMode.FRONT_PICKING && (isShapeReset() || !hasFrontShape() || !hasPickingShape()))
+  public void setHighlightingMode(HighlightingMode mode) {
+    if (mode == HighlightingMode.FRONT_PICKING_SHAPES && (isShapeReset() || !hasFrontShape() || !hasPickingShape()))
       System.out.println(
-          "Warning: FRONT_PICKING highlighting mode requires the frame to have different non-null front and picking shapes");
-    if (mode == HighlightingMode.PICKING && !hasPickingShape())
-      System.out.println("Warning: PICKING highlighting mode requires the frame to have a non-null picking shape");
+          "Warning: FRONT_PICKING_SHAPES highlighting mode requires the frame to have different non-null front and picking shapes");
+    if (mode == HighlightingMode.PICKING_SHAPE && !hasPickingShape())
+      System.out.println("Warning: PICKING_SHAPE highlighting mode requires the frame to have a non-null picking shape");
     highlight = mode;
     if (isEyeFrame() && mode != HighlightingMode.NONE) {
       AbstractScene.showOnlyEyeWarning("setHighlightingMode", false);
@@ -940,7 +940,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Returns the highlighting mode.
    * 
-   * @see #setHighlighting(HighlightingMode)
+   * @see #setHighlightingMode(HighlightingMode)
    */
   public HighlightingMode highlighting() {
     return highlight;
@@ -1087,7 +1087,7 @@ public class InteractiveFrame extends GenericFrame {
         pg.translate(shift.x(), shift.y());
       if (pg != scene().pickingBuffer()) {
         switch (highlighting()) {
-        case FRONT_PICKING:
+        case FRONT_PICKING_SHAPES:
           frontShape(pg);
           if (!isShapeReset() && grabsInput())
             pickingShape(pg);
@@ -1095,13 +1095,13 @@ public class InteractiveFrame extends GenericFrame {
         case NONE:
           frontShape(pg);
           break;
-        case PICKING:
+        case PICKING_SHAPE:
           if (grabsInput())
             pickingShape(pg);
           else
             frontShape(pg);
           break;
-        case FRONT:
+        case FRONT_SHAPE:
           if (grabsInput())
             pg.scale(1.15f);
           frontShape(pg);
