@@ -918,8 +918,8 @@ public class InteractiveFrame extends GenericFrame {
    * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#PICKING_SHAPE}: the
    * picking-shape (see {@link #setPickingShape(PShape)} is displayed instead of the
    * front-shape.</li>
-   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_PICKING_SHAPES}: both,
-   * the front and the picking shapes are displayed.</li>
+   * <li>{@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_PICKING_SHAPES}:
+   * both, the front and the picking shapes are displayed.</li>
    * </ol>
    * 
    * @see #highlighting()
@@ -929,7 +929,8 @@ public class InteractiveFrame extends GenericFrame {
       System.out.println(
           "Warning: FRONT_PICKING_SHAPES highlighting mode requires the frame to have different non-null front and picking shapes");
     if (mode == HighlightingMode.PICKING_SHAPE && !hasPickingShape())
-      System.out.println("Warning: PICKING_SHAPE highlighting mode requires the frame to have a non-null picking shape");
+      System.out
+          .println("Warning: PICKING_SHAPE highlighting mode requires the frame to have a non-null picking shape");
     highlight = mode;
     if (isEyeFrame() && mode != HighlightingMode.NONE) {
       AbstractScene.showOnlyEyeWarning("setHighlightingMode", false);
@@ -1149,9 +1150,14 @@ public class InteractiveFrame extends GenericFrame {
     } else if (_m != null && _o != null) {
       try {
         _m.invoke(_o, new Object[] { _p });
-      } catch (Exception e) {
-        PApplet.println("Something went wrong when invoking your " + _m.getName() + " method");
-        e.printStackTrace();
+      } catch (Exception e1) {
+        try {
+          _m.invoke(_o, new Object[] { this, _p });
+        } catch (Exception e2) {
+          PApplet.println("Something went wrong when invoking your " + _m.getName() + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+        }
       }
     }
   }
@@ -1389,9 +1395,10 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Attempt to add a graphics handler as the frame front-shape. The default front-shape
-   * handler is a method that returns void and has one single PGraphics parameter. The
-   * object to handle the front-shape may be either {@code this} frame or the
-   * {@link #scene()} (this method looks for it in that order).
+   * handler is a method that returns void and takes either an InteractiveFrame parameter
+   * followed by a PGraphics parameter, or just a single PGraphics parameter. The object
+   * to handle the front-shape may be either {@code this} frame or the {@link #scene()}
+   * (this method looks for it in that order).
    * 
    * @param methodName
    *          the front-shape graphics-procedure
@@ -1423,17 +1430,26 @@ public class InteractiveFrame extends GenericFrame {
             : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
         obj1 = obj;
       } catch (Exception e2) {
-        obj = null;
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        e1.printStackTrace();
-        e2.printStackTrace();
+        try {
+          obj = scene();
+          mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+          obj1 = obj;
+        } catch (Exception e3) {
+          obj = null;
+          PApplet.println("Something went wrong when registering your " + methodName + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+          e3.printStackTrace();
+        }
       }
     }
   }
 
   /**
    * Attempt to add a graphics handler as the frame front-shape. The default front-shape
-   * handler is a method that returns void and has one single PGraphics parameter.
+   * handler is a method that returns void and takes either an InteractiveFrame parameter
+   * followed by a PGraphics parameter, or just a single PGraphics parameter.
    * 
    * @param obj
    *          the object defining the shape graphics-procedure
@@ -1458,17 +1474,25 @@ public class InteractiveFrame extends GenericFrame {
       obj1 = obj;
       mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-    } catch (Exception e) {
-      PApplet.println("Something went wrong when registering your " + methodName + " method");
-      e.printStackTrace();
+    } catch (Exception e1) {
+      try {
+        obj1 = obj;
+        mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+            : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+      } catch (Exception e2) {
+        PApplet.println("Something went wrong when registering your " + methodName + " method");
+        e1.printStackTrace();
+        e2.printStackTrace();
+      }
     }
   }
 
   /**
    * Attempt to add a graphics handler as the frame picking-shape. The default
-   * picking-shape handler is a method that returns void and has one single PGraphics
-   * parameter. The object to handle the picking-shape may be either {@code this} frame or
-   * the {@link #scene()} (this method looks for it in that order).
+   * picking-shape handler is a method that returns void and takes either an
+   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
+   * PGraphics parameter. The object to handle the picking-shape may be either
+   * {@code this} frame or the {@link #scene()} (this method looks for it in that order).
    * 
    * @param methodName
    *          the shape graphics-procedure
@@ -1502,17 +1526,27 @@ public class InteractiveFrame extends GenericFrame {
             : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
         updatePickingBufferCache();
       } catch (Exception e2) {
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        e1.printStackTrace();
-        e2.printStackTrace();
+        try {
+          obj = scene();
+          obj2 = obj;
+          mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
+              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+          updatePickingBufferCache();
+        } catch (Exception e3) {
+          PApplet.println("Something went wrong when registering your " + methodName + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+          e3.printStackTrace();
+        }
       }
     }
   }
 
   /**
    * Attempt to add a graphics handler as the frame picking-shape. The default
-   * picking-shape handler is a method that returns void and has one single PGraphics
-   * parameter.
+   * picking-shape handler is a method that returns void and takes either an
+   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
+   * PGraphics parameter
    * 
    * @param obj
    *          the object defining the shape graphics-procedure
@@ -1538,9 +1572,17 @@ public class InteractiveFrame extends GenericFrame {
       mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       updatePickingBufferCache();
-    } catch (Exception e) {
-      PApplet.println("Something went wrong when registering your " + methodName + " method");
-      e.printStackTrace();
+    } catch (Exception e1) {
+      try {
+        obj2 = obj;
+        mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
+            : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+        updatePickingBufferCache();
+      } catch (Exception e2) {
+        PApplet.println("Something went wrong when registering your " + methodName + " method");
+        e1.printStackTrace();
+        e2.printStackTrace();
+      }
     }
   }
 

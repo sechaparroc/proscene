@@ -2385,7 +2385,7 @@ public class Scene extends AbstractScene implements PConstants {
   // and/or add an optional iFrame parameter to iFrame.setShape? see current sketch:
   // 'Mini'
   // fix highlight in appCtrl
-  public void drawEye(PGraphics pg, InteractiveFrame frame, boolean texture) {
+  public void drawEye(InteractiveFrame frame, PGraphics pg, boolean texture) {
     if (frame.isEyeFrame()) {
       // a bit of a hack, but the eye frame scaling should be canceled out
       pg.scale(1 / frame.magnitude());
