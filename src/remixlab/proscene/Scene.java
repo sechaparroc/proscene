@@ -579,8 +579,8 @@ public class Scene extends AbstractScene implements PConstants {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableMouseAgent();
     // TODO android
-    //if (platform() == Platform.PROCESSING_ANDROID)
-      //return disableDroidTouchAgent();
+    // if (platform() == Platform.PROCESSING_ANDROID)
+    // return disableDroidTouchAgent();
     return false;
   }
 
@@ -613,8 +613,8 @@ public class Scene extends AbstractScene implements PConstants {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableKeyAgent();
     // TODO android
-    //if (platform() == Platform.PROCESSING_ANDROID)
-      //return disableDroidKeyAgent();
+    // if (platform() == Platform.PROCESSING_ANDROID)
+    // return disableDroidKeyAgent();
     return false;
   }
 
@@ -779,12 +779,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #droidKeyAgent()
    */
   // TODO android
-  //public DroidTouchAgent droidTouchAgent() {
-  //  if (platform() == Platform.PROCESSING_DESKTOP)
-  //    throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead");
-  //  return (DroidTouchAgent) motionAgent();
-  //}
-  
+  // public DroidTouchAgent droidTouchAgent() {
+  // if (platform() == Platform.PROCESSING_DESKTOP)
+  // throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop
+  // mode. Use mouseAgent() instead");
+  // return (DroidTouchAgent) motionAgent();
+  // }
 
   /**
    * Enables motion handling through the {@link #droidTouchAgent()}.
@@ -810,10 +810,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableDroidKeyAgent()
    */
   // TODO android
-  //public DroidTouchAgent disableDroidTouchAgent() {
-  //  if (platform() == Platform.PROCESSING_DESKTOP)
-  //    throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead");return (DroidTouchAgent)motionAgent();
-  //}
+  // public DroidTouchAgent disableDroidTouchAgent() {
+  // if (platform() == Platform.PROCESSING_DESKTOP)
+  // throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in
+  // Desktop mode. Use disableMouseAgent() instead");return
+  // (DroidTouchAgent)motionAgent();
+  // }
 
   /**
    * Returns {@code true} if the {@link #droidTouchAgent()} is enabled and {@code false}
@@ -844,11 +846,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #droidTouchAgent()
    */
   // TODO android
-  //public DroidKeyAgent droidKeyAgent() {
-  //  if (platform() == Platform.PROCESSING_DESKTOP)
-  //    throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead");
-  //  return (DroidKeyAgent)defKeyboardAgent;
-  //}
+  // public DroidKeyAgent droidKeyAgent() {
+  // if (platform() == Platform.PROCESSING_DESKTOP)
+  // throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop
+  // mode. Use keyAgent() instead");
+  // return (DroidKeyAgent)defKeyboardAgent;
+  // }
 
   /**
    * Enables keyboard handling through the {@link #droidKeyAgent()}.
@@ -875,11 +878,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableDroidTouchAgent()
    */
   // TODO android
-  //public DroidKeyAgent disableDroidKeyAgent() {
-  //  if (platform() == Platform.PROCESSING_DESKTOP) {
-  //    throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead"); } return (DroidKeyAgent)keyboardAgent();
-  //}
-  
+  // public DroidKeyAgent disableDroidKeyAgent() {
+  // if (platform() == Platform.PROCESSING_DESKTOP) {
+  // throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in
+  // Desktop mode. Use disableKeyAgent() instead"); } return
+  // (DroidKeyAgent)keyboardAgent();
+  // }
 
   /**
    * Returns {@code true} if the {@link #droidKeyAgent()} is enabled and {@code false}

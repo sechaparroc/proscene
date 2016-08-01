@@ -39,9 +39,9 @@ import remixlab.util.*;
  * <b>papplet.draw()</b> (refer to the {@link remixlab.dandelion.core.GenericFrame} API
  * class documentation).
  * <li>Setting a visual representation directly to the frame, either by calling
- * {@link #setShape(PShape)} or {@link #setShape(Object, String)} in
- * <b>papplet.setup()</b>, and then calling {@link remixlab.proscene.Scene#drawFrames()}
- * in <b>papplet.draw()</b>.
+ * {@link #setShape(PShape)} (retained mode) or {@link #setShape(Object, String)}
+ * (immediate mode) in <b>papplet.setup()</b>, and then calling
+ * {@link remixlab.proscene.Scene#drawFrames()} in <b>papplet.draw()</b>.
  * </ol>
  * When a visual representation is attached to a frame, picking can be performed in an
  * exact manner (using the pixels of the projected visual representation themselves)
@@ -1051,6 +1051,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Retained mode rendering of the front shape using a PShape.
+   * <p>
    * Replaces previous frame front-shape with {@code ps}.
    * 
    * @see #setShape(PShape)
@@ -1071,6 +1073,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Retained mode rendering of the picking shape using a PShape.
+   * <p>
    * Replaces previous frame picking-shape with {@code ps}.
    * 
    * @see #setShape(PShape)
@@ -1244,6 +1248,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Immediate mode rendering of the front shape using a graphics handler.
+   * <p>
    * Attempt to add a graphics handler as the frame front-shape. The default front-shape
    * handler is a method that returns void and takes either an InteractiveFrame parameter
    * followed by a PGraphics parameter, or just a single PGraphics parameter. The object
@@ -1297,6 +1303,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Immediate mode rendering of the front shape using a graphics handler.
+   * <p>
    * Attempt to add a graphics handler as the frame front-shape. The default front-shape
    * handler is a method that returns void and takes either an InteractiveFrame parameter
    * followed by a PGraphics parameter, or just a single PGraphics parameter. Note that
@@ -1345,6 +1353,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Immediate mode rendering of the picking shape using a graphics handler.
+   * <p>
    * Attempt to add a graphics handler as the frame picking-shape. The default
    * picking-shape handler is a method that returns void and takes either an
    * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
@@ -1400,6 +1410,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Immediate mode rendering of the picking shape using a graphics handler.
+   * <p>
    * Attempt to add a graphics handler as the frame picking-shape. The default
    * picking-shape handler is a method that returns void and takes either an
    * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
