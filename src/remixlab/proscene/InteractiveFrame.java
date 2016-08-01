@@ -126,8 +126,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   public void drawEye(PGraphics pg) {
-    // TODO next beta
-    //scene().drawEye(this, pg, true);
     if (isEyeFrame()) {
       // a bit of a hack, but the eye frame scaling should be canceled out
       pg.scale(1 / magnitude());
@@ -1451,7 +1449,9 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Attempt to add a graphics handler as the frame front-shape. The default front-shape
    * handler is a method that returns void and takes either an InteractiveFrame parameter
-   * followed by a PGraphics parameter, or just a single PGraphics parameter.
+   * followed by a PGraphics parameter, or just a single PGraphics parameter. Note that
+   * the version that takes an InteractiveFrame parameter isn't allowed if this frame
+   * {@link #isEyeFrame()}.
    * 
    * @param obj
    *          the object defining the shape graphics-procedure
@@ -1477,14 +1477,19 @@ public class InteractiveFrame extends GenericFrame {
       mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
     } catch (Exception e1) {
-      try {
-        obj1 = obj;
-        mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-            : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-      } catch (Exception e2) {
+      if (!isEyeFrame()) {
+        try {
+          obj1 = obj;
+          mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
+              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+        } catch (Exception e2) {
+          PApplet.println("Something went wrong when registering your " + methodName + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+        }
+      } else {
         PApplet.println("Something went wrong when registering your " + methodName + " method");
         e1.printStackTrace();
-        e2.printStackTrace();
       }
     }
   }
@@ -1548,7 +1553,8 @@ public class InteractiveFrame extends GenericFrame {
    * Attempt to add a graphics handler as the frame picking-shape. The default
    * picking-shape handler is a method that returns void and takes either an
    * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
-   * PGraphics parameter
+   * PGraphics parameter. Note that the version that takes an InteractiveFrame parameter
+   * isn't allowed if this frame {@link #isEyeFrame()}.
    * 
    * @param obj
    *          the object defining the shape graphics-procedure
@@ -1575,15 +1581,20 @@ public class InteractiveFrame extends GenericFrame {
           : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
       updatePickingBufferCache();
     } catch (Exception e1) {
-      try {
-        obj2 = obj;
-        mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-            : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-        updatePickingBufferCache();
-      } catch (Exception e2) {
+      if (!isEyeFrame()) {
+        try {
+          obj2 = obj;
+          mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
+              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
+          updatePickingBufferCache();
+        } catch (Exception e2) {
+          PApplet.println("Something went wrong when registering your " + methodName + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+        }
+      } else {
         PApplet.println("Something went wrong when registering your " + methodName + " method");
         e1.printStackTrace();
-        e2.printStackTrace();
       }
     }
   }
