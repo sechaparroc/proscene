@@ -199,7 +199,7 @@ public class Scene extends AbstractScene implements PConstants {
       pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
       pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
       pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
-      // TODO seems overkill, but a bit safer
+      // seems overkill, but perhaps a bit safer
       // it's also called from post() and iFrame.visit
       applyPickingBufferShaders();
     }
@@ -579,9 +579,8 @@ public class Scene extends AbstractScene implements PConstants {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableMouseAgent();
     // TODO android
-    /*
-     * if (platform() == Platform.PROCESSING_ANDROID) return disableDroidTouchAgent();
-     */
+    //if (platform() == Platform.PROCESSING_ANDROID)
+      //return disableDroidTouchAgent();
     return false;
   }
 
@@ -614,9 +613,8 @@ public class Scene extends AbstractScene implements PConstants {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableKeyAgent();
     // TODO android
-    /*
-     * if (platform() == Platform.PROCESSING_ANDROID) return disableDroidKeyAgent();
-     */
+    //if (platform() == Platform.PROCESSING_ANDROID)
+      //return disableDroidKeyAgent();
     return false;
   }
 
@@ -781,12 +779,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #droidKeyAgent()
    */
   // TODO android
-  /*
-   * public DroidTouchAgent droidTouchAgent() { if (platform() ==
-   * Platform.PROCESSING_DESKTOP) { throw new RuntimeException(
-   * "Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead"
-   * ); } return (DroidTouchAgent) motionAgent(); }
-   */
+  //public DroidTouchAgent droidTouchAgent() {
+  //  if (platform() == Platform.PROCESSING_DESKTOP)
+  //    throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead");
+  //  return (DroidTouchAgent) motionAgent();
+  //}
+  
 
   /**
    * Enables motion handling through the {@link #droidTouchAgent()}.
@@ -797,10 +795,9 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableDroidKeyAgent()
    */
   public void enableDroidTouchAgent() {
-    if (platform() == Platform.PROCESSING_DESKTOP) {
+    if (platform() == Platform.PROCESSING_DESKTOP)
       throw new RuntimeException(
           "Proscene enableDroidTouchAgent() is not available in Desktop mode. Use enableMouseAgent() instead");
-    }
     super.enableMotionAgent();
   }
 
@@ -813,12 +810,10 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableDroidKeyAgent()
    */
   // TODO android
-  /*
-   * public DroidTouchAgent disableDroidTouchAgent() { if (platform() ==
-   * Platform.PROCESSING_DESKTOP) { throw new RuntimeException(
-   * "Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead"
-   * ); } return (DroidTouchAgent)motionAgent(); }
-   */
+  //public DroidTouchAgent disableDroidTouchAgent() {
+  //  if (platform() == Platform.PROCESSING_DESKTOP)
+  //    throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead");return (DroidTouchAgent)motionAgent();
+  //}
 
   /**
    * Returns {@code true} if the {@link #droidTouchAgent()} is enabled and {@code false}
@@ -849,12 +844,11 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #droidTouchAgent()
    */
   // TODO android
-  /*
-   * public DroidKeyAgent droidKeyAgent() { if (platform() == Platform.PROCESSING_DESKTOP)
-   * { throw new RuntimeException(
-   * "Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead"
-   * ); } return (DroidKeyAgent)defKeyboardAgent; }
-   */
+  //public DroidKeyAgent droidKeyAgent() {
+  //  if (platform() == Platform.PROCESSING_DESKTOP)
+  //    throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead");
+  //  return (DroidKeyAgent)defKeyboardAgent;
+  //}
 
   /**
    * Enables keyboard handling through the {@link #droidKeyAgent()}.
@@ -881,12 +875,11 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableDroidTouchAgent()
    */
   // TODO android
-  /*
-   * public DroidKeyAgent disableDroidKeyAgent() { if (platform() ==
-   * Platform.PROCESSING_DESKTOP) { throw new RuntimeException(
-   * "Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead"
-   * ); } return (DroidKeyAgent)keyboardAgent(); }
-   */
+  //public DroidKeyAgent disableDroidKeyAgent() {
+  //  if (platform() == Platform.PROCESSING_DESKTOP) {
+  //    throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead"); } return (DroidKeyAgent)keyboardAgent();
+  //}
+  
 
   /**
    * Returns {@code true} if the {@link #droidKeyAgent()} is enabled and {@code false}
@@ -986,10 +979,6 @@ public class Scene extends AbstractScene implements PConstants {
     }
     if (this.leadingFrames().size() > 0)
       result += "3. For a specific frame bindings use: frame.info():\n";
-    /*
-     * result += "Frames' info\n"; for (InteractiveFrame frame : frames()) { result +=
-     * frame.info(); } //
-     */
     return result;
   }
 
@@ -3249,256 +3238,4 @@ public class Scene extends AbstractScene implements PConstants {
     else
       System.out.println("Nothing done, profile grabber is different than this scene");
   }
-
-  // PVector <-> toVec
-
-  // /**
-  // * Same as {@code drawHollowCylinder(pg(), detail, w, h, m, n)}.
-  // *
-  // * @see #drawHollowCylinder(PGraphics, int, float, float, PVector, PVector)
-  // */
-  // public void drawHollowCylinder(int detail, float w, float h, PVector m,
-  // PVector n) {
-  // drawHollowCylinder(pg(), detail, w, h, m, n);
-  // }
-  //
-  // /**
-  // * Same as {@code drawHollowCylinder(pg, detail, w, h, Scene.toVec(m),
-  // Scene.toVec(n))}.
-  // *
-  // * @see #drawHollowCylinder(PGraphics, int, float, float, Vec, Vec)
-  // */
-  // public static void drawHollowCylinder(PGraphics pg, int detail, float w,
-  // float h, PVector m, PVector n) {
-  // drawHollowCylinder(pg, detail, w, h, Scene.toVec(m), Scene.toVec(n));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #drawArrow(Vec, Vec, float)
-  // */
-  // public void drawArrow(PVector from, PVector to, float radius) {
-  // drawArrow(toVec(from), toVec(to), radius);
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #drawFilledCircle(Vec, float)
-  // */
-  // public void drawFilledCircle(PVector center, float radius) {
-  // drawFilledCircle(toVec(center), radius);
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #drawFilledSquare(Vec, float)
-  // */
-  // public void drawFilledSquare(PVector center, float edge) {
-  // drawFilledSquare(toVec(center), edge);
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #drawShooterTarget(Vec, float)
-  // */
-  // public void drawShooterTarget(PVector center, float length) {
-  // drawShooterTarget(toVec(center), length);
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #isPointVisible(Vec)
-  // */
-  // public boolean isPointVisible(PVector point) {
-  // return isPointVisible(toVec(point));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #ballVisibility(Vec, float)
-  // */
-  // public Eye.Visibility ballVisibility(PVector center, float radius) {
-  // return ballVisibility(toVec(center), radius);
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #boxVisibility(Vec, Vec)
-  // */
-  // public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
-  // return boxVisibility(toVec(p1), toVec(p2));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #isFaceBackFacing(Vec, Vec, Vec)
-  // */
-  // public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
-  // return isFaceBackFacing(toVec(a), toVec(b), toVec(c));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #pointUnderPixel(Point)
-  // */
-  // public PVector pointUnderPixel(float x, float y) {
-  // return toPVector(pointUnderPixel(new Point(x, y)));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #projectedCoordinatesOf(Vec)
-  // */
-  // public PVector projectedCoordinatesOf(PVector src) {
-  // return toPVector(projectedCoordinatesOf(toVec(src)));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #unprojectedCoordinatesOf(Vec)
-  // */
-  // public PVector unprojectedCoordinatesOf(PVector src) {
-  // return toPVector(unprojectedCoordinatesOf(toVec(src)));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setCenter(Vec)
-  // */
-  // public void setCenter(PVector center) {
-  // setCenter(toVec(center));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setAnchor(Vec)
-  // */
-  // public void setAnchor(PVector anchor) {
-  // setAnchor(toVec(anchor));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setBoundingBox(Vec, Vec)
-  // */
-  // public void setBoundingBox(PVector min, PVector max) {
-  // setBoundingBox(toVec(min), toVec(max));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setBoundingRect(Vec, Vec)
-  // */
-  // public void setBoundingRect(PVector min, PVector max) {
-  // setBoundingRect(toVec(min), toVec(max));
-  // }
-  //
-  // // PMatrix <-> toMat
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #applyModelView(PMatrix2D)
-  // */
-  // public void applyModelView(PMatrix2D source) {
-  // applyModelView(toMat(source));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #applyModelView(PMatrix3D)
-  // */
-  // public void applyModelView(PMatrix3D source) {
-  // applyModelView(toMat(source));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #applyProjection(PMatrix3D)
-  // */
-  // public void applyProjection(PMatrix3D source) {
-  // applyProjection(toMat(source));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setModelView(PMatrix2D)
-  // */
-  // public void setModelView(PMatrix2D source) {
-  // setModelView(toMat(source));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setModelView(PMatrix3D)
-  // */
-  // public void setModelView(PMatrix3D source) {
-  // setModelView(toMat(source));
-  // }
-  //
-  // /**
-  // * Processing version of the abstract-scene method with the same name.
-  // *
-  // * @see #setProjection(PMatrix3D)
-  // */
-  // public void setProjection(PMatrix3D source) {
-  // setProjection(toMat(source));
-  // }
-  //
-  // // trickier:
-  //
-  // /**
-  // * Same as {@link #modelView()} but returning a PMatrix.
-  // */
-  // public PMatrix getModelView() {
-  // return is2D() ? toPMatrix2D(modelView()) : toPMatrix(modelView());
-  // }
-  //
-  // /**
-  // * Same as {@link #projection()} but returning a PMatrix.
-  // */
-  // public PMatrix3D getProjection() {
-  // return toPMatrix(projection());
-  // }
-  //
-  // // Quat stuff, even trickier:
-  //
-  // public static final PVector multiply(Quat q1, PVector v) {
-  // return toPVector(Quat.multiply(q1, toVec(v)));
-  // }
-  //
-  // public static Quat quat(PVector axis, float angle) {
-  // return new Quat(toVec(axis), angle);
-  // }
-  //
-  // public static Quat quat(PVector from, PVector to) {
-  // return new Quat(toVec(from), toVec(to));
-  // }
-  //
-  // public static Quat quat(PVector X, PVector Y, PVector Z) {
-  // return new Quat(toVec(X), toVec(Y), toVec(Z));
-  // }
-  //
-  // public static Quat quat(PMatrix3D matrix) {
-  // return new Quat(toMat(matrix));
-  // }
 }
