@@ -126,6 +126,8 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   public void drawEye(PGraphics pg) {
+    // TODO next beta
+    //scene().drawEye(this, pg, true);
     if (isEyeFrame()) {
       // a bit of a hack, but the eye frame scaling should be canceled out
       pg.scale(1 / magnitude());
@@ -1214,7 +1216,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setFrontShape(PShape ps) {
     if (hasFrontShape()) {
-      System.out.println("Warning: overwritting previous " + (shp1 != null ? "pShape" : "graphics handler"));
+      System.out.println("Warning: overwritting front-shape by setFrontShape(PShape ps)");
       unsetFrontShape();
     }
     shp1 = ps;
@@ -1234,7 +1236,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setPickingShape(PShape ps) {
     if (hasPickingShape()) {
-      System.out.println("Warning: overwritting previous " + (shp2 != null ? "pknpShape" : "pkn graphics handler"));
+      System.out.println("Warning: overwritting picking-shape by setPickingShape(PShape ps)");
       unsetPickingShape();
     }
     shp2 = ps;
@@ -1414,7 +1416,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setFrontShape(String methodName) {
     if (hasFrontShape()) {
-      System.out.println("Warning: overwritting " + shp1 != null ? "pshape" : "graphics handler");
+      System.out.println("Warning: overwritting front-shape by setFrontShape(String methodName)");
       unsetFrontShape();
     }
     Object obj = null;
@@ -1467,7 +1469,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setFrontShape(Object obj, String methodName) {
     if (hasFrontShape()) {
-      System.out.println("Warning: overwritting " + shp1 != null ? "pshape" : "graphics handler");
+      System.out.println("Warning: overwritting front-shape by setFrontShape(Object obj, String methodName)");
       unsetFrontShape();
     }
     try {
@@ -1508,7 +1510,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setPickingShape(String methodName) {
     if (hasPickingShape()) {
-      System.out.println("Warning: overwritting " + shp2 != null ? "pshape" : "graphics handler");
+      System.out.println("Warning: overwritting picking-shape by setPickingShape(String methodName)");
       unsetPickingShape();
     }
     Object obj = null;
@@ -1564,7 +1566,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void setPickingShape(Object obj, String methodName) {
     if (hasPickingShape()) {
-      System.out.println("Warning: overwritting " + shp2 != null ? "pshape" : "graphics handler");
+      System.out.println("Warning: overwritting picking-shape by setPickingShape(Object obj, String methodName)");
       unsetPickingShape();
     }
     try {
