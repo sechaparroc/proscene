@@ -705,9 +705,8 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #mouseAgent()
    */
   public KeyAgent keyAgent() {
-    if (platform() == Platform.PROCESSING_ANDROID) {
+    if (platform() == Platform.PROCESSING_ANDROID)
       throw new RuntimeException("Proscene keyAgent() is not available in Android mode. Use droidKeyAgent() instead");
-    }
     return (KeyAgent) defKeyboardAgent;
   }
 
@@ -720,10 +719,9 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableMouseAgent()
    */
   public void enableKeyAgent() {
-    if (platform() == Platform.PROCESSING_ANDROID) {
+    if (platform() == Platform.PROCESSING_ANDROID)
       throw new RuntimeException(
           "Proscene enableKeyAgent() is not available in Android mode. Use enableDroidKeyAgent() instead");
-    }
     if (!isKeyboardAgentEnabled()) {
       inputHandler().registerAgent(keyboardAgent());
       parent.registerMethod("keyEvent", keyboardAgent());
@@ -739,10 +737,9 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableMouseAgent()
    */
   public boolean disableKeyAgent() {
-    if (platform() == Platform.PROCESSING_ANDROID) {
+    if (platform() == Platform.PROCESSING_ANDROID)
       throw new RuntimeException(
           "Proscene disableKeyAgent() is not available in Android mode. Use disableDroidKeyAgent() instead");
-    }
     if (inputHandler().isAgentRegistered(keyboardAgent())) {
       parent.unregisterMethod("keyEvent", keyboardAgent());
       return inputHandler().unregisterAgent(keyboardAgent());
@@ -760,10 +757,9 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableKeyAgent()
    */
   public boolean isKeyAgentEnabled() {
-    if (platform() == Platform.PROCESSING_ANDROID) {
+    if (platform() == Platform.PROCESSING_ANDROID)
       throw new RuntimeException(
           "Proscene isKeyAgentEnabled() is not available in Android mode. Use isDroidKeyAgentEnabled() instead");
-    }
     return isKeyboardAgentEnabled();
   }
 
@@ -827,10 +823,9 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableDroidKeyAgent()
    */
   public boolean isDroidTouchAgentEnabled() {
-    if (platform() == Platform.PROCESSING_DESKTOP) {
+    if (platform() == Platform.PROCESSING_DESKTOP)
       throw new RuntimeException(
           "Proscene isDroidTouchAgentEnabled() is not available in Android mode. Use isDroidKeyAgentEnabled() instead");
-    }
     return isMotionAgentEnabled();
   }
 

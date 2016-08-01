@@ -254,8 +254,10 @@ public class InteractiveFrame extends GenericFrame {
 
   protected void init() {
     id = ++Scene.frameCount;
+    //unlikely but theoretically possible
+    if(id==16777216)
+      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     shift = new Vec();
-
     setProfile(new Profile(this));
     // TODO android
     if (Scene.platform() == Platform.PROCESSING_DESKTOP)
