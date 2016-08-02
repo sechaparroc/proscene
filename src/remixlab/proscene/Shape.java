@@ -118,6 +118,10 @@ class Shape {
   }
 
   public boolean set(Object object, String methodName) {
+    return set(object, methodName, false);
+  }
+
+  public boolean set(Object object, String methodName, boolean print) {
     boolean success = false;
     if (isImmediate())
       if (obj == object && mth.getName().equals(methodName)) {
@@ -134,27 +138,36 @@ class Shape {
       success = true;
     } catch (Exception e1) {
       try {
-        if (object != iFrame) {
-          obj = object;
-          mth = object.getClass().getMethod(methodName, new Class<?>[] { InteractiveFrame.class, PGraphics.class });
-          success = true;
-        } else {
-          PApplet.println("Something went wrong when registering your " + methodName + " method");
-          e1.printStackTrace();
+        if (iFrame.isEyeFrame()) {
+          PApplet.println("Warning: no eyeFrame shape set. Either the " + methodName
+              + " wasn't found, or perhaps it takes an extra InteractiveFrame param?");
+          return false;
         }
+        if (object == iFrame) {
+          PApplet.println("Warning: no iFrame shape set. Use setShape(methodName) instead");
+          return false;
+        }
+        obj = object;
+        mth = object.getClass().getMethod(methodName, new Class<?>[] { InteractiveFrame.class, PGraphics.class });
+        success = true;
       } catch (Exception e2) {
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        e1.printStackTrace();
-        e2.printStackTrace();
+        if (print) {
+          PApplet.println("Warning: no iFrame shape set with " + methodName + " method");
+          e1.printStackTrace();
+          e2.printStackTrace();
+        }
       }
     }
     return success;
   }
 
   public boolean set(String methodName) {
-    if(!set(iFrame, methodName))
-      return set(iFrame.scene(), methodName);
-    return true;
+    boolean result = set(iFrame, methodName, false);
+    if (!result)
+      result = set(iFrame.scene(), methodName, false);
+    if (!result)
+      PApplet.println("Warning: no iFrame shape set. No " + methodName + " method found in the iFrame or in the scene");
+    return result;
   }
 
   public void reset() {
