@@ -810,14 +810,9 @@ public class InteractiveFrame extends GenericFrame {
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
-   * @see #graphicsShift()
-   * @see #isEyeFrame()
+   * @see #shiftFrontShape(Vec)
+   * @see #shiftPickingShape(Vec)
    */
-  /*
-   * public void shiftGraphics(Vec shift) { if (isEyeFrame())
-   * AbstractScene.showOnlyEyeWarning("shiftGraphics", true); this.shift = shift; }
-   */
-
   public void shiftShape(Vec shift) {
     shiftFrontShape(shift);
     shiftPickingShape(shift);
@@ -830,19 +825,6 @@ public class InteractiveFrame extends GenericFrame {
   public void shiftPickingShape(Vec shift) {
     pShape.shift(shift);
   }
-
-  /**
-   * Returns the frame shape shift.
-   * <p>
-   * This method is only meaningful when frame is not eyeFrame.
-   * 
-   * @see #shiftGraphics(Vec)
-   * @see #isEyeFrame()
-   */
-  /*
-   * public Vec graphicsShift() { if (isEyeFrame())
-   * AbstractScene.showOnlyEyeWarning("graphicsShift", true); return shift; }
-   */
 
   @Override
   public void setPickingPrecision(PickingPrecision precision) {
@@ -996,7 +978,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(Object, String)
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
    * @see #resetShape()
    * @see #setFrontShape(PShape)
    * @see #setPickingShape(PShape)
@@ -1016,7 +997,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
    * @see #resetFrontShape()
    * @see #setPickingShape(PShape)
    * @see #resetShape()
@@ -1035,7 +1015,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(Object, String)
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
    * @see #resetPickingShape()
    * @see #resetShape()
    */
@@ -1050,7 +1029,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(PShape)
    * @see #setShape(Object, String)
    * @see #setShape(String)
-   * @see #hasShape()
    * @see #resetShape()
    * @see #setFrontShape(InteractiveFrame)
    * @see #setPickingShape(InteractiveFrame)
@@ -1069,7 +1047,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(String)
-   * @see #hasFrontShape()
    * @see #resetFrontShape()
    * @see #setPickingShape(InteractiveFrame)
    * @see #resetShape()
@@ -1088,7 +1065,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(Object, String)
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
    * @see #resetPickingShape()
    * @see #resetShape()
    */
@@ -1104,7 +1080,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(Object, String)
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
    * @see #resetFrontShape()
    * @see #resetPickingShape()
    * @see #resetShape()
@@ -1122,7 +1097,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
    * @see #resetPickingShape()
    * @see #resetShape()
    */
@@ -1139,7 +1113,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(Object, String)
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
    * @see #resetShape()
    */
   public void resetPickingShape() {
@@ -1153,7 +1126,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(PShape)
    * @see #setShape(Object, String)
    * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
    * @see #resetShape()
    * @see #setFrontShape(String)
    * @see #setPickingShape(String)
@@ -1170,7 +1142,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(PShape)
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
    * @see #resetShape()
    * @see #setFrontShape(Object, String)
    * @see #setPickingShape(Object, String)
@@ -1199,7 +1170,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
    * @see #resetFrontShape()
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
@@ -1234,7 +1204,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(PShape)
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
    * @see #resetPickingShape()
    * @see #resetShape()
    */
@@ -1267,7 +1236,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
    * @see #resetFrontShape()
    * @see #setPickingShape(String)
    * @see #resetShape()
@@ -1276,14 +1244,11 @@ public class InteractiveFrame extends GenericFrame {
     if (pShape.mth != null)
       if (pShape.mth.getName().equals(methodName)) {
         if (pShape.obj == this || pShape.obj == scene()) {
+          //this copies also the shift reference
+          //use set(Object object, Method method) if need to keep the shift reference
           fShape.set(pShape);
           return;
         }
-        // version without copying the shift reference:
-        /*
-         * if(pShape.obj == this) { fShape.set(this, pShape.mth); return; } if(pShape.obj
-         * == scene()) { fShape.set(scene(), pShape.mth); return; }
-         */
       }
     fShape.set(methodName);
   }
@@ -1305,7 +1270,6 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(PShape)
    * @see #setPickingShape(Object, String)
    * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
    * @see #resetPickingShape()
    * @see #resetShape()
    */
@@ -1313,17 +1277,12 @@ public class InteractiveFrame extends GenericFrame {
     if (fShape.mth != null)
       if (fShape.mth.getName().equals(methodName)) {
         if (fShape.obj == this || fShape.obj == scene()) {
+          //this copies also the shift reference
+          //use set(Object object, Method method) if need to keep the shift reference
           pShape.set(fShape);
           updatePickingBufferCache();
           return;
         }
-        // version without copying the shift reference:
-        /*
-         * if(fShape.obj == this) { //pShape.set(this, fShape.mth);
-         * 
-         * return; } if(fShape.obj == scene()) { pShape.set(scene(), fShape.mth); return;
-         * } //
-         */
       }
     if (pShape.set(methodName))
       updatePickingBufferCache();
@@ -1352,142 +1311,4 @@ public class InteractiveFrame extends GenericFrame {
   public PShape shape() {
     return fShape.shp;
   }
-
-  /**
-   * Same as {@code resetShapes(true)}.
-   * 
-   * @see #setShape(PShape)
-   * @see #setShape(Object, String)
-   * @see #setShape(String)
-   * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
-   * @see #unsetShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
-   * @see #setFrontShape(String)
-   * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
-   * @see #unsetFrontShape()
-   * @see #setPickingShape(PShape)
-   * @see #setPickingShape(Object, String)
-   * @see #setPickingShape(String)
-   * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
-   * @see #unsetPickingShape()
-   * @see #resetShape(boolean)
-   * @see #isShapeReset()
-   */
-  /*
-   * public void resetShape() { resetShape(true); }
-   */
-
-  /**
-   * Makes the front and the picking buffer match. If {@code preserFront} is true then the
-   * picking shape is modified to match the front shape. If {@code preserFront} is false
-   * then the front shape is modified to match the picking shape.
-   * 
-   * @see #setShape(PShape)
-   * @see #setShape(Object, String)
-   * @see #setShape(String)
-   * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
-   * @see #unsetShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
-   * @see #setFrontShape(String)
-   * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
-   * @see #unsetFrontShape()
-   * @see #setPickingShape(PShape)
-   * @see #setPickingShape(Object, String)
-   * @see #setPickingShape(String)
-   * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
-   * @see #unsetPickingShape()
-   * @see #resetShape()
-   * @see #isShapeReset()
-   */
-  /*
-   * public void resetShape(boolean preserveFront) { if (preserveFront) { if (this.shp1 !=
-   * null) setPickingShape(shp1); else if (this.mth1 != null) setPickingShape(obj1,
-   * mth1.getName()); } else { if (this.shp2 != null) setFrontShape(shp2); else if
-   * (this.mth2 != null) setFrontShape(obj2, mth2.getName()); } }
-   */
-
-  /**
-   * Returns {@code true} if the front and the picking shapes are the same, and
-   * {@code false} otherwise.
-   * 
-   * @see #setShape(PShape)
-   * @see #setShape(Object, String)
-   * @see #setShape(String)
-   * @see #setShape(InteractiveFrame)
-   * @see #hasShape()
-   * @see #unsetShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
-   * @see #setFrontShape(String)
-   * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
-   * @see #unsetFrontShape()
-   * @see #setPickingShape(PShape)
-   * @see #setPickingShape(Object, String)
-   * @see #setPickingShape(String)
-   * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
-   * @see #unsetPickingShape()
-   * @see #resetShape()
-   * @see #resetShape(boolean)
-   */
-  /*
-   * public boolean isShapeReset() { return shp2 == shp1 && mth2 == mth1; }
-   */
-
-  /**
-   * Same as {@code return hasFrontShape() || hasPickingShape()}.
-   * 
-   * @see #setShape(PShape)
-   * @see #setShape(Object, String)
-   * @see #setShape(String)
-   * @see #setShape(InteractiveFrame)
-   * @see #unsetShape()
-   * @see #hasFrontShape()
-   * @see #hasPickingShape()
-   * @see #resetShape()
-   */
-  /*
-   * public boolean hasShape() { return hasFrontShape() || hasPickingShape(); }
-   */
-
-  /**
-   * Returns {@code true} if there's a graphics representation set as the front shape.
-   * 
-   * @see #hasShape()
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
-   * @see #setFrontShape(String)
-   * @see #setFrontShape(InteractiveFrame)
-   * @see #unsetFrontShape()
-   * @see #hasPickingShape()
-   * @see #resetShape()
-   */
-  /*
-   * public boolean hasFrontShape() { return shp1 != null || mth1 != null; }
-   */
-
-  /**
-   * Returns {@code true} if there's a graphics representation set as the picking shape.
-   * 
-   * @see #hasShape()
-   * @see #hasFrontShape()
-   * @see #setPickingShape(PShape)
-   * @see #setPickingShape(Object, String)
-   * @see #setPickingShape(String)
-   * @see #setPickingShape(InteractiveFrame)
-   * @see #unsetPickingShape()
-   * @see #resetShape()
-   */
-  /*
-   * public boolean hasPickingShape() { return shp2 != null || mth2 != null; }
-   */
 }
