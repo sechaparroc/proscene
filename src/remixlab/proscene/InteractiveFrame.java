@@ -15,8 +15,6 @@
 
 package remixlab.proscene;
 
-import java.lang.reflect.Method;
-
 import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -64,8 +62,8 @@ import remixlab.util.*;
 public class InteractiveFrame extends GenericFrame {
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(profile).append(shift).append(highlight)
-        .append(id).toHashCode();
+    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(profile).append(fShape).append(pShape)
+        .append(highlight).toHashCode();
   }
 
   @Override
@@ -78,8 +76,8 @@ public class InteractiveFrame extends GenericFrame {
       return false;
 
     InteractiveFrame other = (InteractiveFrame) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile).append(shift, other.shift)
-        .append(highlight, other.highlight).append(id, other.id).isEquals();
+    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile)
+        .append(fShape, other.fShape).append(pShape, other.pShape).append(highlight, other.highlight).isEquals();
   }
 
   /**
@@ -91,15 +89,10 @@ public class InteractiveFrame extends GenericFrame {
 
   // profile
   protected Profile profile;
-
-  // shape
-  protected PShape shp1, shp2;
+  // id
   protected int id;
-  protected Vec shift;
-
-  // graphics handler
-  protected Object obj1, obj2;
-  protected Method mth1, mth2;
+  // shape
+  protected Shape fShape, pShape;
 
   HighlightingMode highlight = HighlightingMode.NONE;
 
@@ -253,11 +246,12 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init() {
-    id = ++Scene.frameCount;
-    //unlikely but theoretically possible
-    if(id==16777216)
+    id = ++scene().frameCount;
+    // unlikely but theoretically possible
+    if (id == 16777216)
       throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
-    shift = new Vec();
+    fShape = new Shape(this);
+    pShape = new Shape(this);
     setProfile(new Profile(this));
     // TODO android
     if (Scene.platform() == Platform.PROCESSING_DESKTOP)
@@ -268,9 +262,12 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init(GenericFrame referenceFrame) {
-    id = ++Scene.frameCount;
-    shift = new Vec();
-
+    id = ++scene().frameCount;
+    // unlikely but theoretically possible
+    if (id == 16777216)
+      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
+    fShape = new Shape(this);
+    pShape = new Shape(this);
     setProfile(new Profile(this));
     if (referenceFrame instanceof InteractiveFrame)
       this.profile.from(((InteractiveFrame) referenceFrame).profile);
@@ -289,14 +286,11 @@ public class InteractiveFrame extends GenericFrame {
     setProfile(new Profile(this));
     this.profile.from(otherFrame.profile);
     this.highlight = otherFrame.highlight;
-    this.shp1 = otherFrame.shp1;
-    this.shp2 = otherFrame.shp2;
     this.id = otherFrame.id;
-    this.shift = otherFrame.shift.get();
-    this.obj1 = otherFrame.obj1;
-    this.mth1 = otherFrame.mth1;
-    this.obj2 = otherFrame.obj2;
-    this.mth2 = otherFrame.mth2;
+    this.fShape = new Shape(this);
+    this.pShape = new Shape(this);
+    this.pShape.set(otherFrame.pShape);
+    this.fShape.set(otherFrame.fShape);
   }
 
   @Override
@@ -777,10 +771,11 @@ public class InteractiveFrame extends GenericFrame {
    * @see #highlighting()
    */
   public void setHighlightingMode(HighlightingMode mode) {
-    if (mode == HighlightingMode.FRONT_PICKING_SHAPES && (isShapeReset() || !hasFrontShape() || !hasPickingShape()))
+    if (mode == HighlightingMode.FRONT_PICKING_SHAPES
+        && (fShape.equals(pShape) || fShape.isReset() || pShape.isReset()))
       System.out.println(
           "Warning: FRONT_PICKING_SHAPES highlighting mode requires the frame to have different non-null front and picking shapes");
-    if (mode == HighlightingMode.PICKING_SHAPE && !hasPickingShape())
+    if (mode == HighlightingMode.PICKING_SHAPE && pShape.isReset())
       System.out
           .println("Warning: PICKING_SHAPE highlighting mode requires the frame to have a non-null picking shape");
     highlight = mode;
@@ -818,10 +813,22 @@ public class InteractiveFrame extends GenericFrame {
    * @see #graphicsShift()
    * @see #isEyeFrame()
    */
-  public void shiftGraphics(Vec shift) {
-    if (isEyeFrame())
-      AbstractScene.showOnlyEyeWarning("shiftGraphics", true);
-    this.shift = shift;
+  /*
+   * public void shiftGraphics(Vec shift) { if (isEyeFrame())
+   * AbstractScene.showOnlyEyeWarning("shiftGraphics", true); this.shift = shift; }
+   */
+
+  public void shiftShape(Vec shift) {
+    shiftFrontShape(shift);
+    shiftPickingShape(shift);
+  }
+
+  public void shiftFrontShape(Vec shift) {
+    fShape.shift(shift);
+  }
+
+  public void shiftPickingShape(Vec shift) {
+    pShape.shift(shift);
   }
 
   /**
@@ -832,11 +839,10 @@ public class InteractiveFrame extends GenericFrame {
    * @see #shiftGraphics(Vec)
    * @see #isEyeFrame()
    */
-  public Vec graphicsShift() {
-    if (isEyeFrame())
-      AbstractScene.showOnlyEyeWarning("graphicsShift", true);
-    return shift;
-  }
+  /*
+   * public Vec graphicsShift() { if (isEyeFrame())
+   * AbstractScene.showOnlyEyeWarning("graphicsShift", true); return shift; }
+   */
 
   @Override
   public void setPickingPrecision(PickingPrecision precision) {
@@ -871,7 +877,7 @@ public class InteractiveFrame extends GenericFrame {
       AbstractScene.showOnlyEyeWarning("checkIfGrabsInput", false);
       return false;
     }
-    if (pickingPrecision() != PickingPrecision.EXACT || !hasPickingShape() || !scene().isPickingBufferEnabled())
+    if (pickingPrecision() != PickingPrecision.EXACT || pShape.isReset() || !scene().isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
     int index = (int) y * gScene.width() + (int) x;
     if ((0 <= index) && (index < scene().pickingBuffer().pixels.length))
@@ -890,7 +896,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see remixlab.proscene.Scene#drawFrames(PGraphics)
    */
   public void draw() {
-    if (hasFrontShape())
+    if (!fShape.isReset())
       draw(scene().pg());
   }
 
@@ -905,7 +911,7 @@ public class InteractiveFrame extends GenericFrame {
    * the frame into the scene main {@link remixlab.proscene.Scene#pg()}.
    */
   public boolean draw(PGraphics pg) {
-    if (!hasFrontShape())
+    if (fShape.isReset())
       return false;
     pg.pushMatrix();
     Scene.applyWorldTransformation(pg, this);
@@ -926,7 +932,7 @@ public class InteractiveFrame extends GenericFrame {
       float g = (float) ((id >> 8) & 255) / 255.f;
       float b = (float) ((id >> 16) & 255) / 255.f;
       // funny, graphics handler procedures requires shaders to be re-applied
-      if (this.mth2 != null)
+      if (pShape.isImmediate())
         scene().applyPickingBufferShaders();
       scene().pickingBufferShaderTriangle.set("id", new PVector(r, g, b));
       scene().pickingBufferShaderLine.set("id", new PVector(r, g, b));
@@ -934,84 +940,33 @@ public class InteractiveFrame extends GenericFrame {
     }
     if (!isEyeFrame()) {
       pg.pushMatrix();
-      if (pg.is3D())
-        pg.translate(shift.x(), shift.y(), shift.z());
-      else
-        pg.translate(shift.x(), shift.y());
       if (pg != scene().pickingBuffer()) {
         switch (highlighting()) {
         case FRONT_PICKING_SHAPES:
-          frontShape(pg);
-          if (!isShapeReset() && grabsInput())
-            pickingShape(pg);
+          fShape.draw(pg);
+          if (!fShape.equals(pShape) && grabsInput())
+            pShape.draw(pg);
           break;
         case NONE:
-          frontShape(pg);
+          fShape.draw(pg);
           break;
         case PICKING_SHAPE:
           if (grabsInput())
-            pickingShape(pg);
+            pShape.draw(pg);
           else
-            frontShape(pg);
+            fShape.draw(pg);
           break;
         case FRONT_SHAPE:
           if (grabsInput())
             pg.scale(1.15f);
-          frontShape(pg);
+          fShape.draw(pg);
           break;
         }
       } else
-        pickingShape(pg);
+        pShape.draw(pg);
       pg.popMatrix();
     }
     pg.popStyle();
-  }
-
-  /**
-   * Internal use. Calls the shape drawing method. Called by {@link #draw(PGraphics)} and
-   * by the scene frame hierarchy traversal algorithm.
-   * <p>
-   * This method is only meaningful when frame is not eyeFrame.
-   * 
-   * @see #isEyeFrame()
-   */
-  protected void frontShape(PGraphics pg) {
-    _shape(pg, shp1, obj1, mth1);
-  }
-
-  protected void pickingShape(PGraphics pg) {
-    _shape(pg, shp2, obj2, mth2);
-  }
-
-  protected void _shape(PGraphics _p, PShape _s, Object _o, Method _m) {
-    if (this.isEyeFrame())
-      return;
-    if (_s != null) {
-      // don't do expensive matrix ops if invisible
-      if (_s.isVisible() && !this.isEyeFrame()) {
-        _p.flush();
-        if (_p.shapeMode == PApplet.CENTER) {
-          _p.pushMatrix();
-          translate(-_s.getWidth() / 2, -_s.getHeight() / 2);
-        }
-        _s.draw(_p); // needs to handle recorder too
-        if (_p.shapeMode == PApplet.CENTER) {
-          _p.popMatrix();
-        }
-      }
-    } else if (_m != null && _o != null) {
-      try {
-        _m.invoke(_o, new Object[] { _p });
-      } catch (Exception e1) {
-        try {
-          _m.invoke(_o, new Object[] { this, _p });
-        } catch (Exception e2) {
-          PApplet.println("Something went wrong when invoking your " + _m.getName() + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-        }
-      }
-    }
   }
 
   // shape
@@ -1023,12 +978,12 @@ public class InteractiveFrame extends GenericFrame {
    * update and {@code false} otherwise.
    */
   protected void updatePickingBufferCache() {
-    if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && hasPickingShape()) {
+    if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && !pShape.isReset()) {
       scene().unchachedBuffer = true;
       return;
     }
     for (InteractiveFrame frame : scene().frames())
-      if (!frame.isEyeFrame() && frame.pickingPrecision() == PickingPrecision.EXACT && frame.hasPickingShape()) {
+      if (!frame.isEyeFrame() && frame.pickingPrecision() == PickingPrecision.EXACT && !frame.pShape.isReset()) {
         scene().unchachedBuffer = true;
         return;
       }
@@ -1042,7 +997,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
    * @see #hasShape()
-   * @see #unsetShape()
+   * @see #resetShape()
    * @see #setFrontShape(PShape)
    * @see #setPickingShape(PShape)
    * @see #resetShape()
@@ -1062,16 +1017,12 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
    * @see #hasFrontShape()
-   * @see #unsetFrontShape()
+   * @see #resetFrontShape()
    * @see #setPickingShape(PShape)
    * @see #resetShape()
    */
   public void setFrontShape(PShape ps) {
-    if (hasFrontShape()) {
-      System.out.println("Warning: overwritting front-shape by setFrontShape(PShape ps)");
-      unsetFrontShape();
-    }
-    shp1 = ps;
+    fShape.set(ps);
   }
 
   /**
@@ -1085,15 +1036,11 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
-   * @see #unsetPickingShape()
+   * @see #resetPickingShape()
    * @see #resetShape()
    */
   public void setPickingShape(PShape ps) {
-    if (hasPickingShape()) {
-      System.out.println("Warning: overwritting picking-shape by setPickingShape(PShape ps)");
-      unsetPickingShape();
-    }
-    shp2 = ps;
+    pShape.set(ps);
     updatePickingBufferCache();
   }
 
@@ -1104,7 +1051,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(Object, String)
    * @see #setShape(String)
    * @see #hasShape()
-   * @see #unsetShape()
+   * @see #resetShape()
    * @see #setFrontShape(InteractiveFrame)
    * @see #setPickingShape(InteractiveFrame)
    * @see #resetShape()
@@ -1123,15 +1070,12 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(String)
    * @see #hasFrontShape()
-   * @see #unsetFrontShape()
+   * @see #resetFrontShape()
    * @see #setPickingShape(InteractiveFrame)
    * @see #resetShape()
    */
   public void setFrontShape(InteractiveFrame otherFrame) {
-    if (otherFrame.shp1 != null)
-      setFrontShape(otherFrame.shp1);
-    else if (otherFrame.mth1 != null)
-      setFrontShape(otherFrame.obj1, otherFrame.mth1.getName());
+    fShape.set(otherFrame.fShape);
   }
 
   /**
@@ -1145,14 +1089,12 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
-   * @see #unsetPickingShape()
+   * @see #resetPickingShape()
    * @see #resetShape()
    */
   public void setPickingShape(InteractiveFrame otherFrame) {
-    if (otherFrame.shp2 != null)
-      setPickingShape(otherFrame.shp2);
-    else if (otherFrame.mth2 != null)
-      setPickingShape(otherFrame.obj2, otherFrame.mth2.getName());
+    pShape.set(otherFrame.pShape);
+    updatePickingBufferCache();
   }
 
   /**
@@ -1163,41 +1105,36 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
    * @see #hasShape()
-   * @see #unsetFrontShape()
-   * @see #unsetPickingShape()
+   * @see #resetFrontShape()
+   * @see #resetPickingShape()
    * @see #resetShape()
    */
-  public void unsetShape() {
-    unsetFrontShape();
-    unsetPickingShape();
+  public void resetShape() {
+    resetFrontShape();
+    resetPickingShape();
   }
 
   /**
    * Unsets the front-shape which is wrapped by this interactive-frame.
    * 
-   * @see #unsetShape()
+   * @see #resetShape()
    * @see #setFrontShape(PShape)
    * @see #setFrontShape(Object, String)
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
    * @see #hasFrontShape()
-   * @see #unsetPickingShape()
+   * @see #resetPickingShape()
    * @see #resetShape()
    */
-  public void unsetFrontShape() {
-    if (shp1 != null)
-      shp1 = null;
-    else if (mth1 != null) {
-      mth1 = null;
-      obj1 = null;
-    }
+  public void resetFrontShape() {
+    fShape.reset();
   }
 
   /**
    * Unsets the picking-shape which is wrapped by this interactive-frame.
    * 
-   * @see #unsetShape()
-   * @see #unsetFrontShape()
+   * @see #resetShape()
+   * @see #resetFrontShape()
    * @see #setPickingShape(PShape)
    * @see #setPickingShape(Object, String)
    * @see #setPickingShape(String)
@@ -1205,13 +1142,8 @@ public class InteractiveFrame extends GenericFrame {
    * @see #hasPickingShape()
    * @see #resetShape()
    */
-  public void unsetPickingShape() {
-    if (shp2 != null)
-      shp2 = null;
-    else if (mth2 != null) {
-      mth2 = null;
-      obj2 = null;
-    }
+  public void resetPickingShape() {
+    pShape.reset();
     updatePickingBufferCache();
   }
 
@@ -1222,7 +1154,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(Object, String)
    * @see #setShape(InteractiveFrame)
    * @see #hasShape()
-   * @see #unsetShape()
+   * @see #resetShape()
    * @see #setFrontShape(String)
    * @see #setPickingShape(String)
    * @see #resetShape()
@@ -1239,7 +1171,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setShape(String)
    * @see #setShape(InteractiveFrame)
    * @see #hasShape()
-   * @see #unsetShape()
+   * @see #resetShape()
    * @see #setFrontShape(Object, String)
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
@@ -1247,61 +1179,6 @@ public class InteractiveFrame extends GenericFrame {
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
     setPickingShape(obj, methodName);
-  }
-
-  /**
-   * Immediate mode rendering of the front shape using a graphics handler.
-   * <p>
-   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
-   * handler is a method that returns void and takes either an InteractiveFrame parameter
-   * followed by a PGraphics parameter, or just a single PGraphics parameter. The object
-   * to handle the front-shape may be either {@code this} frame or the {@link #scene()}
-   * (this method looks for it in that order).
-   * 
-   * @param methodName
-   *          the front-shape graphics-procedure
-   * 
-   * @see #setShape(String)
-   * @see #setFrontShape(PShape)
-   * @see #setFrontShape(Object, String)
-   * @see #setFrontShape(InteractiveFrame)
-   * @see #hasFrontShape()
-   * @see #unsetFrontShape()
-   * @see #setPickingShape(String)
-   * @see #resetShape()
-   */
-  public void setFrontShape(String methodName) {
-    if (hasFrontShape()) {
-      System.out.println("Warning: overwritting front-shape by setFrontShape(String methodName)");
-      unsetFrontShape();
-    }
-    Object obj = null;
-    try {
-      obj = this;
-      mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      obj1 = obj;
-    } catch (Exception e1) {
-      try {
-        obj = scene();
-        mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-            : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-        obj1 = obj;
-      } catch (Exception e2) {
-        try {
-          obj = scene();
-          mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-          obj1 = obj;
-        } catch (Exception e3) {
-          obj = null;
-          PApplet.println("Something went wrong when registering your " + methodName + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-          e3.printStackTrace();
-        }
-      }
-    }
   }
 
   /**
@@ -1323,92 +1200,19 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(String)
    * @see #setFrontShape(InteractiveFrame)
    * @see #hasFrontShape()
-   * @see #unsetFrontShape()
+   * @see #resetFrontShape()
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
    */
   public void setFrontShape(Object obj, String methodName) {
-    if (hasFrontShape()) {
-      System.out.println("Warning: overwritting front-shape by setFrontShape(Object obj, String methodName)");
-      unsetFrontShape();
-    }
-    try {
-      obj1 = obj;
-      mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-    } catch (Exception e1) {
-      if (!isEyeFrame()) {
-        try {
-          obj1 = obj;
-          mth1 = (obj2 == obj && mth2.getName() == methodName) ? mth2
-              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-        } catch (Exception e2) {
-          PApplet.println("Something went wrong when registering your " + methodName + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-        }
-      } else {
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        e1.printStackTrace();
+    if (pShape.mth != null)
+      if (pShape.obj == obj && pShape.mth.getName().equals(methodName)) {
+        fShape.set(pShape);
+        // version without copying the shift reference:
+        // fShape.set(pShape.obj, pShape.mth);
+        return;
       }
-    }
-  }
-
-  /**
-   * Immediate mode rendering of the picking shape using a graphics handler.
-   * <p>
-   * Attempt to add a graphics handler as the frame picking-shape. The default
-   * picking-shape handler is a method that returns void and takes either an
-   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
-   * PGraphics parameter. The object to handle the picking-shape may be either
-   * {@code this} frame or the {@link #scene()} (this method looks for it in that order).
-   * 
-   * @param methodName
-   *          the shape graphics-procedure
-   * 
-   * @see #setShape(String)
-   * @see #setFrontShape(String)
-   * @see #setPickingShape(PShape)
-   * @see #setPickingShape(Object, String)
-   * @see #setPickingShape(InteractiveFrame)
-   * @see #hasPickingShape()
-   * @see #unsetPickingShape()
-   * @see #resetShape()
-   */
-  public void setPickingShape(String methodName) {
-    if (hasPickingShape()) {
-      System.out.println("Warning: overwritting picking-shape by setPickingShape(String methodName)");
-      unsetPickingShape();
-    }
-    Object obj = null;
-    try {
-      obj = this;
-      obj2 = obj;
-      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      updatePickingBufferCache();
-    } catch (Exception e1) {
-      try {
-        obj = scene();
-        obj2 = obj;
-        mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-            : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-        updatePickingBufferCache();
-      } catch (Exception e2) {
-        try {
-          obj = scene();
-          obj2 = obj;
-          mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-          updatePickingBufferCache();
-        } catch (Exception e3) {
-          PApplet.println("Something went wrong when registering your " + methodName + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-          e3.printStackTrace();
-        }
-      }
-    }
+    fShape.set(obj, methodName);
   }
 
   /**
@@ -1431,36 +1235,98 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(String)
    * @see #setPickingShape(InteractiveFrame)
    * @see #hasPickingShape()
-   * @see #unsetPickingShape()
+   * @see #resetPickingShape()
    * @see #resetShape()
    */
   public void setPickingShape(Object obj, String methodName) {
-    if (hasPickingShape()) {
-      System.out.println("Warning: overwritting picking-shape by setPickingShape(Object obj, String methodName)");
-      unsetPickingShape();
-    }
-    try {
-      obj2 = obj;
-      mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-          : obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      updatePickingBufferCache();
-    } catch (Exception e1) {
-      if (!isEyeFrame()) {
-        try {
-          obj2 = obj;
-          mth2 = (obj1 == obj && mth1.getName() == methodName) ? mth1
-              : obj.getClass().getMethod(methodName, new Class<?>[] { getClass(), PGraphics.class });
-          updatePickingBufferCache();
-        } catch (Exception e2) {
-          PApplet.println("Something went wrong when registering your " + methodName + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-        }
-      } else {
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        e1.printStackTrace();
+    if (fShape.mth != null)
+      if (fShape.obj == obj && fShape.mth.getName().equals(methodName)) {
+        pShape.set(fShape);
+        updatePickingBufferCache();
+        // version without copying the shift reference:
+        // pShape.set(fShape.obj, fShape.mth);
+        return;
       }
-    }
+    if (pShape.set(obj, methodName))
+      updatePickingBufferCache();
+  }
+
+  /**
+   * Immediate mode rendering of the front shape using a graphics handler.
+   * <p>
+   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
+   * handler is a method that returns void and takes either an InteractiveFrame parameter
+   * followed by a PGraphics parameter, or just a single PGraphics parameter. The object
+   * to handle the front-shape may be either {@code this} frame or the {@link #scene()}
+   * (this method looks for it in that order).
+   * 
+   * @param methodName
+   *          the front-shape graphics-procedure
+   * 
+   * @see #setShape(String)
+   * @see #setFrontShape(PShape)
+   * @see #setFrontShape(Object, String)
+   * @see #setFrontShape(InteractiveFrame)
+   * @see #hasFrontShape()
+   * @see #resetFrontShape()
+   * @see #setPickingShape(String)
+   * @see #resetShape()
+   */
+  public void setFrontShape(String methodName) {
+    if (pShape.mth != null)
+      if (pShape.mth.getName().equals(methodName)) {
+        if (pShape.obj == this || pShape.obj == scene()) {
+          fShape.set(pShape);
+          return;
+        }
+        // version without copying the shift reference:
+        /*
+         * if(pShape.obj == this) { fShape.set(this, pShape.mth); return; } if(pShape.obj
+         * == scene()) { fShape.set(scene(), pShape.mth); return; }
+         */
+      }
+    fShape.set(methodName);
+  }
+
+  /**
+   * Immediate mode rendering of the picking shape using a graphics handler.
+   * <p>
+   * Attempt to add a graphics handler as the frame picking-shape. The default
+   * picking-shape handler is a method that returns void and takes either an
+   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
+   * PGraphics parameter. The object to handle the picking-shape may be either
+   * {@code this} frame or the {@link #scene()} (this method looks for it in that order).
+   * 
+   * @param methodName
+   *          the shape graphics-procedure
+   * 
+   * @see #setShape(String)
+   * @see #setFrontShape(String)
+   * @see #setPickingShape(PShape)
+   * @see #setPickingShape(Object, String)
+   * @see #setPickingShape(InteractiveFrame)
+   * @see #hasPickingShape()
+   * @see #resetPickingShape()
+   * @see #resetShape()
+   */
+  public void setPickingShape(String methodName) {
+    if (fShape.mth != null)
+      if (fShape.mth.getName().equals(methodName)) {
+        if (fShape.obj == this || fShape.obj == scene()) {
+          pShape.set(fShape);
+          updatePickingBufferCache();
+          return;
+        }
+        // version without copying the shift reference:
+        /*
+         * if(fShape.obj == this) { //pShape.set(this, fShape.mth);
+         * 
+         * return; } if(fShape.obj == scene()) { pShape.set(scene(), fShape.mth); return;
+         * } //
+         */
+      }
+    if (pShape.set(methodName))
+      updatePickingBufferCache();
   }
 
   /**
@@ -1472,11 +1338,11 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * @deprecated use {@link #unsetShape()}.
+   * @deprecated use {@link #resetShape()}.
    */
   @Deprecated
   public void removeGraphicsHandler() {
-    unsetShape();
+    resetShape();
   }
 
   /**
@@ -1484,7 +1350,7 @@ public class InteractiveFrame extends GenericFrame {
    */
   @Deprecated
   public PShape shape() {
-    return shp1;
+    return fShape.shp;
   }
 
   /**
@@ -1511,9 +1377,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetShape(boolean)
    * @see #isShapeReset()
    */
-  public void resetShape() {
-    resetShape(true);
-  }
+  /*
+   * public void resetShape() { resetShape(true); }
+   */
 
   /**
    * Makes the front and the picking buffer match. If {@code preserFront} is true then the
@@ -1541,19 +1407,12 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetShape()
    * @see #isShapeReset()
    */
-  public void resetShape(boolean preserveFront) {
-    if (preserveFront) {
-      if (this.shp1 != null)
-        setPickingShape(shp1);
-      else if (this.mth1 != null)
-        setPickingShape(obj1, mth1.getName());
-    } else {
-      if (this.shp2 != null)
-        setFrontShape(shp2);
-      else if (this.mth2 != null)
-        setFrontShape(obj2, mth2.getName());
-    }
-  }
+  /*
+   * public void resetShape(boolean preserveFront) { if (preserveFront) { if (this.shp1 !=
+   * null) setPickingShape(shp1); else if (this.mth1 != null) setPickingShape(obj1,
+   * mth1.getName()); } else { if (this.shp2 != null) setFrontShape(shp2); else if
+   * (this.mth2 != null) setFrontShape(obj2, mth2.getName()); } }
+   */
 
   /**
    * Returns {@code true} if the front and the picking shapes are the same, and
@@ -1580,9 +1439,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetShape()
    * @see #resetShape(boolean)
    */
-  public boolean isShapeReset() {
-    return shp2 == shp1 && mth2 == mth1;
-  }
+  /*
+   * public boolean isShapeReset() { return shp2 == shp1 && mth2 == mth1; }
+   */
 
   /**
    * Same as {@code return hasFrontShape() || hasPickingShape()}.
@@ -1596,9 +1455,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #hasPickingShape()
    * @see #resetShape()
    */
-  public boolean hasShape() {
-    return hasFrontShape() || hasPickingShape();
-  }
+  /*
+   * public boolean hasShape() { return hasFrontShape() || hasPickingShape(); }
+   */
 
   /**
    * Returns {@code true} if there's a graphics representation set as the front shape.
@@ -1612,9 +1471,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #hasPickingShape()
    * @see #resetShape()
    */
-  public boolean hasFrontShape() {
-    return shp1 != null || mth1 != null;
-  }
+  /*
+   * public boolean hasFrontShape() { return shp1 != null || mth1 != null; }
+   */
 
   /**
    * Returns {@code true} if there's a graphics representation set as the picking shape.
@@ -1628,7 +1487,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #unsetPickingShape()
    * @see #resetShape()
    */
-  public boolean hasPickingShape() {
-    return shp2 != null || mth2 != null;
-  }
+  /*
+   * public boolean hasPickingShape() { return shp2 != null || mth2 != null; }
+   */
 }
