@@ -768,7 +768,7 @@ public class InteractiveFrame extends GenericFrame {
    * both, the front and the picking shapes are displayed.</li>
    * </ol>
    * 
-   * @see #highlighting()
+   * @see #highlightingMode()
    */
   public void setHighlightingMode(HighlightingMode mode) {
     if (mode == HighlightingMode.FRONT_PICKING_SHAPES
@@ -790,7 +790,7 @@ public class InteractiveFrame extends GenericFrame {
    * 
    * @see #setHighlightingMode(HighlightingMode)
    */
-  public HighlightingMode highlighting() {
+  public HighlightingMode highlightingMode() {
     return highlight;
   }
 
@@ -923,7 +923,7 @@ public class InteractiveFrame extends GenericFrame {
     if (!isEyeFrame()) {
       pg.pushMatrix();
       if (pg != scene().pickingBuffer()) {
-        switch (highlighting()) {
+        switch (highlightingMode()) {
         case FRONT_PICKING_SHAPES:
           fShape.draw(pg);
           if (!fShape.equals(pShape) && grabsInput())

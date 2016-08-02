@@ -99,7 +99,7 @@ class Shape {
 
   public void set(Shape other) {
     if (!isReset()) {
-      System.out.println("overwritting shape by set(Shape other");
+      System.out.println("overwritting shape by set(Shape other)");
       reset();
     }
     shp = other.shp;
@@ -152,11 +152,9 @@ class Shape {
   }
 
   public boolean set(String methodName) {
-    try {
-      return set(iFrame, methodName);
-    } catch (Exception e) {
+    if(!set(iFrame, methodName))
       return set(iFrame.scene(), methodName);
-    }
+    return true;
   }
 
   public void reset() {
