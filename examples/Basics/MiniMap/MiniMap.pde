@@ -56,6 +56,8 @@ void setup() {
   auxFrame3.fromFrame(frame3);
 
   iFrame = new InteractiveFrame(auxScene);
+  //To scale the iFrame on mouse hover uncomment:
+  //iFrame.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_SHAPE);
   iFrame.fromFrame(scene.eyeFrame());
   handleAgents();
 }
