@@ -144,7 +144,8 @@ class Shape {
           return false;
         }
         if (object == iFrame) {
-          PApplet.println("Warning: no iFrame shape set. Use setShape(methodName) instead");
+          if (print)
+            PApplet.println("Warning: no iFrame shape set. Use setShape(methodName) instead");
           return false;
         }
         obj = object;

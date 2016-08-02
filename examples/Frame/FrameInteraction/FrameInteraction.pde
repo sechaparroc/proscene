@@ -16,12 +16,12 @@
  * frame.setShape(myPShape) or frame.setShape(myProcedure) in setup() (frame2 and frame3,
  * resp.), and then calling scene.drawFrames() in draw() (frame2, frame3 and frame4).
  * Note that in frame4 different visual representations for the front and picking shapes
- * are set with setFrontShape() and setPickingShape() resp. Note that setShape() is
+ * are set with setFrontShape() and setPickingShape() resp. Also note that setShape() is
  * just a wrapper method that call both functions on the same shape paramenter.
  * 
  * Frame picking is achieved by tracking the pointer and checking whether or not it
  * lies within the frame 'selection area': a square around the frame's projected origin
- * (frame 1) or the projected frame visual representation (frame2, frame3 and frame4)
+ * (frame 1 and frame3) or the projected frame visual representation (frame2 and frame4)
  * which requires drawing the frame picking-shape into an scene.pickingBuffer().
  *
  * Press 'i' (which is a shortcut defined below) to switch the interaction between the
@@ -63,18 +63,18 @@ void setup() {
   frame2.setMotionBinding(RIGHT, "scale");
 
   //frame 3
-  //also possible:
-  frame3 = new InteractiveFrame(scene, this, "boxDrawing");
+  frame3 = new InteractiveFrame(scene, "drawAxes");
   //same as:
   //frame3 = new InteractiveFrame(scene);
-  //frame3.setShape(this, "boxDrawing");
+  //frame3.setShape("drawAxes");
+  //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
   frame3.translate(-100, -50);
   frame3.setMotionBinding(this, LEFT, "boxCustomMotion");
   frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
   
   //frame 4
   //frame4 will behave as frame3 since the latter is passed as its
-  //referenceFrame() in the constructor 
+  //referenceFrame() in its constructor 
   frame4 = new InteractiveFrame(scene, frame3);
   frame4.setFrontShape(this, "boxDrawing");
   frame4.setPickingShape(this, "boxPicking");
