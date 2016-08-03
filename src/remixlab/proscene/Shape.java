@@ -118,7 +118,7 @@ class Shape {
   }
 
   public boolean set(Object object, String methodName) {
-    return set(object, methodName, false);
+    return set(object, methodName, true);
   }
 
   public boolean set(Object object, String methodName, boolean print) {

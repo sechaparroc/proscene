@@ -131,7 +131,7 @@ void keyPressed() {
     if ( scene.avatar() == null && lastAvatar != null)
       scene.setAvatar(lastAvatar);
     else
-      lastAvatar = scene.unsetAvatar();
+      lastAvatar = scene.resetAvatar();
     break;
   }
 }
