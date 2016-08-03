@@ -17,6 +17,14 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
+/**
+ * An interactive-frame shape may wrap either a PShape (Processing retained mode) or a
+ * graphics procedure (Processing immediate mode), but not both.
+ * <p>
+ * This class allows to easily set an interactive-frame shape (see all the set() methods)
+ * and is provided to ease the {@link remixlab.proscene.InteractiveFrame} class
+ * implementation itself.
+ */
 class Shape {
   @Override
   public int hashCode() {
@@ -36,24 +44,30 @@ class Shape {
         .append(shift, other.shift).isEquals();
   }
 
-  protected InteractiveFrame iFrame;
-
-  protected PShape shp;
-  protected Object obj;
-  protected Method mth;
-  protected Vec shift;
+  InteractiveFrame iFrame;
+  PShape shp;
+  Object obj;
+  Method mth;
+  Vec shift;
 
   Shape(InteractiveFrame frame) {
     iFrame = frame;
   }
 
-  public void shift(Vec s) {
+  /**
+   * Defines the shape shift, i.e., the translation respect to the frame origin used to
+   * draw the shape.
+   */
+  void shift(Vec s) {
     if (iFrame.isEyeFrame())
       AbstractScene.showOnlyEyeWarning("shift", true);
     shift = s;
   }
 
-  protected void draw(PGraphics pg) {
+  /**
+   * Draw the shape into an arbitrary PGraphics.
+   */
+  void draw(PGraphics pg) {
     if (iFrame.isEyeFrame())
       return;
     if (shift != null)
@@ -89,7 +103,10 @@ class Shape {
     }
   }
 
-  public void set(PShape ps) {
+  /**
+   * Retained mode.
+   */
+  void set(PShape ps) {
     if (!isReset()) {
       System.out.println("overwritting shape by set(PShape ps)");
       reset();
@@ -97,7 +114,12 @@ class Shape {
     shp = ps;
   }
 
-  public void set(Shape other) {
+  /**
+   * Sets shape from other.
+   * <p>
+   * Note that all fields are copied by reference.
+   */
+  void set(Shape other) {
     if (!isReset()) {
       System.out.println("overwritting shape by set(Shape other)");
       reset();
@@ -108,53 +130,95 @@ class Shape {
     shift = other.shift;
   }
 
-  public void set(Object object, Method method) {
-    if (!isReset()) {
-      System.out.println("overwritting shape by set(Object object, Method method)");
-      reset();
-    }
+  /**
+   * Immediate mode.
+   * <p>
+   * Low-level routine. Looks for a {@code void methodName(PGraphics)} function prototype
+   * in {@code object}.
+   */
+  void singleParam(Object object, String methodName) throws NoSuchMethodException, SecurityException {
     obj = object;
-    mth = method;
+    mth = object.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
   }
 
-  public boolean set(Object object, String methodName) {
-    return set(object, methodName, true);
+  /**
+   * Immediate mode.
+   * <p>
+   * Low-level routine. Looks for a {@code void methodName(InteractiveFrame, PGraphics)}
+   * function prototype in {@code object}.
+   */
+  void doubleParam(Object object, String methodName) throws NoSuchMethodException, SecurityException {
+    obj = object;
+    mth = object.getClass().getMethod(methodName, new Class<?>[] { InteractiveFrame.class, PGraphics.class });
   }
 
-  public boolean set(Object object, String methodName, boolean print) {
+  /**
+   * Immediate mode.
+   * <p>
+   * High-level routine where the {@code object} declaring the graphics procedure is
+   * explicitly given.
+   * <p>
+   * Looks for a {@link #singleParam(Object, String)} function prototype first. If nothing
+   * is hit, then looks for a {@link #doubleParam(Object, String)} function prototype,
+   * only if the {@link remixlab.proscene.InteractiveFrame} instance this shape is
+   * attached to is not a {@link remixlab.proscene.InteractiveFrame#isEyeFrame()}.
+   */
+  boolean set(Object object, String methodName) {
+    if (!isSetable(object, methodName))
+      return false;
     boolean success = false;
-    if (isImmediate())
-      if (obj == object && mth.getName().equals(methodName)) {
-        System.out.println("Warning: shape already set. Nothing done in set(Object object, String methodName)");
-        return false;
-      }
-    if (!isReset()) {
-      System.out.println("Warning: overwritting shape by set(Object object, String methodName)");
-      reset();
-    }
+    if (object == iFrame || object == iFrame.scene())
+      PApplet.println("Warning: you can use the simpler setShape(methodName) method too");
     try {
-      obj = object;
-      mth = object.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+      singleParam(object, methodName);
       success = true;
-    } catch (Exception e1) {
+    } catch (Exception e) {
       try {
         if (iFrame.isEyeFrame()) {
           PApplet.println("Warning: no eyeFrame shape set. Either the " + methodName
               + " wasn't found, or perhaps it takes an extra InteractiveFrame param?");
           return false;
         }
-        if (object == iFrame) {
-          if (print)
-            PApplet.println("Warning: no iFrame shape set. Use setShape(methodName) instead");
-          return false;
-        }
-        obj = object;
-        mth = object.getClass().getMethod(methodName, new Class<?>[] { InteractiveFrame.class, PGraphics.class });
+        doubleParam(object, methodName);
         success = true;
-      } catch (Exception e2) {
-        if (print) {
-          PApplet.println("Warning: no iFrame shape set with " + methodName + " method");
-          e1.printStackTrace();
+      } catch (Exception e1) {
+        PApplet.println("Warning: no shape set with " + methodName + " method");
+        e1.printStackTrace();
+      }
+    }
+    return success;
+  }
+
+  /**
+   * Immediate mode.
+   * <p>
+   * High-level routine where the object declaring the graphics procedure is not given and
+   * hence need to be inferred. It could be either the
+   * {@link remixlab.proscene.InteractiveFrame} instance this shape is attached to or the
+   * {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame instance.
+   * <p>
+   * Looks for a {@link #singleParam(Object, String)} function prototype first. If nothing
+   * is hit, then looks for a {@link #doubleParam(Object, String)} function prototype.
+   */
+  boolean set(String methodName) {
+    boolean success = false;
+    try {
+      if (!isSetable(iFrame, methodName))
+        return false;
+      singleParam(iFrame, methodName);
+      success = true;
+    } catch (Exception e) {
+      if (!isSetable(iFrame.scene(), methodName))
+        return false;
+      try {
+        singleParam(iFrame.scene(), methodName);
+        success = true;
+      } catch (Exception e1) {
+        try {
+          doubleParam(iFrame.scene(), methodName);
+          success = true;
+        } catch (Exception e2) {
+          PApplet.println("Warning: no shape set with " + methodName + " method");
           e2.printStackTrace();
         }
       }
@@ -162,31 +226,47 @@ class Shape {
     return success;
   }
 
-  public boolean set(String methodName) {
-    boolean result = set(iFrame, methodName, false);
-    if (!result)
-      result = set(iFrame.scene(), methodName, false);
-    if (!result)
-      PApplet.println("Warning: no iFrame shape set. No " + methodName + " method found in the iFrame or in the scene");
-    return result;
-  }
-
-  public void reset() {
+  /**
+   * Sets all internal shape references to null.
+   */
+  void reset() {
     shp = null;
     mth = null;
     obj = null;
     shift = null;
   }
 
-  public boolean isReset() {
+  boolean isSetable(Object object, String methodName) {
+    if (isImmediate())
+      if (obj == object && mth.getName().equals(methodName)) {
+        System.out.println("Warning: mode shape already set. Nothing done)");
+        return false;
+      }
+    if (!isReset()) {
+      System.out.println("Warning: overwritting shape by set(Object object, String methodName)");
+      reset();
+    }
+    return true;
+  }
+
+  /**
+   * Checks if internal references are null.
+   */
+  boolean isReset() {
     return shp == null && mth == null;
   }
 
-  public boolean isRetained() {
+  /**
+   * Does the shape wraps a PShape Processing object?
+   */
+  boolean isRetained() {
     return shp != null;
   }
 
-  public boolean isImmediate() {
+  /**
+   * Does the shape wraps a graphics procedure Processing object?
+   */
+  boolean isImmediate() {
     return obj != null && mth != null;
   }
 }

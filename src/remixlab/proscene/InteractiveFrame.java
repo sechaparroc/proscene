@@ -94,7 +94,7 @@ public class InteractiveFrame extends GenericFrame {
   // shape
   protected Shape fShape, pShape;
 
-  HighlightingMode highlight = HighlightingMode.NONE;
+  HighlightingMode highlight;
 
   /**
    * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
@@ -164,7 +164,6 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -179,7 +178,6 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(ps);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -196,7 +194,6 @@ public class InteractiveFrame extends GenericFrame {
     setShape(methodName);
     if (methodName != "drawAxes" && methodName != "drawGrid" && methodName != "drawDottedGrid")
       setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -211,7 +208,6 @@ public class InteractiveFrame extends GenericFrame {
     init();
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -227,7 +223,6 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   /**
@@ -242,7 +237,6 @@ public class InteractiveFrame extends GenericFrame {
     init(referenceFrame);
     setShape(obj, methodName);
     setPickingPrecision(PickingPrecision.EXACT);
-    setHighlightingMode(HighlightingMode.FRONT_SHAPE);
   }
 
   protected void init() {
@@ -252,6 +246,7 @@ public class InteractiveFrame extends GenericFrame {
       throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     fShape = new Shape(this);
     pShape = new Shape(this);
+    highlight = HighlightingMode.FRONT_SHAPE;
     setProfile(new Profile(this));
     // TODO android
     if (Scene.platform() == Platform.PROCESSING_DESKTOP)
@@ -268,6 +263,7 @@ public class InteractiveFrame extends GenericFrame {
       throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     fShape = new Shape(this);
     pShape = new Shape(this);
+    highlight = HighlightingMode.FRONT_SHAPE;
     setProfile(new Profile(this));
     if (referenceFrame instanceof InteractiveFrame)
       this.profile.from(((InteractiveFrame) referenceFrame).profile);
@@ -768,9 +764,13 @@ public class InteractiveFrame extends GenericFrame {
    * both, the front and the picking shapes are displayed.</li>
    * </ol>
    * 
+   * Default is {@link remixlab.proscene.InteractiveFrame.HighlightingMode#FRONT_SHAPE}.
+   * 
    * @see #highlightingMode()
    */
   public void setHighlightingMode(HighlightingMode mode) {
+    if (isEyeFrame())
+      AbstractScene.showOnlyEyeWarning("setHighlightingMode", false);
     if (mode == HighlightingMode.FRONT_PICKING_SHAPES
         && (fShape.equals(pShape) || fShape.isReset() || pShape.isReset()))
       System.out.println(
@@ -779,10 +779,6 @@ public class InteractiveFrame extends GenericFrame {
       System.out
           .println("Warning: PICKING_SHAPE highlighting mode requires the frame to have a non-null picking shape");
     highlight = mode;
-    if (isEyeFrame() && mode != HighlightingMode.NONE) {
-      AbstractScene.showOnlyEyeWarning("setHighlightingMode", false);
-      return;
-    }
   }
 
   /**
@@ -1244,8 +1240,8 @@ public class InteractiveFrame extends GenericFrame {
     if (pShape.mth != null)
       if (pShape.mth.getName().equals(methodName)) {
         if (pShape.obj == this || pShape.obj == scene()) {
-          //this copies also the shift reference
-          //use set(Object object, Method method) if need to keep the shift reference
+          // this copies also the shift reference
+          // use set(Object object, Method method) if need to keep the shift reference
           fShape.set(pShape);
           return;
         }
@@ -1277,8 +1273,8 @@ public class InteractiveFrame extends GenericFrame {
     if (fShape.mth != null)
       if (fShape.mth.getName().equals(methodName)) {
         if (fShape.obj == this || fShape.obj == scene()) {
-          //this copies also the shift reference
-          //use set(Object object, Method method) if need to keep the shift reference
+          // this copies also the shift reference
+          // use set(Object object, Method method) if need to keep the shift reference
           pShape.set(fShape);
           updatePickingBufferCache();
           return;
