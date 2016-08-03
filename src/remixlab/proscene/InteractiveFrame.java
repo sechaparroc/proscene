@@ -59,11 +59,10 @@ import remixlab.util.*;
  * 
  * @see remixlab.dandelion.core.GenericFrame
  */
-public class InteractiveFrame extends GenericFrame {
+public class InteractiveFrame extends GenericFrame { 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(profile).append(fShape).append(pShape)
-        .append(highlight).toHashCode();
+    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(fShape).append(pShape).toHashCode();
   }
 
   @Override
@@ -76,8 +75,8 @@ public class InteractiveFrame extends GenericFrame {
       return false;
 
     InteractiveFrame other = (InteractiveFrame) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(profile, other.profile)
-        .append(fShape, other.fShape).append(pShape, other.pShape).append(highlight, other.highlight).isEquals();
+    return new EqualsBuilder().appendSuper(super.equals(obj)).append(fShape, other.fShape).append(pShape, other.pShape)
+        .isEquals();
   }
 
   /**
