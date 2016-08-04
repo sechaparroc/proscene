@@ -62,6 +62,7 @@ class Shape {
     if (iFrame.isEyeFrame())
       AbstractScene.showOnlyEyeWarning("shift", true);
     shift = s;
+    iFrame.modified();
   }
 
   /**
@@ -107,11 +108,14 @@ class Shape {
    * Retained mode.
    */
   void set(PShape ps) {
+    if (shp == ps)
+      return;
     if (!isReset()) {
       System.out.println("overwritting shape by set(PShape ps)");
       reset();
     }
     shp = ps;
+    iFrame.modified();
   }
 
   /**
@@ -120,6 +124,8 @@ class Shape {
    * Note that all fields are copied by reference.
    */
   void set(Shape other) {
+    if (equals(other))
+      return;
     if (!isReset()) {
       System.out.println("overwritting shape by set(Shape other)");
       reset();
@@ -128,6 +134,7 @@ class Shape {
     obj = other.obj;
     mth = other.mth;
     shift = other.shift;
+    iFrame.modified();
   }
 
   /**
@@ -186,6 +193,8 @@ class Shape {
         e1.printStackTrace();
       }
     }
+    if (success)
+      iFrame.modified();
     return success;
   }
 
@@ -223,6 +232,8 @@ class Shape {
         }
       }
     }
+    if (success)
+      iFrame.modified();
     return success;
   }
 
@@ -234,14 +245,13 @@ class Shape {
     mth = null;
     obj = null;
     shift = null;
+    iFrame.modified();
   }
 
   boolean isSetable(Object object, String methodName) {
     if (isImmediate())
-      if (obj == object && mth.getName().equals(methodName)) {
-        System.out.println("Warning: mode shape already set. Nothing done)");
+      if (obj == object && mth.getName().equals(methodName))
         return false;
-      }
     if (!isReset()) {
       System.out.println("Warning: overwritting shape by set(Object object, String methodName)");
       reset();

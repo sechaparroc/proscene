@@ -22,6 +22,7 @@ import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.*;
+import remixlab.util.*;
 
 /**
  * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
@@ -59,6 +60,25 @@ import remixlab.dandelion.geom.*;
  * @see remixlab.dandelion.core.GenericFrame
  */
 public class InteractiveFrame extends GenericFrame {
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(fShape).append(pShape).toHashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (obj == this)
+      return true;
+    if (obj.getClass() != getClass())
+      return false;
+
+    InteractiveFrame other = (InteractiveFrame) obj;
+    return new EqualsBuilder().appendSuper(super.equals(obj)).append(fShape, other.fShape).append(pShape, other.pShape)
+        .isEquals();
+  }
+
   /**
    * Enumerates the highlighting modes.
    */
@@ -699,21 +719,61 @@ public class InteractiveFrame extends GenericFrame {
     return result;
   }
 
-  // TODO fromFrame. Future work should also include the profile and the shape which
-  // indirectly implies that they also should implement the equals and hashCode methods.
-  // Note that to be more consistent this relates to the GenericFrame.sync invariant.
+  /**
+   * Same as {@code sync(this, otherFrame)}.
+   * 
+   * @see #sync(GenericFrame, GenericFrame)
+   */
+  public void sync(InteractiveFrame otherFrame) {
+    sync(this, otherFrame);
+  }
 
   /**
-   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)},
-   * {@link #setBindings(InteractiveFrame)} (only if this frame and the other are both
-   * attached or detached from an eye) and {@link #setShape(InteractiveFrame)} on the
-   * other frame instance.
+   * If {@code f1} has been more recently updated than {@code f2}, calls
+   * {@code f2.fromFrame(f1)}, otherwise calls {@code f1.fromFrame(f2)}. Does nothing if
+   * both objects were updated at the same frame.
+   * <p>
+   * This method syncs only the global geometry attributes ({@link #position()},
+   * {@link #orientation()} and {@link #magnitude()}) among the two frames. The
+   * {@link #referenceFrame()} and {@link #constraint()} (if any) of each frame are kept
+   * separately.
+   * 
+   * @see #fromFrame(Frame)
+   */
+  public static void sync(InteractiveFrame f1, InteractiveFrame f2) {
+    if (f1 == null || f2 == null)
+      return;
+    if (f1.lastUpdate() == f2.lastUpdate())
+      return;
+    InteractiveFrame source = (f1.lastUpdate() > f2.lastUpdate()) ? f1 : f2;
+    InteractiveFrame target = (f1.lastUpdate() > f2.lastUpdate()) ? f2 : f1;
+    target.fromFrame(source);
+  }
+
+  /**
+   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)}, and
+   * {@link #setShape(InteractiveFrame)} on the other frame instance.
    */
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
-    if ((isEyeFrame() && otherFrame.isEyeFrame()) || (!isEyeFrame() && !otherFrame.isEyeFrame()))
-      setBindings(otherFrame);
+    // TODO Should also decide whether or not to include the profile which
+    // indirectly implies that it also should implement the equals and hashCode methods.
+    // if ((isEyeFrame() && otherFrame.isEyeFrame()) || (!isEyeFrame() &&
+    // !otherFrame.isEyeFrame()))
+    // setBindings(otherFrame);
     setShape(otherFrame);
+  }
+
+  /**
+   * Internal use. Automatically call by all methods which change the Frame state.
+   * <p>
+   * Overridden just to make it visible to the Shape class.
+   * <p>
+   * It can be discarded if the Shape class is made inner class of the InteractiveFrame.
+   */
+  @Override
+  protected void modified() {
+    super.modified();
   }
 
   /**
