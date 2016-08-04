@@ -699,12 +699,20 @@ public class InteractiveFrame extends GenericFrame {
     return result;
   }
 
+  // TODO fromFrame. Future work should also include the profile and the shape which
+  // indirectly implies that they also should implement the equals and hashCode methods.
+  // Note that to be more consistent this relates to the GenericFrame.sync invariant.
+
   /**
-   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)} and
-   * {@link #setShape(InteractiveFrame)} on the other frame instance.
+   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)},
+   * {@link #setBindings(InteractiveFrame)} (only if this frame and the other are both
+   * attached or detached from an eye) and {@link #setShape(InteractiveFrame)} on the
+   * other frame instance.
    */
   public void fromFrame(InteractiveFrame otherFrame) {
     super.fromFrame(otherFrame);
+    if ((isEyeFrame() && otherFrame.isEyeFrame()) || (!isEyeFrame() && !otherFrame.isEyeFrame()))
+      setBindings(otherFrame);
     setShape(otherFrame);
   }
 

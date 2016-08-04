@@ -1409,6 +1409,9 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().loadPixels();
   }
 
+  // TODO: Future work should include the eye and scene profiles.
+  // Probably related with iFrame.fromFrame
+
   /**
    * Same as {@link #saveConfig()}.
    * <p>
