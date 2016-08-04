@@ -22,7 +22,6 @@ import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.*;
-import remixlab.util.*;
 
 /**
  * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
@@ -59,26 +58,7 @@ import remixlab.util.*;
  * 
  * @see remixlab.dandelion.core.GenericFrame
  */
-public class InteractiveFrame extends GenericFrame { 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(fShape).append(pShape).toHashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
-    if (obj == this)
-      return true;
-    if (obj.getClass() != getClass())
-      return false;
-
-    InteractiveFrame other = (InteractiveFrame) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(fShape, other.fShape).append(pShape, other.pShape)
-        .isEquals();
-  }
-
+public class InteractiveFrame extends GenericFrame {
   /**
    * Enumerates the highlighting modes.
    */
