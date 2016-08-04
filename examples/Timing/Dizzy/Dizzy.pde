@@ -51,9 +51,6 @@ public void setup() {
   // key frames can be added at runtime with keys [j..n]
   scene.loadConfig();
 
-  // drawing of camera paths are toggled with key 'r'.
-  //scene.setViewPointPathsAreDrawn(true);
-
   buttons = new ArrayList(6);
   for (int i = 0; i < 5; ++i)
     buttons.add(null);
