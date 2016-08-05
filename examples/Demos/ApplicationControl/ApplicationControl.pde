@@ -12,7 +12,7 @@
  * Click and drag the ellipse or the rect with the left mouse to control the torus and box
  * color and shape.
  * Press ' ' (the spacebar) to toggle the application canvas aid.
- * Press 'oH' to display the key shortcuts and mouse bindings in the console.
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
 import remixlab.bias.event.*;

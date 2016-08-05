@@ -76,6 +76,8 @@ class Shape {
         pg.translate(shift.x(), shift.y(), shift.z());
       else
         pg.translate(shift.x(), shift.y());
+    // The shape part took verbatim from Processing, see:
+    // https://github.com/processing/processing/blob/master/core/src/processing/core/PGraphics.java
     if (shp != null) {
       // don't do expensive matrix ops if invisible
       if (shp.isVisible() && !iFrame.isEyeFrame()) {

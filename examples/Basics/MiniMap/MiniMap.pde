@@ -6,7 +6,7 @@
  * a mini-map of the main Scene where all objetcs are interactive. It also
  * shows Frame syncing among views. 
  *
- * Press 'oH' to display the key shortcuts and mouse bindings in the console.
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
  * Press 'x' and 'y' to change the mini-map eye representation.
  */
 
@@ -56,8 +56,8 @@ void setup() {
   auxFrame3.fromFrame(frame3);
 
   iFrame = new InteractiveFrame(auxScene);
-  //To scale the iFrame on mouse hover uncomment:
-  //iFrame.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_SHAPE);
+  //to not scale the iFrame on mouse hover uncomment:
+  //iFrame.setHighlightingMode(InteractiveFrame.HighlightingMode.NONE);
   iFrame.fromFrame(scene.eyeFrame());
   handleAgents();
 }
