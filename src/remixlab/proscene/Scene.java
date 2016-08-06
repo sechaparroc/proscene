@@ -2371,11 +2371,14 @@ public class Scene extends AbstractScene implements PConstants {
     drawEye(pg, eye, false);
   }
   
-  public void drawProjectionLine(Eye eye, Vec src) {
-    drawProjectionLine(pg(), eye, src);
+  public void drawProjector(Eye eye, Vec src) {
+    pg().pushMatrix();
+    applyTransformation(eye.frame());
+    drawProjector(pg(), eye, eye.frame().coordinatesOf(src));
+    pg().popMatrix();
   }
   
-  public void drawProjectionLine(PGraphics pg, Eye eye, Vec src) {
+  public void drawProjector(PGraphics pg, Eye eye, Vec src) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawProjectionLine done, eye.scene()).pg() and pg are the same!");
@@ -2389,7 +2392,8 @@ public class Scene extends AbstractScene implements PConstants {
       pg.endShape();
     }
     else {
-      Vec v = eye.frame().inverseCoordinatesOf(((Camera)eye).type() ==  Camera.Type.ORTHOGRAPHIC ? Vec.multiply(new Vec(src.x(), src.y(), -((Camera) eye).zNear()), 1 / eye.frame().magnitude()) : new Vec());
+      float zNear = -((Camera)eye).zNear() * 1 / eye.frame().magnitude();
+      Vec v = ((Camera)eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(src.x(), src.y(), zNear) : new Vec();
       pg.beginShape(PApplet.LINES);
       Scene.vertex(pg, v.x(), v.y(), v.z());
       Scene.vertex(pg, src.x(), src.y(), src.z());

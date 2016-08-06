@@ -80,8 +80,10 @@ void draw() {
     auxScene.beginDraw();
     auxCanvas.background(29, 153, 243);
     // all frames but iFrame defined their own color 'frameDrawing'
-    // and thus this color only will affects the iFrame
-    auxScene.pg().fill(255, 0, 255);
+    // and in 3D we use a textured image for the zNear plane by default
+    // Thus this color will only affect the iFrame in 2D
+    if(auxScene.is2D())
+      auxScene.pg().fill(255, 0, 255, 125);
     auxScene.drawFrames();
     auxScene.endDraw();
     auxCanvas.endDraw();
