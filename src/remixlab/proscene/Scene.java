@@ -2404,6 +2404,7 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
+  /*
   public void drawEye(PGraphics pg, Eye eye, boolean texture) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
@@ -2551,6 +2552,148 @@ public class Scene extends AbstractScene implements PConstants {
     }
     pg.endShape();
 
+    pg.popStyle();
+  }
+  */
+  
+  public void drawEye(PGraphics pg, Eye eye, boolean texture) {
+    if (eye.scene() instanceof Scene)
+      if (((Scene) eye.scene()).pg() == pg) {
+        System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
+        return;
+      }
+    pg.pushStyle();
+    // boolean drawFarPlane = true;
+    // int farIndex = drawFarPlane ? 1 : 0;
+    int farIndex = is3D() ? 1 : 0;
+    boolean ortho = false;
+    if (is3D())
+      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
+        ortho = true;
+
+    // 0 is the upper left coordinates of the near corner, 1 for the far one
+    Vec[] points = new Vec[2];
+    points[0] = new Vec();
+    points[1] = new Vec();
+
+    if (is2D() || ortho) {
+      float[] wh = eye.getBoundaryWidthHeight();
+      points[0].setX(wh[0]);
+      points[1].setX(wh[0]);
+      points[0].setY(wh[1]);
+      points[1].setY(wh[1]);
+    }
+
+    if (is3D()) {
+      points[0].setZ(((Camera) eye).zNear());
+      points[1].setZ(((Camera) eye).zFar());
+
+      if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
+        points[0].setY(points[0].z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
+        points[0].setX(points[0].y() * ((Camera) eye).aspectRatio());
+        float ratio = points[1].z() / points[0].z();
+        points[1].setY(ratio * points[0].y());
+        points[1].setX(ratio * points[0].x());
+      }
+
+      // Frustum lines
+      switch (((Camera) eye).type()) {
+      case PERSPECTIVE: {
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, -points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, -points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
+        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
+        Scene.vertex(pg, points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
+        pg.endShape();
+        break;
+      }
+      case ORTHOGRAPHIC: {
+        // if (drawFarPlane) {
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
+        Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
+        Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
+        Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
+        Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
+        Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
+        Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
+        Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
+        pg.endShape();
+        // }
+        break;
+      }
+      }
+    }
+    
+    // Planes
+    // far plane
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, -1.0f);
+    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
+    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
+    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
+    pg.endShape();
+    // near plane
+    pg.noStroke();
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, 1.0f);
+    if(pg instanceof PGraphicsOpenGL && texture) {
+      pg.textureMode(NORMAL);
+      pg.tint(255, 126);  // Apply transparency without changing color
+      pg.texture(((Scene)eye.scene()).pg());
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
+    }
+    else {
+      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
+      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
+      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
+    }
+    pg.endShape();
+
+    // Up arrow
+    float arrowHeight = 1.5f * points[0].y();
+    float baseHeight = 1.2f * points[0].y();
+    float arrowHalfWidth = 0.5f * points[0].x();
+    float baseHalfWidth = 0.3f * points[0].x();
+
+    // pg3d().noStroke();
+    // Arrow base
+    pg.beginShape(PApplet.QUADS);
+    if (isLeftHanded()) {
+      Scene.vertex(pg, -baseHalfWidth, -points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, -points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, -baseHeight, -points[0].z());
+    } else {
+      Scene.vertex(pg, -baseHalfWidth, points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, points[0].y(), -points[0].z());
+      Scene.vertex(pg, baseHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, -baseHalfWidth, baseHeight, -points[0].z());
+    }
+    pg.endShape();
+
+    // Arrow
+    pg.beginShape(PApplet.TRIANGLES);
+    if (isLeftHanded()) {
+      Scene.vertex(pg, 0.0f, -arrowHeight, -points[0].z());
+      Scene.vertex(pg, -arrowHalfWidth, -baseHeight, -points[0].z());
+      Scene.vertex(pg, arrowHalfWidth, -baseHeight, -points[0].z());
+    } else {
+      Scene.vertex(pg, 0.0f, arrowHeight, -points[0].z());
+      Scene.vertex(pg, -arrowHalfWidth, baseHeight, -points[0].z());
+      Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
+    }
+    pg.endShape();
+    // pg.popMatrix();
     pg.popStyle();
   }
 
