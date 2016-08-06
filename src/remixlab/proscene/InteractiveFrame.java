@@ -996,9 +996,6 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Internal cache optimization method.
-   * <P>
-   * Returns {@code true} if the {@link remixlab.proscene.Scene#pickingBuffer()} needs an
-   * update and {@code false} otherwise.
    */
   protected void updatePickingBufferCache() {
     if (!isEyeFrame() && pickingPrecision() == PickingPrecision.EXACT && !pShape.isReset()) {
