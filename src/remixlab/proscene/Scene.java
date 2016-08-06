@@ -2386,7 +2386,6 @@ public class Scene extends AbstractScene implements PConstants {
       }
     pg.pushStyle();
     if(is2D()) {
-      pg.strokeWeight(4);
       pg.beginShape(PApplet.POINTS);
       Scene.vertex(pg, src.x(), src.y());
       pg.endShape();
