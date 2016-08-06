@@ -2334,6 +2334,14 @@ public class Scene extends AbstractScene implements PConstants {
     drawEye(eye, false);
   }
 
+  /**
+   * Applies the {@code eye.frame()} transformation and then calls
+   * {@link #drawEye(PGraphics, Eye, boolean)} on the scene {@link #pg()}. If
+   * {@code texture} draws the projected scene on the near plane.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawEye(PGraphics, Eye, boolean)
+   */
   public void drawEye(Eye eye, boolean texture) {
     pg().pushMatrix();
     applyTransformation(eye.frame());
@@ -2349,44 +2357,15 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawEye(PGraphics pg, Eye eye) {
     drawEye(pg, eye, false);
   }
-  
-  public void drawProjector(Eye eye, Vec src) {
-    pg().pushMatrix();
-    applyTransformation(eye.frame());
-    drawProjector(pg(), eye, eye.frame().coordinatesOf(src));
-    pg().popMatrix();
-  }
-  
-  public void drawProjector(PGraphics pg, Eye eye, Vec src) {
-    if (eye.scene() instanceof Scene)
-      if (((Scene) eye.scene()).pg() == pg) {
-        System.out.println("Warning: No drawProjectionLine done, eye.scene()).pg() and pg are the same!");
-        return;
-      }
-    pg.pushStyle();
-    if(is2D()) {
-      pg.beginShape(PApplet.POINTS);
-      Scene.vertex(pg, src.x(), src.y());
-      pg.endShape();
-    }
-    else {
-      float zNear = -((Camera)eye).zNear() * 1 / eye.frame().magnitude();
-      Vec v = ((Camera)eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(src.x(), src.y(), zNear) : new Vec();
-      pg.beginShape(PApplet.LINES);
-      Scene.vertex(pg, v.x(), v.y(), v.z());
-      Scene.vertex(pg, src.x(), src.y(), src.z());
-      pg.endShape();
-    }
-    pg.popStyle();
-  }
 
   /**
-   * Implementation of {@link #drawEye(Eye)}. Warning: texture only works with opengl
-   * renderers
+   * Implementation of {@link #drawEye(Eye)}. If {@code texture} draws the projected scene
+   * on the near plane.
+   * <p>
+   * Warning: texture only works with opengl renderers.
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
-  /*
   public void drawEye(PGraphics pg, Eye eye, boolean texture) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
@@ -2410,16 +2389,15 @@ public class Scene extends AbstractScene implements PConstants {
 
     if (is2D() || ortho) {
       float[] wh = eye.getBoundaryWidthHeight();
-      points[0].setX(wh[0]);
-      points[1].setX(wh[0]);
-      points[0].setY(wh[1]);
-      points[1].setY(wh[1]);
+      points[0].setX(wh[0] * 1 / eye.frame().magnitude());
+      points[1].setX(wh[0] * 1 / eye.frame().magnitude());
+      points[0].setY(wh[1] * 1 / eye.frame().magnitude());
+      points[1].setY(wh[1] * 1 / eye.frame().magnitude());
     }
 
     if (is3D()) {
-      points[0].setZ(((Camera) eye).zNear());
-      points[1].setZ(((Camera) eye).zFar());
-
+      points[0].setZ(((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+      points[1].setZ(((Camera) eye).zFar() * 1 / eye.frame().magnitude());
       if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
         points[0].setY(points[0].z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
         points[0].setX(points[0].y() * ((Camera) eye).aspectRatio());
@@ -2503,7 +2481,7 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
     }
     if (texture)
-      pg.pushStyle();// begin at arrow base
+      pg.popStyle();// begin at arrow base
     pg.endShape();
 
     // Planes
@@ -2536,145 +2514,123 @@ public class Scene extends AbstractScene implements PConstants {
 
     pg.popStyle();
   }
-  */
-  
-  public void drawEye(PGraphics pg, Eye eye, boolean texture) {
+
+  /**
+   * Applies the {@code eye.frame()} transformation, transforms {@code src} (which should
+   * be given in the world coordinate system) into the {@code eye} coordinate system and
+   * then calls {@link #drawProjector(PGraphics, Eye, Vec)} on the scene {@link #pg()}.
+   * <p>
+   * Since this method uses the eye origin and zNear plane to draw the other end of the
+   * projector it should be used in conjunction with
+   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawProjector(PGraphics, Eye, Vec)
+   * @see #drawProjectors(Eye, List)
+   */
+  public void drawProjector(Eye eye, Vec src) {
+    pg().pushMatrix();
+    applyTransformation(eye.frame());
+    drawProjector(pg(), eye, eye.frame().coordinatesOf(src));
+    pg().popMatrix();
+  }
+
+  /**
+   * Draws the projection of {@code src} (given in the {@code eye} coordinate system) onto
+   * the near plane.
+   * <p>
+   * Since this method uses the eye origin and zNear plane to draw the other end of the
+   * projector it should be used in conjunction with
+   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * <p>
+   * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawProjector(PGraphics, Eye, Vec)
+   * @see #drawProjectors(PGraphics, Eye, List)
+   */
+  public void drawProjector(PGraphics pg, Eye eye, Vec src) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
-        System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
+        System.out.println("Warning: No drawProjecter done, eye.scene()).pg() and pg are the same!");
         return;
       }
     pg.pushStyle();
-    // boolean drawFarPlane = true;
-    // int farIndex = drawFarPlane ? 1 : 0;
-    int farIndex = is3D() ? 1 : 0;
-    boolean ortho = false;
-    if (is3D())
-      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
-        ortho = true;
-
-    // 0 is the upper left coordinates of the near corner, 1 for the far one
-    Vec[] points = new Vec[2];
-    points[0] = new Vec();
-    points[1] = new Vec();
-
-    if (is2D() || ortho) {
-      float[] wh = eye.getBoundaryWidthHeight();
-      points[0].setX(wh[0] * 1 / eye.frame().magnitude());
-      points[1].setX(wh[0] * 1 / eye.frame().magnitude());
-      points[0].setY(wh[1] * 1 / eye.frame().magnitude());
-      points[1].setY(wh[1] * 1 / eye.frame().magnitude());
-    }
-
-    if (is3D()) {
-      points[0].setZ(((Camera)eye).zNear() * 1 / eye.frame().magnitude());
-      points[1].setZ(((Camera)eye).zFar() * 1 / eye.frame().magnitude());
-      if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
-        points[0].setY(points[0].z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
-        points[0].setX(points[0].y() * ((Camera) eye).aspectRatio());
-        float ratio = points[1].z() / points[0].z();
-        points[1].setY(ratio * points[0].y());
-        points[1].setX(ratio * points[0].x());
-      }
-
-      // Frustum lines
-      switch (((Camera) eye).type()) {
-      case PERSPECTIVE: {
-        pg.beginShape(PApplet.LINES);
-        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
-        Scene.vertex(pg, points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
-        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
-        Scene.vertex(pg, -points[farIndex].x(), points[farIndex].y(), -points[farIndex].z());
-        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
-        Scene.vertex(pg, -points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
-        Scene.vertex(pg, 0.0f, 0.0f, 0.0f);
-        Scene.vertex(pg, points[farIndex].x(), -points[farIndex].y(), -points[farIndex].z());
-        pg.endShape();
-        break;
-      }
-      case ORTHOGRAPHIC: {
-        // if (drawFarPlane) {
-        pg.beginShape(PApplet.LINES);
-        Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
-        Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
-        Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
-        Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
-        Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
-        Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
-        Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
-        Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
-        pg.endShape();
-        // }
-        break;
-      }
-      }
-    }
-    
-    // Planes
-    // far plane
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, -1.0f);
-    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
-    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
-    pg.endShape();
-    // near plane
-    pg.noStroke();
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, 1.0f);
-    if(pg instanceof PGraphicsOpenGL && texture) {
-      pg.textureMode(NORMAL);
-      pg.tint(255, 126);  // Apply transparency without changing color
-      pg.texture(((Scene)eye.scene()).pg());
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(),1,1);
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(),0,1);
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(),0,0);
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(),1,0);
-    }
-    else {
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
-    }
-    pg.endShape();
-
-    // Up arrow
-    float arrowHeight = 1.5f * points[0].y();
-    float baseHeight = 1.2f * points[0].y();
-    float arrowHalfWidth = 0.5f * points[0].x();
-    float baseHalfWidth = 0.3f * points[0].x();
-
-    // pg3d().noStroke();
-    // Arrow base
-    pg.beginShape(PApplet.QUADS);
-    if (isLeftHanded()) {
-      Scene.vertex(pg, -baseHalfWidth, -points[0].y(), -points[0].z());
-      Scene.vertex(pg, baseHalfWidth, -points[0].y(), -points[0].z());
-      Scene.vertex(pg, baseHalfWidth, -baseHeight, -points[0].z());
-      Scene.vertex(pg, -baseHalfWidth, -baseHeight, -points[0].z());
+    if (is2D()) {
+      pg.beginShape(PApplet.POINTS);
+      Scene.vertex(pg, src.x(), src.y());
+      pg.endShape();
     } else {
-      Scene.vertex(pg, -baseHalfWidth, points[0].y(), -points[0].z());
-      Scene.vertex(pg, baseHalfWidth, points[0].y(), -points[0].z());
-      Scene.vertex(pg, baseHalfWidth, baseHeight, -points[0].z());
-      Scene.vertex(pg, -baseHalfWidth, baseHeight, -points[0].z());
+      float zNear = -((Camera) eye).zNear() * 1 / eye.frame().magnitude();
+      Vec v = ((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(src.x(), src.y(), zNear) : new Vec();
+      pg.beginShape(PApplet.LINES);
+      Scene.vertex(pg, v.x(), v.y(), v.z());
+      Scene.vertex(pg, src.x(), src.y(), src.z());
+      pg.endShape();
     }
-    pg.endShape();
+    pg.popStyle();
+  }
 
-    // Arrow
-    pg.beginShape(PApplet.TRIANGLES);
-    if (isLeftHanded()) {
-      Scene.vertex(pg, 0.0f, -arrowHeight, -points[0].z());
-      Scene.vertex(pg, -arrowHalfWidth, -baseHeight, -points[0].z());
-      Scene.vertex(pg, arrowHalfWidth, -baseHeight, -points[0].z());
+  /**
+   * Applies the {@code eye.frame()} transformation, transforms each vector in {@code src}
+   * (all of which should be given in the world coordinate system) into the {@code eye}
+   * coordinate system and then calls {@link #drawProjectors(PGraphics, Eye, List)} on the
+   * scene {@link #pg()}.
+   * <p>
+   * Since this method uses the eye origin and zNear plane to draw the other end of the
+   * projector it should be used in conjunction with
+   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawProjectors(PGraphics, Eye, List)
+   * @see #drawProjector(Eye, Vec)
+   */
+  public void drawProjectors(Eye eye, List<Vec> src) {
+    pg().pushMatrix();
+    applyTransformation(eye.frame());
+    ArrayList<Vec> s = new ArrayList<Vec>();
+    for (Vec v : src)
+      s.add(eye.frame().coordinatesOf(v));
+    drawProjectors(pg(), eye, s);
+    pg().popMatrix();
+  }
+
+  /**
+   * Draws the projection of each vector in {@code src} (all of which should be given in
+   * the {@code eye} coordinate system) onto the near plane.
+   * <p>
+   * Since this method uses the eye origin and zNear plane to draw the other end of the
+   * projector it should be used in conjunction with
+   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * <p>
+   * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawProjectors(PGraphics, Eye, List)
+   * @see #drawProjector(PGraphics, Eye, Vec)
+   */
+  public void drawProjectors(PGraphics pg, Eye eye, List<Vec> src) {
+    if (eye.scene() instanceof Scene)
+      if (((Scene) eye.scene()).pg() == pg) {
+        System.out.println("Warning: No drawProjecter done, eye.scene()).pg() and pg are the same!");
+        return;
+      }
+    pg.pushStyle();
+    if (is2D()) {
+      pg.beginShape(PApplet.POINTS);
+      for (Vec s : src)
+        Scene.vertex(pg, s.x(), s.y());
+      pg.endShape();
     } else {
-      Scene.vertex(pg, 0.0f, arrowHeight, -points[0].z());
-      Scene.vertex(pg, -arrowHalfWidth, baseHeight, -points[0].z());
-      Scene.vertex(pg, arrowHalfWidth, baseHeight, -points[0].z());
+      float zNear = -((Camera) eye).zNear() * 1 / eye.frame().magnitude();
+      pg.beginShape(PApplet.LINES);
+      for (Vec s : src) {
+        Vec v = ((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(s.x(), s.y(), zNear) : new Vec();
+        Scene.vertex(pg, v.x(), v.y(), v.z());
+        Scene.vertex(pg, s.x(), s.y(), s.z());
+      }
+      pg.endShape();
     }
-    pg.endShape();
-    // pg.popMatrix();
     pg.popStyle();
   }
 
