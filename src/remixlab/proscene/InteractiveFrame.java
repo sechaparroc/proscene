@@ -110,7 +110,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code pg.scale(1/magnitude()); scene().drawEye(pg, eye());}.
+   * Same as {@code scene().drawEye(pg, eye())}.
    * <p>
    * This method is only meaningful when frame {@link #isEyeFrame()}.
    * 
@@ -118,11 +118,9 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   public void drawEye(PGraphics pg) {
-    if (isEyeFrame()) {
-      // a bit of a hack, but the eye frame scaling should be canceled out
-      pg.scale(1 / magnitude());
+    if (isEyeFrame())
       scene().drawEye(pg, eye(), is3D());
-    } else
+    else
       AbstractScene.showOnlyEyeWarning("drawEye", true);
   }
 

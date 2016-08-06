@@ -2336,28 +2336,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   public void drawEye(Eye eye, boolean texture) {
     pg().pushMatrix();
-
-    // applyMatrix(camera.frame().worldMatrix());
-    // same as the previous line, but maybe more efficient
-
-    // Frame tmpFrame = new Frame(is3D());
-    // tmpFrame.fromMatrix(eye.frame().worldMatrix());
-    // applyTransformation(tmpFrame);
-    // same as above but easier
-    // scene().applyTransformation(camera.frame());
-
-    // fails due to scaling!
-
-    // take into account the whole hierarchy:
-    if (is2D()) {
-      // applyWorldTransformation(eye.frame());
-      pg().translate(eye.frame().position().vec[0], eye.frame().position().vec[1]);
-      pg().rotate(eye.frame().orientation().angle());
-    } else {
-      pg().translate(eye.frame().position().vec[0], eye.frame().position().vec[1], eye.frame().position().vec[2]);
-      pg().rotate(eye.frame().orientation().angle(), ((Quat) eye.frame().orientation()).axis().vec[0],
-          ((Quat) eye.frame().orientation()).axis().vec[1], ((Quat) eye.frame().orientation()).axis().vec[2]);
-    }
+    applyTransformation(eye.frame());
     drawEye(pg(), eye, texture);
     pg().popMatrix();
   }
@@ -2581,16 +2560,15 @@ public class Scene extends AbstractScene implements PConstants {
 
     if (is2D() || ortho) {
       float[] wh = eye.getBoundaryWidthHeight();
-      points[0].setX(wh[0]);
-      points[1].setX(wh[0]);
-      points[0].setY(wh[1]);
-      points[1].setY(wh[1]);
+      points[0].setX(wh[0] * 1 / eye.frame().magnitude());
+      points[1].setX(wh[0] * 1 / eye.frame().magnitude());
+      points[0].setY(wh[1] * 1 / eye.frame().magnitude());
+      points[1].setY(wh[1] * 1 / eye.frame().magnitude());
     }
 
     if (is3D()) {
-      points[0].setZ(((Camera) eye).zNear());
-      points[1].setZ(((Camera) eye).zFar());
-
+      points[0].setZ(((Camera)eye).zNear() * 1 / eye.frame().magnitude());
+      points[1].setZ(((Camera)eye).zFar() * 1 / eye.frame().magnitude());
       if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
         points[0].setY(points[0].z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
         points[0].setX(points[0].y() * ((Camera) eye).aspectRatio());
