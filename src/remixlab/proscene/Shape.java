@@ -129,7 +129,7 @@ class Shape {
     if (equals(other))
       return;
     if (!isReset()) {
-      System.out.println("overwritting shape by set(Shape other)");
+      System.out.println("Overwriting shape by set(Shape other)");
       reset();
     }
     shp = other.shp;
