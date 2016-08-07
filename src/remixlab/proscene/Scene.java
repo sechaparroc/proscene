@@ -2363,6 +2363,9 @@ public class Scene extends AbstractScene implements PConstants {
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
   public void drawEye(PGraphics pg, Eye eye, boolean texture) {
+    // key here is to represent in the eye coordinate system the eye params
+    // given in world units: getBoundaryWidthHeight, zNear and zFar
+    // which need to be multiplied by: * 1 / eye.frame().magnitude()
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
