@@ -2552,22 +2552,27 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, src.x(), src.y());
       pg.endShape();
     } else {
-      Vec v;
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
-        v = eye.frame().coordinatesOf(src);
+        pg.pushMatrix();
+        applyTransformation(eye.frame());
+        Vec v = eye.frame().coordinatesOf(src);
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, v.x(), v.y(), v.z());
         // Key here is to represent the eye zNear param (which is given in world units) in
         // eye units.
         // Hence it should be multiplied by: 1 / eye.frame().magnitude()
         // The neg sign is because the zNear is positive but the eye view direction is the
         // negative Z-axis
-        v.setZ(-((Camera) eye).zNear() * 1 / eye.frame().magnitude());
-        v = eye.frame().inverseCoordinatesOf(v);
-      } else
-        v = eye.frame().inverseCoordinatesOf(new Vec());
-      pg.beginShape(PApplet.LINES);
-      Scene.vertex(pg, v.x(), v.y(), v.z());
-      Scene.vertex(pg, src.x(), src.y(), src.z());
-      pg.endShape();
+        Scene.vertex(pg, v.x(), v.y(), -((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+        pg.endShape();
+        pg.popMatrix();
+      } else {
+        Vec o = eye.frame().inverseCoordinatesOf(new Vec());
+        pg.beginShape(PApplet.LINES);
+        Scene.vertex(pg, src.x(), src.y(), src.z());
+        Scene.vertex(pg, o.x(), o.y(), o.z());
+        pg.endShape();
+      }
     }
     pg.popStyle();
   }
@@ -2611,24 +2616,33 @@ public class Scene extends AbstractScene implements PConstants {
         Scene.vertex(pg, s.x(), s.y());
       pg.endShape();
     } else {
+      Vec o = new Vec();
+      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
+        pg.pushMatrix();
+        applyTransformation(eye.frame());
+      } else
+        o = eye.frame().inverseCoordinatesOf(new Vec());
       pg.beginShape(PApplet.LINES);
       for (Vec s : src) {
-        Vec v;
         if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
-          v = eye.frame().coordinatesOf(s);
+          Vec v = eye.frame().coordinatesOf(s);
+          Scene.vertex(pg, v.x(), v.y(), v.z());
           // Key here is to represent the eye zNear param (which is given in world units)
-          // in eye units.
+          // in
+          // eye units.
           // Hence it should be multiplied by: 1 / eye.frame().magnitude()
           // The neg sign is because the zNear is positive but the eye view direction is
-          // the negative Z-axis
-          v.setZ(-((Camera) eye).zNear() * 1 / eye.frame().magnitude());
-          v = eye.frame().inverseCoordinatesOf(v);
-        } else
-          v = eye.frame().inverseCoordinatesOf(new Vec());
-        Scene.vertex(pg, v.x(), v.y(), v.z());
-        Scene.vertex(pg, s.x(), s.y(), s.z());
+          // the
+          // negative Z-axis
+          Scene.vertex(pg, v.x(), v.y(), -((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+        } else {
+          Scene.vertex(pg, s.x(), s.y(), s.z());
+          Scene.vertex(pg, o.x(), o.y(), o.z());
+        }
       }
       pg.endShape();
+      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
+        pg.popMatrix();
     }
     pg.popStyle();
   }
