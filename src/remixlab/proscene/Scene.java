@@ -2365,7 +2365,7 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawEye(PGraphics pg, Eye eye, boolean texture) {
     // key here is to represent in the eye coordinate system the eye params
     // given in world units: getBoundaryWidthHeight, zNear and zFar
-    // which need to be multiplied by: * 1 / eye.frame().magnitude()
+    // which need to be multiplied by: 1 / eye.frame().magnitude()
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
@@ -2515,28 +2515,21 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Applies the {@code eye.frame()} transformation, transforms {@code src} (which should
-   * be given in the world coordinate system) into the {@code eye} coordinate system and
-   * then calls {@link #drawProjector(PGraphics, Eye, Vec)} on the scene {@link #pg()}.
+   * Calls {@link #drawProjector(PGraphics, Eye, Vec)} on the scene {@link #pg()}.
    * <p>
    * Since this method uses the eye origin and zNear plane to draw the other end of the
-   * projector it should be used in conjunction with
-   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * projector it should be used in conjunction with {@link #drawEye(PGraphics, Eye)}.
    * 
-   * @see #applyTransformation(Frame)
    * @see #drawProjector(PGraphics, Eye, Vec)
    * @see #drawProjectors(Eye, List)
    */
   public void drawProjector(Eye eye, Vec src) {
-    pg().pushMatrix();
-    applyTransformation(eye.frame());
-    drawProjector(pg(), eye, eye.frame().coordinatesOf(src));
-    pg().popMatrix();
+    drawProjector(pg(), eye, src);
   }
 
   /**
-   * Draws the projection of {@code src} (given in the {@code eye} coordinate system) onto
-   * the near plane.
+   * Draws as a line (or point in 2D) the projection of {@code src} (given in the world
+   * coordinate system) onto the near plane.
    * <p>
    * Since this method uses the eye origin and zNear plane to draw the other end of the
    * projector it should be used in conjunction with
@@ -2544,14 +2537,13 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    * 
-   * @see #applyTransformation(Frame)
    * @see #drawProjector(PGraphics, Eye, Vec)
    * @see #drawProjectors(PGraphics, Eye, List)
    */
   public void drawProjector(PGraphics pg, Eye eye, Vec src) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
-        System.out.println("Warning: No drawProjecter done, eye.scene()).pg() and pg are the same!");
+        System.out.println("Warning: No drawProjector done, eye.scene()).pg() and pg are the same!");
         return;
       }
     pg.pushStyle();
@@ -2560,8 +2552,15 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, src.x(), src.y());
       pg.endShape();
     } else {
-      float zNear = -((Camera) eye).zNear() * 1 / eye.frame().magnitude();
-      Vec v = ((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(src.x(), src.y(), zNear) : new Vec();
+      Vec v;
+      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
+        // key here is to represent zNear in the eye coordinate system
+        // which should multiplied by: 1 / eye.frame().magnitude()
+        v = eye.frame().inverseCoordinatesOf(new Vec(0, 0, -((Camera) eye).zNear() * 1 / eye.frame().magnitude()));
+        v.setX(src.x());
+        v.setX(src.y());
+      } else
+        v = eye.frame().inverseCoordinatesOf(new Vec());
       pg.beginShape(PApplet.LINES);
       Scene.vertex(pg, v.x(), v.y(), v.z());
       Scene.vertex(pg, src.x(), src.y(), src.z());
@@ -2571,32 +2570,21 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Applies the {@code eye.frame()} transformation, transforms each vector in {@code src}
-   * (all of which should be given in the world coordinate system) into the {@code eye}
-   * coordinate system and then calls {@link #drawProjectors(PGraphics, Eye, List)} on the
-   * scene {@link #pg()}.
+   * Calls {@link #drawProjectors(PGraphics, Eye, List)} on the scene {@link #pg()}.
    * <p>
    * Since this method uses the eye origin and zNear plane to draw the other end of the
-   * projector it should be used in conjunction with
-   * {@link #drawEye(PGraphics, Eye, boolean)}.
+   * projector it should be used in conjunction with {@link #drawEye(PGraphics, Eye)}.
    * 
-   * @see #applyTransformation(Frame)
    * @see #drawProjectors(PGraphics, Eye, List)
    * @see #drawProjector(Eye, Vec)
    */
   public void drawProjectors(Eye eye, List<Vec> src) {
-    pg().pushMatrix();
-    applyTransformation(eye.frame());
-    ArrayList<Vec> s = new ArrayList<Vec>();
-    for (Vec v : src)
-      s.add(eye.frame().coordinatesOf(v));
-    drawProjectors(pg(), eye, s);
-    pg().popMatrix();
+    drawProjectors(pg(), eye, src);
   }
 
   /**
-   * Draws the projection of each vector in {@code src} (all of which should be given in
-   * the {@code eye} coordinate system) onto the near plane.
+   * Draws as lines (or points in 2D) the projection of each vector in {@code src} (all of
+   * which should be given in the world coordinate system) onto the near plane.
    * <p>
    * Since this method uses the eye origin and zNear plane to draw the other end of the
    * projector it should be used in conjunction with
@@ -2604,14 +2592,13 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    * 
-   * @see #applyTransformation(Frame)
    * @see #drawProjectors(PGraphics, Eye, List)
    * @see #drawProjector(PGraphics, Eye, Vec)
    */
   public void drawProjectors(PGraphics pg, Eye eye, List<Vec> src) {
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
-        System.out.println("Warning: No drawProjecter done, eye.scene()).pg() and pg are the same!");
+        System.out.println("Warning: No drawProjectors done, eye.scene()).pg() and pg are the same!");
         return;
       }
     pg.pushStyle();
@@ -2621,10 +2608,17 @@ public class Scene extends AbstractScene implements PConstants {
         Scene.vertex(pg, s.x(), s.y());
       pg.endShape();
     } else {
-      float zNear = -((Camera) eye).zNear() * 1 / eye.frame().magnitude();
       pg.beginShape(PApplet.LINES);
       for (Vec s : src) {
-        Vec v = ((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC ? new Vec(s.x(), s.y(), zNear) : new Vec();
+        Vec v;
+        if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
+          // key here is to represent zNear in the eye coordinate system
+          // which should multiplied by: 1 / eye.frame().magnitude()
+          v = eye.frame().inverseCoordinatesOf(new Vec(0, 0, -((Camera) eye).zNear() * 1 / eye.frame().magnitude()));
+          v.setX(s.x());
+          v.setX(s.y());
+        } else
+          v = eye.frame().inverseCoordinatesOf(new Vec());
         Scene.vertex(pg, v.x(), v.y(), v.z());
         Scene.vertex(pg, s.x(), s.y(), s.z());
       }
