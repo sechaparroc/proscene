@@ -243,7 +243,7 @@ class Shape {
    * Sets all internal shape references to null.
    */
   void reset() {
-    if(isReset())
+    if (isReset())
       return;
     shp = null;
     mth = null;
