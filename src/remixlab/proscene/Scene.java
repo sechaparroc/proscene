@@ -199,9 +199,6 @@ public class Scene extends AbstractScene implements PConstants {
       pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
       pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
       pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
-      // seems overkill, but perhaps a bit safer
-      // it's also called from post() and iFrame.visit
-      applyPickingBufferShaders();
     }
 
     // 4. Create agents and register P5 methods
@@ -1401,7 +1398,6 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().beginDraw();
     pickingBuffer().pushStyle();
     pickingBuffer().background(0);
-    applyPickingBufferShaders();
     drawFrames(pickingBuffer());
     pickingBuffer().popStyle();
     pickingBuffer().endDraw();

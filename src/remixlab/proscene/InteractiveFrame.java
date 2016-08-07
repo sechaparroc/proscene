@@ -954,9 +954,9 @@ public class InteractiveFrame extends GenericFrame {
       float r = (float) (id & 255) / 255.f;
       float g = (float) ((id >> 8) & 255) / 255.f;
       float b = (float) ((id >> 16) & 255) / 255.f;
-      // funny, graphics handler procedures requires shaders to be re-applied
-      if (pShape.isImmediate())
-        scene().applyPickingBufferShaders();
+      // funny, only safe way. Otherwise break things horribly when setting shapes
+      // and there are more than one iFrame
+      scene().applyPickingBufferShaders();
       scene().pickingBufferShaderTriangle.set("id", new PVector(r, g, b));
       scene().pickingBufferShaderLine.set("id", new PVector(r, g, b));
       scene().pickingBufferShaderPoint.set("id", new PVector(r, g, b));
