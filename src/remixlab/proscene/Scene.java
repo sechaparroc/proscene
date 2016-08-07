@@ -2363,9 +2363,9 @@ public class Scene extends AbstractScene implements PConstants {
    * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
    */
   public void drawEye(PGraphics pg, Eye eye, boolean texture) {
-    // key here is to represent in the eye coordinate system the eye params
-    // given in world units: getBoundaryWidthHeight, zNear and zFar
-    // which need to be multiplied by: 1 / eye.frame().magnitude()
+    // Key here is to represent the eye getBoundaryWidthHeight, zNear and zFar params
+    // (which are is given in world units) in eye units.
+    // Hence they should be multiplied by: 1 / eye.frame().magnitude()
     if (eye.scene() instanceof Scene)
       if (((Scene) eye.scene()).pg() == pg) {
         System.out.println("Warning: No drawEye done, eye.scene()).pg() and pg are the same!");
@@ -2554,11 +2554,14 @@ public class Scene extends AbstractScene implements PConstants {
     } else {
       Vec v;
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
-        // key here is to represent zNear in the eye coordinate system
-        // which should multiplied by: 1 / eye.frame().magnitude()
-        v = eye.frame().inverseCoordinatesOf(new Vec(0, 0, -((Camera) eye).zNear() * 1 / eye.frame().magnitude()));
-        v.setX(src.x());
-        v.setX(src.y());
+        v = eye.frame().coordinatesOf(src);
+        // Key here is to represent the eye zNear param (which is given in world units) in
+        // eye units.
+        // Hence it should be multiplied by: 1 / eye.frame().magnitude()
+        // The neg sign is because the zNear is positive but the eye view direction is the
+        // negative Z-axis
+        v.setZ(-((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+        v = eye.frame().inverseCoordinatesOf(v);
       } else
         v = eye.frame().inverseCoordinatesOf(new Vec());
       pg.beginShape(PApplet.LINES);
@@ -2612,11 +2615,14 @@ public class Scene extends AbstractScene implements PConstants {
       for (Vec s : src) {
         Vec v;
         if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
-          // key here is to represent zNear in the eye coordinate system
-          // which should multiplied by: 1 / eye.frame().magnitude()
-          v = eye.frame().inverseCoordinatesOf(new Vec(0, 0, -((Camera) eye).zNear() * 1 / eye.frame().magnitude()));
-          v.setX(s.x());
-          v.setX(s.y());
+          v = eye.frame().coordinatesOf(s);
+          // Key here is to represent the eye zNear param (which is given in world units)
+          // in eye units.
+          // Hence it should be multiplied by: 1 / eye.frame().magnitude()
+          // The neg sign is because the zNear is positive but the eye view direction is
+          // the negative Z-axis
+          v.setZ(-((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+          v = eye.frame().inverseCoordinatesOf(v);
         } else
           v = eye.frame().inverseCoordinatesOf(new Vec());
         Scene.vertex(pg, v.x(), v.y(), v.z());
