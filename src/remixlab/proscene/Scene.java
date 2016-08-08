@@ -2620,10 +2620,14 @@ public class Scene extends AbstractScene implements PConstants {
     } else {
       // if ORTHOGRAPHIC: do it in the eye coordinate system
       // if PERSPECTIVE: do it in the world coordinate system
+      Vec o = new Vec();
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
         pg.pushMatrix();
         applyTransformation(eye.frame());
       }
+      // in PERSPECTIVE cache the transformed origin
+      else
+        o = eye.frame().inverseCoordinatesOf(new Vec());
       pg.beginShape(PApplet.LINES);
       for (Vec s : src) {
         if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
@@ -2636,7 +2640,6 @@ public class Scene extends AbstractScene implements PConstants {
           // the negative Z-axis
           Scene.vertex(pg, v.x(), v.y(), -((Camera) eye).zNear() * 1 / eye.frame().magnitude());
         } else {
-          Vec o = eye.frame().inverseCoordinatesOf(new Vec());
           Scene.vertex(pg, s.x(), s.y(), s.z());
           Scene.vertex(pg, o.x(), o.y(), o.z());
         }
