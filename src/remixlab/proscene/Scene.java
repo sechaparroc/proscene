@@ -2513,6 +2513,97 @@ public class Scene extends AbstractScene implements PConstants {
 
     pg.popStyle();
   }
+  
+  public void drawEyeNearPlane(Eye eye) {
+    drawEyeNearPlane(eye, false);
+  }
+
+  /**
+   * Applies the {@code eye.frame()} transformation and then calls
+   * {@link #drawEye(PGraphics, Eye, boolean)} on the scene {@link #pg()}. If
+   * {@code texture} draws the projected scene on the near plane.
+   * 
+   * @see #applyTransformation(Frame)
+   * @see #drawEye(PGraphics, Eye, boolean)
+   */
+  public void drawEyeNearPlane(Eye eye, boolean texture) {
+    pg().pushMatrix();
+    applyTransformation(eye.frame());
+    drawEye(pg(), eye, texture);
+    pg().popMatrix();
+  }
+
+  /**
+   * Same as {@code drawEye(pg, eye, false)}.
+   * 
+   * @see #drawEye(PGraphics, Eye, boolean)
+   */
+  public void drawEyeNearPlane(PGraphics pg, Eye eye) {
+    drawEye(pg, eye, false);
+  }
+
+  /**
+   * Implementation of {@link #drawEye(Eye)}. If {@code texture} draws the projected scene
+   * on the near plane.
+   * <p>
+   * Warning: texture only works with opengl renderers.
+   * <p>
+   * Note that if {@code eye.scene()).pg() == pg} this method has not effect at all.
+   */
+  public void drawEyeNearPlane(PGraphics pg, Eye eye, boolean texture) {
+    // Key here is to represent the eye getBoundaryWidthHeight and zNear params
+    // (which are is given in world units) in eye units.
+    // Hence they should be multiplied by: 1 / eye.frame().magnitude()
+    if (eye.scene() instanceof Scene)
+      if (((Scene) eye.scene()).pg() == pg) {
+        System.out.println("Warning: No drawEyeNearPlane done, eye.scene()).pg() and pg are the same!");
+        return;
+      }
+    pg.pushStyle();
+
+    boolean ortho = false;
+    if (is3D())
+      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
+        ortho = true;
+
+    // 0 is the upper left coordinates of the near corner, 1 for the far one
+    Vec corner = new Vec();
+
+    if (is2D() || ortho) {
+      float[] wh = eye.getBoundaryWidthHeight();
+      corner.setX(wh[0] * 1 / eye.frame().magnitude());
+      corner.setY(wh[1] * 1 / eye.frame().magnitude());
+    }
+
+    if (is3D()) {
+      corner.setZ(((Camera) eye).zNear() * 1 / eye.frame().magnitude());
+      if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
+        corner.setY(corner.z() * PApplet.tan(((Camera) eye).fieldOfView() / 2.0f));
+        corner.setX(corner.y() * ((Camera) eye).aspectRatio());
+      }
+    }
+    
+    // near plane
+    pg.beginShape(PApplet.QUAD);
+    pg.normal(0.0f, 0.0f, 1.0f);
+    if (pg instanceof PGraphicsOpenGL && texture) {
+      pg.textureMode(NORMAL);
+      pg.tint(255, 126); // Apply transparency without changing color
+      pg.texture(((Scene) eye.scene()).pg());
+      Scene.vertex(pg, corner.x(), corner.y(), -corner.z(), 1, 1);
+      Scene.vertex(pg, -corner.x(), corner.y(), -corner.z(), 0, 1);
+      Scene.vertex(pg, -corner.x(), -corner.y(), -corner.z(), 0, 0);
+      Scene.vertex(pg, corner.x(), -corner.y(), -corner.z(), 1, 0);
+    } else {
+      Scene.vertex(pg, corner.x(), corner.y(), -corner.z());
+      Scene.vertex(pg, -corner.x(), corner.y(), -corner.z());
+      Scene.vertex(pg, -corner.x(), -corner.y(), -corner.z());
+      Scene.vertex(pg, corner.x(), -corner.y(), -corner.z());
+    }
+    pg.endShape();
+
+    pg.popStyle();
+  }
 
   /**
    * Calls {@link #drawProjector(PGraphics, Eye, Vec)} on the scene {@link #pg()}.

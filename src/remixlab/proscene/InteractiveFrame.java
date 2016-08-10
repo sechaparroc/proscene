@@ -123,6 +123,21 @@ public class InteractiveFrame extends GenericFrame {
     else
       AbstractScene.showOnlyEyeWarning("drawEye", true);
   }
+  
+  /**
+   * Same as {@code scene().drawEyeNearPlane(pg, eye())}.
+   * <p>
+   * This method is only meaningful when frame {@link #isEyeFrame()}.
+   * 
+   * @see remixlab.proscene.Scene#drawEyeNearPlane(PGraphics, Eye)
+   * @see #isEyeFrame()
+   */
+  public void drawEyeNearPlane(PGraphics pg) {
+    if (isEyeFrame())
+      scene().drawEyeNearPlane(pg, eye(), is3D());
+    else
+      AbstractScene.showOnlyEyeWarning("drawEyeNearPlane", true);
+  }
 
   /**
    * Calls {@code super(scn}. Sets the {@link #pickingPrecision()} to
