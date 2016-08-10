@@ -21,6 +21,7 @@ import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -2485,32 +2486,10 @@ public class Scene extends AbstractScene implements PConstants {
 
     // Planes
     // far plane
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, -1.0f);
-    Scene.vertex(pg, points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), points[1].y(), -points[1].z());
-    Scene.vertex(pg, -points[1].x(), -points[1].y(), -points[1].z());
-    Scene.vertex(pg, points[1].x(), -points[1].y(), -points[1].z());
-    pg.endShape();
+    drawPlane(pg, eye, points[1], new Vec(0, 0, -1), false);
     // near plane
-    pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, 1.0f);
-    if (pg instanceof PGraphicsOpenGL && texture) {
-      pg.textureMode(NORMAL);
-      pg.tint(255, 126); // Apply transparency without changing color
-      pg.texture(((Scene) eye.scene()).pg());
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z(), 1, 1);
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z(), 0, 1);
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z(), 0, 0);
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z(), 1, 0);
-    } else {
-      Scene.vertex(pg, points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), points[0].y(), -points[0].z());
-      Scene.vertex(pg, -points[0].x(), -points[0].y(), -points[0].z());
-      Scene.vertex(pg, points[0].x(), -points[0].y(), -points[0].z());
-    }
-    pg.endShape();
-
+    drawPlane(pg, eye, points[0], new Vec(0, 0, 1), texture);
+    
     pg.popStyle();
   }
   
@@ -2529,22 +2508,21 @@ public class Scene extends AbstractScene implements PConstants {
   public void drawEyeNearPlane(Eye eye, boolean texture) {
     pg().pushMatrix();
     applyTransformation(eye.frame());
-    drawEye(pg(), eye, texture);
+    drawEyeNearPlane(pg(), eye, texture);
     pg().popMatrix();
   }
 
   /**
-   * Same as {@code drawEye(pg, eye, false)}.
+   * Same as {@code drawEyeNearPlane(pg, eye, false)}.
    * 
-   * @see #drawEye(PGraphics, Eye, boolean)
+   * @see #drawEyeNearPlane(PGraphics, Eye, boolean)
    */
   public void drawEyeNearPlane(PGraphics pg, Eye eye) {
-    drawEye(pg, eye, false);
+    drawEyeNearPlane(pg, eye, false);
   }
 
   /**
-   * Implementation of {@link #drawEye(Eye)}. If {@code texture} draws the projected scene
-   * on the near plane.
+   * Draws the eye near plane. If {@code texture} draws the projected scene on the plane.
    * <p>
    * Warning: texture only works with opengl renderers.
    * <p>
@@ -2560,21 +2538,17 @@ public class Scene extends AbstractScene implements PConstants {
         return;
       }
     pg.pushStyle();
-
     boolean ortho = false;
     if (is3D())
       if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC)
         ortho = true;
-
     // 0 is the upper left coordinates of the near corner, 1 for the far one
     Vec corner = new Vec();
-
     if (is2D() || ortho) {
       float[] wh = eye.getBoundaryWidthHeight();
       corner.setX(wh[0] * 1 / eye.frame().magnitude());
       corner.setY(wh[1] * 1 / eye.frame().magnitude());
     }
-
     if (is3D()) {
       corner.setZ(((Camera) eye).zNear() * 1 / eye.frame().magnitude());
       if (((Camera) eye).type() == Camera.Type.PERSPECTIVE) {
@@ -2582,10 +2556,14 @@ public class Scene extends AbstractScene implements PConstants {
         corner.setX(corner.y() * ((Camera) eye).aspectRatio());
       }
     }
-    
+    drawPlane(pg, eye, corner, new Vec(0, 0 ,1), texture);
+  }
+  
+  protected void drawPlane(PGraphics pg, Eye eye, Vec corner, Vec normal, boolean texture) { 
+    pg.pushStyle();    
     // near plane
     pg.beginShape(PApplet.QUAD);
-    pg.normal(0.0f, 0.0f, 1.0f);
+    pg.normal(normal.x(), normal.y(), normal.z());
     if (pg instanceof PGraphicsOpenGL && texture) {
       pg.textureMode(NORMAL);
       pg.tint(255, 126); // Apply transparency without changing color
@@ -2601,7 +2579,6 @@ public class Scene extends AbstractScene implements PConstants {
       Scene.vertex(pg, corner.x(), -corner.y(), -corner.z());
     }
     pg.endShape();
-
     pg.popStyle();
   }
 
@@ -2632,42 +2609,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #drawProjectors(PGraphics, Eye, List)
    */
   public void drawProjector(PGraphics pg, Eye eye, Vec src) {
-    if (eye.scene() instanceof Scene)
-      if (((Scene) eye.scene()).pg() == pg) {
-        System.out.println("Warning: No drawProjector done, eye.scene()).pg() and pg are the same!");
-        return;
-      }
-    pg.pushStyle();
-    if (is2D()) {
-      pg.beginShape(PApplet.POINTS);
-      Scene.vertex(pg, src.x(), src.y());
-      pg.endShape();
-    } else {
-      // if ORTHOGRAPHIC: do it in the eye coordinate system
-      // if PERSPECTIVE: do it in the world coordinate system
-      if (((Camera) eye).type() == Camera.Type.ORTHOGRAPHIC) {
-        pg.pushMatrix();
-        applyTransformation(eye.frame());
-        Vec v = eye.frame().coordinatesOf(src);
-        pg.beginShape(PApplet.LINES);
-        Scene.vertex(pg, v.x(), v.y(), v.z());
-        // Key here is to represent the eye zNear param (which is given in world units) in
-        // eye units.
-        // Hence it should be multiplied by: 1 / eye.frame().magnitude()
-        // The neg sign is because the zNear is positive but the eye view direction is the
-        // negative Z-axis
-        Scene.vertex(pg, v.x(), v.y(), -((Camera) eye).zNear() * 1 / eye.frame().magnitude());
-        pg.endShape();
-        pg.popMatrix();
-      } else {
-        Vec o = eye.frame().inverseCoordinatesOf(new Vec());
-        pg.beginShape(PApplet.LINES);
-        Scene.vertex(pg, src.x(), src.y(), src.z());
-        Scene.vertex(pg, o.x(), o.y(), o.z());
-        pg.endShape();
-      }
-    }
-    pg.popStyle();
+    drawProjectors(pg, eye, Arrays.asList(src));
   }
 
   /**
