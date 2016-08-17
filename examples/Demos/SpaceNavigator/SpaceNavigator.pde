@@ -89,7 +89,7 @@ public class HIDAgent extends Agent {
 }
 
 void setup() {
-  size(640, 360, P3D);
+  size(800, 600, P3D);
   openSpaceNavigator();
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
@@ -103,20 +103,27 @@ void setup() {
   hidAgent = new HIDAgent(scene);
   
   //the iFrame is added to all scene agents (that's why we previously instantiated the hidAgent)
-  iFrame = new InteractiveFrame(scene);
-  iFrame.translate(new Vec(180, 180, 0));
+  iFrame = new InteractiveFrame(scene, loadShape("rocket.obj"));
+  iFrame.translate(new Vec(275, 180, 0));
+  iFrame.scale(0.3);
   
   // we bound some frame DOF6 actions to the gesture on both frames
   scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
   iFrame.setMotionBinding(SN_ID, "translateRotateXYZ");
+  // and the custom behaviour to the right mouse button
+  iFrame.setMotionBinding(this, RIGHT, "customBehaviour");
 
   smooth();
+}
+
+void customBehaviour(InteractiveFrame frame, MotionEvent event) {
+  frame.screenRotate(event);
 }
 
 void draw() {    
   background(0);    
   renderGlobe();
-  renderIFrame();
+  scene.drawFrames();
 }
 
 void keyPressed() {
@@ -151,25 +158,6 @@ void renderGlobe() {
   noStroke();
   textureMode(IMAGE);  
   texturedSphere(globeRadius, texmap);
-}
-
-void renderIFrame() {
-  // Save the current model view matrix
-  pushMatrix();
-  // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(scene.interactiveFrame().matrix()) is handy but inefficient 
-  iFrame.applyTransformation(); //optimum
-  // Draw an axis using the Scene static function
-  scene.drawAxes(20);
-  // Draw a second box
-  if (iFrame.grabsInput()) {
-    fill(255, 0, 0);
-    box(12, 17, 22);
-  } else {
-    fill(0, 0, 255);
-    box(10, 15, 20);
-  }  
-  popMatrix();
 }
 
 void initializeSphere(int res) {
