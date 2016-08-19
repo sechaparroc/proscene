@@ -110,13 +110,13 @@ void setup() {
   // we bound some frame DOF6 actions to the gesture on both frames
   scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
   iFrame.setMotionBinding(SN_ID, "translateRotateXYZ");
-  // and the custom behaviour to the right mouse button
-  iFrame.setMotionBinding(this, RIGHT, "customBehaviour");
+  // and the custom behavior to the right mouse button
+  iFrame.setMotionBinding(this, RIGHT, "customBehavior");
 
   smooth();
 }
 
-void customBehaviour(InteractiveFrame frame, MotionEvent event) {
+void customBehavior(InteractiveFrame frame, MotionEvent event) {
   frame.screenRotate(event);
 }
 
