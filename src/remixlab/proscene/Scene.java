@@ -2489,10 +2489,10 @@ public class Scene extends AbstractScene implements PConstants {
     drawPlane(pg, eye, points[1], new Vec(0, 0, -1), false);
     // near plane
     drawPlane(pg, eye, points[0], new Vec(0, 0, 1), texture);
-    
+
     pg.popStyle();
   }
-  
+
   public void drawEyeNearPlane(Eye eye) {
     drawEyeNearPlane(eye, false);
   }
@@ -2556,11 +2556,11 @@ public class Scene extends AbstractScene implements PConstants {
         corner.setX(corner.y() * ((Camera) eye).aspectRatio());
       }
     }
-    drawPlane(pg, eye, corner, new Vec(0, 0 ,1), texture);
+    drawPlane(pg, eye, corner, new Vec(0, 0, 1), texture);
   }
-  
-  protected void drawPlane(PGraphics pg, Eye eye, Vec corner, Vec normal, boolean texture) { 
-    pg.pushStyle();    
+
+  protected void drawPlane(PGraphics pg, Eye eye, Vec corner, Vec normal, boolean texture) {
+    pg.pushStyle();
     // near plane
     pg.beginShape(PApplet.QUAD);
     pg.normal(normal.x(), normal.y(), normal.z());

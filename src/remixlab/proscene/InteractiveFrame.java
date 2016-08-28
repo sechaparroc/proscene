@@ -123,7 +123,7 @@ public class InteractiveFrame extends GenericFrame {
     else
       AbstractScene.showOnlyEyeWarning("drawEye", true);
   }
-  
+
   /**
    * Same as {@code scene().drawEyeNearPlane(pg, eye())}.
    * <p>
