@@ -215,7 +215,7 @@ public class Scene extends AbstractScene implements PConstants {
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
     // TODO buggy in P5
-    pApplet().registerMethod("dispose", this);
+    //pApplet().registerMethod("dispose", this);
 
     // TODO Droid: remove the following 2 lines if needed to compile the project
     if (platform() == Platform.PROCESSING_ANDROID)
