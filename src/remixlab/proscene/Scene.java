@@ -188,16 +188,16 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 3. Frames & picking buffer
     // TODO Droid: is picking buffer supported in droid mode? It should be checked
-    // if (platform() != Platform.PROCESSING_ANDROID) {
-    pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
-        ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
-    if (pb != null) {
-      enablePickingBuffer();
-      pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
-      pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
-      pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
+    if (platform() != Platform.PROCESSING_ANDROID) {
+      pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
+          ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
+      if (pb != null) {
+        enablePickingBuffer();
+        pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
+        pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
+        pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
+      }
     }
-    // }
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
@@ -218,8 +218,8 @@ public class Scene extends AbstractScene implements PConstants {
     pApplet().registerMethod("dispose", this);
 
     // TODO Droid: remove the following 2 lines if needed to compile the project
-    // if (platform() == Platform.PROCESSING_ANDROID)
-    // disablePickingBuffer();
+    if (platform() == Platform.PROCESSING_ANDROID)
+      disablePickingBuffer();
     if (this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0))
       pApplet().registerMethod("post", this);
 
