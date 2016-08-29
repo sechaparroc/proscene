@@ -16,7 +16,8 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 /**
- * Proscene {@link remixlab.dandelion.agent.KeyboardAgent}.
+ * Proscene Android key-agent. A Processing fully fledged Android-key
+ * {@link remixlab.bias.core.Agent}.
  */
 public class DroidKeyAgent extends Agent {
   protected Scene scene;

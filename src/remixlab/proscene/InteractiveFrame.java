@@ -260,11 +260,10 @@ public class InteractiveFrame extends GenericFrame {
     pShape = new Shape(this);
     highlight = HighlightingMode.FRONT_SHAPE;
     setProfile(new Profile(this));
-    // TODO android
     if (Scene.platform() == Platform.PROCESSING_DESKTOP)
       setDefaultMouseBindings();
-    // else
-    // setDefaultTouchBindings();
+    else
+      setDefaultTouchBindings();
     setDefaultKeyBindings();
   }
 
@@ -280,11 +279,10 @@ public class InteractiveFrame extends GenericFrame {
     if (referenceFrame instanceof InteractiveFrame)
       this.profile.from(((InteractiveFrame) referenceFrame).profile);
     else {
-      // TODO android
       if (Scene.platform() == Platform.PROCESSING_DESKTOP)
         setDefaultMouseBindings();
-      // else
-      // setDefaultTouchBindings();
+      else
+        setDefaultTouchBindings();
       setDefaultKeyBindings();
     }
   }
@@ -361,11 +359,9 @@ public class InteractiveFrame extends GenericFrame {
     scene().mouseAgent().setDefaultBindings(this);
   }
 
-  // TODO android
-
-  // public void setDefaultTouchBindings() {
-  // scene().touchAgent().setDefaultBindings(this);
-  // }
+  public void setDefaultTouchBindings() {
+    scene().droidTouchAgent().setDefaultBindings(this);
+  }
 
   /**
    * Calls {@link #removeKeyBindings()} and sets the default frame key bindings which may

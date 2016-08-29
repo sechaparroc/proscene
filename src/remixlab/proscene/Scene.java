@@ -22,9 +22,7 @@ import remixlab.fpstiming.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 // begin: GWT-incompatible
@@ -189,10 +187,8 @@ public class Scene extends AbstractScene implements PConstants {
     setMatrixHelper(matrixHelper(pg));
 
     // 3. Frames & picking buffer
-    // pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ?
-    // pApplet().createGraphics(pg().width, pg().height, pg() instanceof
-    // PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width,
-    // pg().height, JAVA2D);
+    // TODO Droid: is picking buffer supported in droid mode? It should be checked
+    // if (platform() != Platform.PROCESSING_ANDROID) {
     pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
         ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
     if (pb != null) {
@@ -201,26 +197,18 @@ public class Scene extends AbstractScene implements PConstants {
       pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
       pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
     }
+    // }
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
-    // TODO android
-    // discard this block one android is restored
-    {
+    if (platform() == Platform.PROCESSING_ANDROID) {
+      defMotionAgent = new DroidTouchAgent(this);
+      defKeyboardAgent = new DroidKeyAgent(this);
+    } else {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
       parent.registerMethod("mouseEvent", motionAgent());
     }
-    // if (platform() == Platform.PROCESSING_ANDROID) {
-    // defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-    // defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
-    // }
-    // else {
-    // defMotionAgent = new MouseAgent(this, "proscene_mouse");
-    // defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-    // parent.registerMethod("mouseEvent", motionAgent());
-    // }
-
     parent.registerMethod("keyEvent", keyboardAgent());
     this.setDefaultKeyBindings();
 
@@ -229,7 +217,7 @@ public class Scene extends AbstractScene implements PConstants {
     // TODO buggy in P5
     pApplet().registerMethod("dispose", this);
 
-    // Android: remove the following 2 lines if needed to compile the project
+    // TODO Droid: remove the following 2 lines if needed to compile the project
     // if (platform() == Platform.PROCESSING_ANDROID)
     // disablePickingBuffer();
     if (this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0))
@@ -349,19 +337,11 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   protected void setPlatform() {
-    Properties p = System.getProperties();
-    Enumeration<?> keys = p.keys();
-    while (keys.hasMoreElements()) {
-      String key = (String) keys.nextElement();
-      String value = (String) p.get(key);
-      if (key.contains("java.vm.vendor")) {
-        if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
-          platform = Platform.PROCESSING_ANDROID;
-        else
-          platform = Platform.PROCESSING_DESKTOP;
-        break;
-      }
-    }
+    String value = System.getProperty("java.vm.vendor").toString();
+    if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
+      platform = Platform.PROCESSING_ANDROID;
+    else
+      platform = Platform.PROCESSING_DESKTOP;
   }
 
   // P5-WRAPPERS
@@ -576,9 +556,8 @@ public class Scene extends AbstractScene implements PConstants {
   public boolean disableMotionAgent() {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableMouseAgent();
-    // TODO android
-    // if (platform() == Platform.PROCESSING_ANDROID)
-    // return disableDroidTouchAgent();
+    if (platform() == Platform.PROCESSING_ANDROID)
+      return disableDroidTouchAgent();
     return false;
   }
 
@@ -610,9 +589,8 @@ public class Scene extends AbstractScene implements PConstants {
   public boolean disableKeyboardAgent() {
     if (platform() == Platform.PROCESSING_DESKTOP)
       return disableKeyAgent();
-    // TODO android
-    // if (platform() == Platform.PROCESSING_ANDROID)
-    // return disableDroidKeyAgent();
+    if (platform() == Platform.PROCESSING_ANDROID)
+      return disableDroidKeyAgent();
     return false;
   }
 
@@ -772,13 +750,12 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableMouseAgent()
    * @see #droidKeyAgent()
    */
-  // TODO android
-  // public DroidTouchAgent droidTouchAgent() {
-  // if (platform() == Platform.PROCESSING_DESKTOP)
-  // throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop
-  // mode. Use mouseAgent() instead");
-  // return (DroidTouchAgent) motionAgent();
-  // }
+  public DroidTouchAgent droidTouchAgent() {
+    if (platform() == Platform.PROCESSING_DESKTOP)
+      throw new RuntimeException(
+          "Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead");
+    return (DroidTouchAgent) motionAgent();
+  }
 
   /**
    * Enables motion handling through the {@link #droidTouchAgent()}.
@@ -803,13 +780,14 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableDroidTouchAgent()
    * @see #disableDroidKeyAgent()
    */
-  // TODO android
-  // public DroidTouchAgent disableDroidTouchAgent() {
-  // if (platform() == Platform.PROCESSING_DESKTOP)
-  // throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in
-  // Desktop mode. Use disableMouseAgent() instead");return
-  // (DroidTouchAgent)motionAgent();
-  // }
+  public boolean disableDroidTouchAgent() {
+    if (platform() == Platform.PROCESSING_DESKTOP)
+      throw new RuntimeException(
+          "Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead");
+    if (isMotionAgentEnabled())
+      return inputHandler().unregisterAgent(motionAgent());
+    return false;
+  }
 
   /**
    * Returns {@code true} if the {@link #droidTouchAgent()} is enabled and {@code false}
@@ -838,13 +816,11 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #disableDroidKeyAgent()
    * @see #droidTouchAgent()
    */
-  // TODO android
-  // public DroidKeyAgent droidKeyAgent() {
-  // if (platform() == Platform.PROCESSING_DESKTOP)
-  // throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop
-  // mode. Use keyAgent() instead");
-  // return (DroidKeyAgent)defKeyboardAgent;
-  // }
+  public DroidKeyAgent droidKeyAgent() {
+    if (platform() == Platform.PROCESSING_DESKTOP)
+      throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead");
+    return (DroidKeyAgent) defKeyboardAgent;
+  }
 
   /**
    * Enables keyboard handling through the {@link #droidKeyAgent()}.
@@ -870,13 +846,16 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #enableDroidKeyAgent()
    * @see #disableDroidTouchAgent()
    */
-  // TODO android
-  // public DroidKeyAgent disableDroidKeyAgent() {
-  // if (platform() == Platform.PROCESSING_DESKTOP) {
-  // throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in
-  // Desktop mode. Use disableKeyAgent() instead"); } return
-  // (DroidKeyAgent)keyboardAgent();
-  // }
+  public boolean disableDroidKeyAgent() {
+    if (platform() == Platform.PROCESSING_DESKTOP)
+      throw new RuntimeException(
+          "Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead");
+    if (inputHandler().isAgentRegistered(keyboardAgent())) {
+      parent.unregisterMethod("keyEvent", keyboardAgent());
+      return inputHandler().unregisterAgent(keyboardAgent());
+    }
+    return false;
+  }
 
   /**
    * Returns {@code true} if the {@link #droidKeyAgent()} is enabled and {@code false}
