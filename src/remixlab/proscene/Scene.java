@@ -187,16 +187,13 @@ public class Scene extends AbstractScene implements PConstants {
     setMatrixHelper(matrixHelper(pg));
 
     // 3. Frames & picking buffer
-    // TODO Droid: is picking buffer supported in droid mode? It should be checked
-    if (platform() != Platform.PROCESSING_ANDROID) {
-      pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
-          ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
-      if (pb != null) {
-        enablePickingBuffer();
-        pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
-        pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
-        pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
-      }
+    pb = (pg() instanceof processing.opengl.PGraphicsOpenGL)
+        ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
+    if (pb != null) {
+      enablePickingBuffer();
+      pickingBufferShaderTriangle = pApplet().loadShader("PickingBuffer.frag");
+      pickingBufferShaderLine = pApplet().loadShader("PickingBuffer.frag");
+      pickingBufferShaderPoint = pApplet().loadShader("PickingBuffer.frag");
     }
 
     // 4. Create agents and register P5 methods
@@ -208,18 +205,20 @@ public class Scene extends AbstractScene implements PConstants {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
       parent.registerMethod("mouseEvent", motionAgent());
+      // TODO DROID broke in Android so moved here
+      parent.registerMethod("keyEvent", keyboardAgent());
+      this.setDefaultKeyBindings();
     }
-    parent.registerMethod("keyEvent", keyboardAgent());
-    this.setDefaultKeyBindings();
+    //TODO DROID broke in Android
+    //parent.registerMethod("keyEvent", keyboardAgent());
+    //this.setDefaultKeyBindings();
 
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
-    // TODO buggy in P5
-    //pApplet().registerMethod("dispose", this);
+    // TODO DROID buggy in desktop, should be tested in Android
+    if (platform() != Platform.PROCESSING_ANDROID)
+      pApplet().registerMethod("dispose", this);
 
-    // TODO Droid: remove the following 2 lines if needed to compile the project
-    if (platform() == Platform.PROCESSING_ANDROID)
-      disablePickingBuffer();
     if (this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0))
       pApplet().registerMethod("post", this);
 

@@ -8,13 +8,11 @@ Scene scene;
 float x,y,z;
 Box [] boxes;
 
-
 void setup() {
-  boxes = new Box[10];
   //size(displayWidth, displayHeight, P3D);
   fullScreen(P3D, 1);
+  boxes = new Box[10];
   scene = new Scene(this);
-  scene.setDottedGrid(false);
   for (int i = 0; i < boxes.length; i++)
     boxes[i] = new Box(scene);
   frameRate(100);
@@ -28,8 +26,7 @@ void draw() {
   text(frameRate, 5, 17);
   scene.endScreenDrawing();
   for (int i = 0; i < boxes.length; i++)      
-    boxes[i].draw();
-    
+    boxes[i].draw(); 
 }
 
 public boolean surfaceTouchEvent(MotionEvent event) {
