@@ -209,9 +209,9 @@ public class Scene extends AbstractScene implements PConstants {
       parent.registerMethod("keyEvent", keyboardAgent());
       this.setDefaultKeyBindings();
     }
-    //TODO DROID broke in Android
-    //parent.registerMethod("keyEvent", keyboardAgent());
-    //this.setDefaultKeyBindings();
+    // TODO DROID broke in Android
+    // parent.registerMethod("keyEvent", keyboardAgent());
+    // this.setDefaultKeyBindings();
 
     pApplet().registerMethod("pre", this);
     pApplet().registerMethod("draw", this);
