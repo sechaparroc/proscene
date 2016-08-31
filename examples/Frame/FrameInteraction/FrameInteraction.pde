@@ -23,10 +23,6 @@
  * lies within the frame 'selection area': a square around the frame's projected origin
  * (frame 1 and frame3) or the projected frame visual representation (frame2 and frame4)
  * which requires drawing the frame picking-shape into an scene.pickingBuffer().
- *
- * Press 'i' (which is a shortcut defined below) to switch the interaction between the
- * camera frame and the interactive frame. You can also manipulate the interactive
- * frame by picking the blue torus passing the mouse next to its axes origin.
  * 
  * Press 'f' to display the interactive frame picking hint.
  * Press 'h' to display the global shortcuts in the console.

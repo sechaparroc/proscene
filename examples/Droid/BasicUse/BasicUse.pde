@@ -1,3 +1,15 @@
+/**
+ * Frame Interaction.
+ * by Victor Forero and Jean Pierre Charalambos.
+ * 
+ * Android version of the Basics.BasicUse example.
+ * 
+ * Press 'f' to display the interactive frame picking hint.
+ * Press 'h' to display the global shortcuts in the console.
+ * Press 'H' to display the current camera profile keyboard shortcuts
+ * and mouse bindings in the console.
+ */
+
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;

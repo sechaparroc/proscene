@@ -1,32 +1,8 @@
 /**
  * Frame Interaction.
- * by Jean Pierre Charalambos.
+ * by Victor Forero and Jean Pierre Charalambos.
  * 
- * This example illustrates how to deal with interactive frames: how to pick &
- * manipulate them and how to visually represent them.
- * 
- * Interactivity may be fine-tuned either from an InteractiveFrame instance (frame2) or
- * from some code within the sketch (frame3 and frame4). Note that frame1 has default
- * mouse and keyboard interactivity. Also note that the scene eye has a frame instance
- * (scene.eyeFrame()) which may be controlled in the same way.
- * 
- * Visual representations may be related to a frame in two different ways: 1. Applying
- * the frame transformation just before the graphics code happens in draw() (frame1);
- * or, 2. Setting a visual representation to the frame, either by calling
- * frame.setShape(myPShape) or frame.setShape(myProcedure) in setup() (frame2 and frame3,
- * resp.), and then calling scene.drawFrames() in draw() (frame2, frame3 and frame4).
- * Note that in frame4 different visual representations for the front and picking shapes
- * are set with setFrontShape() and setPickingShape() resp. Also note that setShape() is
- * just a wrapper method that call both functions on the same shape paramenter.
- * 
- * Frame picking is achieved by tracking the pointer and checking whether or not it
- * lies within the frame 'selection area': a square around the frame's projected origin
- * (frame 1 and frame3) or the projected frame visual representation (frame2 and frame4)
- * which requires drawing the frame picking-shape into an scene.pickingBuffer().
- *
- * Press 'i' (which is a shortcut defined below) to switch the interaction between the
- * camera frame and the interactive frame. You can also manipulate the interactive
- * frame by picking the blue torus passing the mouse next to its axes origin.
+ * Android version of the Frame.FrameInteraction example.
  * 
  * Press 'f' to display the interactive frame picking hint.
  * Press 'h' to display the global shortcuts in the console.
@@ -41,12 +17,12 @@ import android.view.MotionEvent;
 Scene scene;
 InteractiveFrame frame1, frame2, frame3, frame4;
 
-//Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
+//Choose one of P3D for a 3D scene, or P2D for a 2D scene
 String renderer = P3D;
 
 void setup() {
   //size(displayWidth, displayHeight, P3D);
-  fullScreen(P3D, 1);    
+  fullScreen(P3D, 1);
   scene = new Scene(this);
   scene.eyeFrame().setDamping(0);
   scene.setPickingVisualHint(true);
@@ -65,11 +41,10 @@ void setup() {
   //frame2.setMotionBinding(RIGHT, "scale");
 
   //frame 3
-  frame3 = new InteractiveFrame(scene, "drawAxes");
-  //same as:
-  //frame3 = new InteractiveFrame(scene);
-  //frame3.setShape("drawAxes");
-  //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
+  frame3 = new InteractiveFrame(scene);
+  frame3.setFrontShape("drawAxes");
+  frame3.setPickingShape(this, "boxPicking");
+  frame3.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
   frame3.translate(-100, -50);
   //frame3.setMotionBinding(this, LEFT, "boxCustomMotion");
   //frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
