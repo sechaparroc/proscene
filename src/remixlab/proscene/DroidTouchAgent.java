@@ -25,6 +25,7 @@ public class DroidTouchAgent extends Agent {
   public DroidTouchAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
+    TAP_ID = scene().registerClickID(1, this);
     DRAG_ONE_ID = scene().registerMotionID(2, this, 6);
     DRAG_TWO_ID = scene().registerMotionID(3, this, 6);
     DRAG_THREE_ID = scene().registerMotionID(4, this, 6);
@@ -33,7 +34,6 @@ public class DroidTouchAgent extends Agent {
     PINCH_TWO_ID = scene().registerMotionID(7, this, 6);
     PINCH_THREE_ID = scene().registerMotionID(8, this, 6);
     OPPOSABLE_THREE_ID = scene().registerMotionID(9, this, 6);
-
   }
 
   public void setDefaultBindings(InteractiveFrame frame) {
