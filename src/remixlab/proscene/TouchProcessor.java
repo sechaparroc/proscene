@@ -23,7 +23,7 @@ import remixlab.dandelion.geom.Vec;
 
 class TouchProcessor {
   // heuristic constants
-  public static enum Gestures {
+  enum Gestures {
     TAP_ID("Briefly touch surface with fingertip", DroidTouchAgent.TAP_ID),
     DRAG_ONE_ID("Move fingertip over surface without losing contact", DroidTouchAgent.DRAG_ONE_ID),
     DRAG_TWO_ID("Move two fingertips over surface without losing contact", DroidTouchAgent.DRAG_TWO_ID),
