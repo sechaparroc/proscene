@@ -37,7 +37,7 @@ public class DroidTouchAgent extends Agent {
     touchProcessor = new TouchProcessor();
   }
 
-  public void setDefaultBindings(InteractiveFrame frame) {
+  protected void setDefaultBindings(InteractiveFrame frame) {
     frame.removeMotionBindings(this);
     frame.removeClickBindings(this);
 
