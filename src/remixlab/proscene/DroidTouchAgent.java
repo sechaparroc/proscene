@@ -18,22 +18,23 @@ import remixlab.proscene.TouchProcessor.Gestures;
 public class DroidTouchAgent extends Agent {
   Scene scene;
   protected DOF6Event event, prevEvent;
-  protected static TouchProcessor touchProcessor = new TouchProcessor();
+  protected TouchProcessor touchProcessor;
   public static int TAP_ID, DRAG_ONE_ID, DRAG_TWO_ID, DRAG_THREE_ID, TURN_TWO_ID, TURN_THREE_ID, PINCH_TWO_ID,
       PINCH_THREE_ID, OPPOSABLE_THREE_ID;
 
   public DroidTouchAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
-    TAP_ID = scene().registerClickID(1, this);
-    DRAG_ONE_ID = scene().registerMotionID(2, this, 6);
-    DRAG_TWO_ID = scene().registerMotionID(3, this, 6);
-    DRAG_THREE_ID = scene().registerMotionID(4, this, 6);
-    TURN_TWO_ID = scene().registerMotionID(5, this, 6);
-    TURN_THREE_ID = scene().registerMotionID(6, this, 6);
-    PINCH_TWO_ID = scene().registerMotionID(7, this, 6);
-    PINCH_THREE_ID = scene().registerMotionID(8, this, 6);
-    OPPOSABLE_THREE_ID = scene().registerMotionID(9, this, 6);
+    TAP_ID = scene().registerClickID(this);
+    DRAG_ONE_ID = scene().registerMotionID(this, 6);
+    DRAG_TWO_ID = scene().registerMotionID(this, 6);
+    DRAG_THREE_ID = scene().registerMotionID(this, 6);
+    TURN_TWO_ID = scene().registerMotionID(this, 6);
+    TURN_THREE_ID = scene().registerMotionID(this, 6);
+    PINCH_TWO_ID = scene().registerMotionID(this, 6);
+    PINCH_THREE_ID = scene().registerMotionID(this, 6);
+    OPPOSABLE_THREE_ID = scene().registerMotionID(this, 6);
+    touchProcessor = new TouchProcessor();
   }
 
   public void setDefaultBindings(InteractiveFrame frame) {
@@ -72,11 +73,11 @@ public class DroidTouchAgent extends Agent {
       touchProcessor.pointDown(x, y, id);
       touchProcessor.parse();
       event = new DOF6Event(null, touchProcessor.getCx(), touchProcessor.getCy(), 0, 0, 0, 0,
-          MotionEvent.NO_MODIFIER_MASK, e.getPointerCount());
+          MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 
       prevEvent = event.get();
       event = new DOF6Event(prevEvent, touchProcessor.getCx(), touchProcessor.getCy(), 0, 0, 0, 0,
-          MotionEvent.NO_MODIFIER_MASK, e.getPointerCount());
+          MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 
       if (e.getPointerCount() == 1) {
         updateTrackedGrabber(event);
@@ -107,19 +108,6 @@ public class DroidTouchAgent extends Agent {
       gesture = touchProcessor.parseGesture();
       if (gesture != null) {
         PApplet.print("Gesto " + gesture.id());
-        // event = new DOF6Event(prevEvent, touchProcessor.getCx(),
-        // touchProcessor.getCy(), 0, 0, 0, 0,
-        // MotionEvent.NO_MODIFIER_MASK,
-        // gesture.id());
-        // Action<?> a = (inputGrabber() instanceof InteractiveFrame) ?
-        // eyeProfile().handle((BogusEvent) event)
-        // : frameProfile().handle((BogusEvent) event);
-        // if (a == null)
-        // return;
-        // MotionAction dA = (MotionAction) a.referenceAction();
-        // if (dA == MotionAction.TRANSLATE_XYZ) {
-        // } else if (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ) {
-        // } else {
         if (prevEvent.id() != gesture.id()) {
           prevEvent = null;
         }
@@ -153,9 +141,7 @@ public class DroidTouchAgent extends Agent {
           break;
         default:
           break;
-
         }
-        // }
         if (gesture != null) {
           if (prevEvent != null) {
             handle(event);

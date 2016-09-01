@@ -1,3 +1,13 @@
+/**************************************************************************************
+ * ProScene (version 3.0.0)
+ * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * @author Victor Manuel Forero, Jean Pierre Charalambos, http://otrolado.info/
+ * 
+ * All rights reserved. Library that eases the creation of interactive scenes
+ * in Processing, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ **************************************************************************************/
+
 //TouchProcessor and helper classes were adapted from Android Multi-Touch event demo by David Bouchard,
 //http://www.deadpixel.ca
 //Event classes
@@ -11,21 +21,18 @@ import remixlab.util.*;
 
 import remixlab.dandelion.geom.Vec;
 
-public class TouchProcessor {
+class TouchProcessor {
   // heuristic constants
   public static enum Gestures {
-    TAP_ID("Briefly touch surface with fingertip", 1), DRAG_ONE_ID("Move fingertip over surface without losing contact",
-        2), DRAG_TWO_ID("Move two fingertips over surface without losing contact",
-            3), DRAG_THREE_ID("Move three fingertips over surface without losing contact", 4), TURN_TWO_ID(
-                "Touch surface with two fingers and move them in a clockwise or counterclockwise direction",
-                5), TURN_THREE_ID(
-                    "Touch surface with three fingers and move them in a clockwise or counterclockwise direction",
-                    6), PINCH_TWO_ID("Touch surface with two fingers and bring them together or move them appart",
-                        7), PINCH_THREE_ID(
-                            "Touch surface with three fingers and bring them together or move them appart",
-                            8), OPPOSABLE_THREE_ID(
-                                "Press surface with two fingers and move third finger over surface without losing contact",
-                                9);
+    TAP_ID("Briefly touch surface with fingertip", DroidTouchAgent.TAP_ID),
+    DRAG_ONE_ID("Move fingertip over surface without losing contact", DroidTouchAgent.DRAG_ONE_ID),
+    DRAG_TWO_ID("Move two fingertips over surface without losing contact", DroidTouchAgent.DRAG_TWO_ID),
+    DRAG_THREE_ID("Move three fingertips over surface without losing contact", DroidTouchAgent.DRAG_THREE_ID),
+    TURN_TWO_ID("Touch surface with two fingers and move them in a clockwise or counterclockwise direction", DroidTouchAgent.TURN_TWO_ID),
+    TURN_THREE_ID("Touch surface with three fingers and move them in a clockwise or counterclockwise direction", DroidTouchAgent.TURN_THREE_ID),
+    PINCH_TWO_ID("Touch surface with two fingers and bring them together or move them appart", DroidTouchAgent.PINCH_TWO_ID),
+    PINCH_THREE_ID("Touch surface with three fingers and bring them together or move them appart", DroidTouchAgent.PINCH_THREE_ID),
+    OPPOSABLE_THREE_ID("Press surface with two fingers and move third finger over surface without losing contact", DroidTouchAgent.OPPOSABLE_THREE_ID);
 
     String description;
     int id;
@@ -38,26 +45,26 @@ public class TouchProcessor {
     /**
      * Returns a description of the gesture.
      */
-    public String description() {
+    String description() {
       return description;
     }
 
     /**
      * Returns gesture id.
      */
-    public int id() {
+    int id() {
       return id;
     }
   }
 
-  private final long TAP_INTERVAL = 200;
-  private final long TAP_TIMEOUT = 0;
-  private final int DOUBLE_TAP_DIST_THRESHOLD = 30;
-  private final int FLICK_VELOCITY_THRESHOLD = 20;
-  private final float MAX_MULTI_DRAG_DISTANCE = 400; // from the centroid
+  final long TAP_INTERVAL = 200;
+  final long TAP_TIMEOUT = 0;
+  final int DOUBLE_TAP_DIST_THRESHOLD = 30;
+  final int FLICK_VELOCITY_THRESHOLD = 20;
+  final float MAX_MULTI_DRAG_DISTANCE = 400; // from the centroid
 
-  private final float TURN_THRESHOLD = 0.01f;
-  private final float PINCH_THRESHOLD = 1.2f;
+  final float TURN_THRESHOLD = 0.01f;
+  final float PINCH_THRESHOLD = 1.2f;
 
   // A list of currently active touch points
   ArrayList<TouchPoint> touchPoints;
@@ -72,23 +79,23 @@ public class TouchProcessor {
   ArrayList<TouchEvent> events;
 
   // centroid information
-  private float cx;
-  private float cy;
+  float cx;
+  float cy;
   float old_cx, old_cy;
-  private float r;
-  private float z = 1;
+  float r;
+  float z = 1;
 
   boolean pointsChanged = false;
 
   // -------------------------------------------------------------------------------------
-  public TouchProcessor() {
+  TouchProcessor() {
     touchPoints = new ArrayList<TouchPoint>();
     events = new ArrayList<TouchEvent>();
   }
 
   // -------------------------------------------------------------------------------------
   // Point Update functions
-  public synchronized void pointDown(float x, float y, int id) {
+  synchronized void pointDown(float x, float y, int id) {
     TouchPoint p = new TouchPoint(x, y, id);
     touchPoints.add(p);
     setZ(1);
@@ -116,7 +123,7 @@ public class TouchProcessor {
   }
 
   // -------------------------------------------------------------------------------------
-  public synchronized void pointUp(int id) {
+  synchronized void pointUp(int id) {
     TouchPoint p = getPoint(id);
     touchPoints.remove(p);
 
@@ -140,7 +147,7 @@ public class TouchProcessor {
   }
 
   // -------------------------------------------------------------------------------------
-  public synchronized void pointMoved(float x, float y, int id) {
+  synchronized void pointMoved(float x, float y, int id) {
     TouchPoint p = getPoint(id);
     p.update(x, y);
     // since the events will be in sync with draw(), we just wait until analyse() to
@@ -166,7 +173,7 @@ public class TouchProcessor {
 
   // -------------------------------------------------------------------------------------
 
-  public synchronized void parse() {
+  synchronized void parse() {
     // simple event priority rule: do not try to rotate or pinch while dragging
     // this gets rid of a lot of jittery events
     if (pointsChanged) {
@@ -175,14 +182,14 @@ public class TouchProcessor {
     }
   }
 
-  public synchronized Gestures parseTap() {
+  synchronized Gestures parseTap() {
     if (handleTaps() == null)
       return null;
     else
       return Gestures.TAP_ID;
   }
 
-  public synchronized Gestures parseGesture() {
+  synchronized Gestures parseGesture() {
     Gestures gesture = null;
     if (pointsChanged) {
       updateCentroid();
@@ -366,6 +373,7 @@ public class TouchProcessor {
   }
 
   // -------------------------------------------------------------------------------------
+  //TODO implement me in a cleaner way
   @SuppressWarnings("unchecked")
   synchronized ArrayList<TouchPoint> getPoints() {
     return (ArrayList<TouchPoint>) touchPoints.clone();
@@ -382,7 +390,7 @@ public class TouchProcessor {
     return null;
   }
 
-  public float getCx() {
+  float getCx() {
     return cx;
   }
 
@@ -390,7 +398,7 @@ public class TouchProcessor {
     this.cx = cx;
   }
 
-  public float getCy() {
+  float getCy() {
     return cy;
   }
 
@@ -398,7 +406,7 @@ public class TouchProcessor {
     this.cy = cy;
   }
 
-  public float getZ() {
+  float getZ() {
     return z;
   }
 
@@ -406,7 +414,7 @@ public class TouchProcessor {
     this.z = z;
   }
 
-  public float getR() {
+  float getR() {
     return r;
   }
 
@@ -438,7 +446,6 @@ class DragEvent extends TouchEvent {
 
 // /////////////////////////////////////////////////////////////////////////////////
 class PinchEvent extends TouchEvent {
-
   float centerX;
   float centerY;
   float amount; // in pixels
