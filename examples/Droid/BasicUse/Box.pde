@@ -25,13 +25,13 @@
 
 public class Box {
   Scene scene;
-  public GenericFrame iFrame;
+  public InteractiveFrame iFrame;
   float w, h, d;
   int c;
 
   public Box(Scene scn) {
     scene = scn;
-    iFrame = new GenericFrame(scn);
+    iFrame = new InteractiveFrame(scn);
     iFrame.setPickingPrecision(GenericFrame.PickingPrecision.ADAPTIVE);
     setSize();
     setColor();    
@@ -96,8 +96,8 @@ public class Box {
     iFrame.setPosition(pos);
   }
 
-  public Quat getOrientation() {
-    return (Quat)iFrame.orientation();
+  public Rotation getOrientation() {
+    return iFrame.orientation();
   }
 
   public void setOrientation(Vec v) {
