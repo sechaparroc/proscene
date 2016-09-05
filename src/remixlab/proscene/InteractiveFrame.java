@@ -98,10 +98,10 @@ public class InteractiveFrame extends GenericFrame {
   protected Shape fShape, pShape;
 
   HighlightingMode highlight;
-  
-  //TODO static?
-  protected 
-  //static 
+
+  // TODO static?
+  protected
+  // static
   List<Method> grabsList = new ArrayList<Method>();
 
   /**
@@ -879,8 +879,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Shifts the front-frame shape respect to the frame {@link #position()}. Default value is
-   * zero.
+   * Shifts the front-frame shape respect to the frame {@link #position()}. Default value
+   * is zero.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -892,8 +892,8 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Shifts the picking-frame shape respect to the frame {@link #position()}. Default value is
-   * zero.
+   * Shifts the picking-frame shape respect to the frame {@link #position()}. Default
+   * value is zero.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -917,40 +917,40 @@ public class InteractiveFrame extends GenericFrame {
     }
     updatePickingBufferCache();
   }
-  
+
   @Override
   public boolean checkIfGrabsInput(BogusEvent event) {
-    // TODO performance boost, but will not allow to be reflective on events derived from default ones
-    //if(event instanceof KeyboardEvent || event instanceof ClickEvent || event instanceof MotionEvent)
-    //  return super.checkIfGrabsInput(event);
+    // TODO performance boost, but will not allow to be reflective on events derived from
+    // default ones
+    // if(event instanceof KeyboardEvent || event instanceof ClickEvent || event
+    // instanceof MotionEvent)
+    // return super.checkIfGrabsInput(event);
     Method mth = null;
     Object obj = this;
     boolean frameParam = false;
-    //1. Retrieving
+    // 1. Retrieving
     try {
-    mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
-    }
-    catch (Exception e1) {
+      mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
+    } catch (Exception e1) {
       obj = scene().pApplet();
       try {
         mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
+      } catch (Exception e2) {
+        frameParam = true;
+        try {
+          mth = obj.getClass().getMethod("checkIfGrabsInput",
+              new Class<?>[] { InteractiveFrame.class, event.getClass() });
+        } catch (Exception e3) {
+          PApplet.println("Error: no picking condition for " + event.getClass().getName());
+          e1.printStackTrace();
+          e2.printStackTrace();
+          e3.printStackTrace();
         }
-        catch (Exception e2) {
-          frameParam = true;
-          try {
-            mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { InteractiveFrame.class, event.getClass() });
-            }
-            catch (Exception e3) {      
-              PApplet.println("Error: no picking condition for " + event.getClass().getName());
-              e1.printStackTrace();
-              e2.printStackTrace();
-              e3.printStackTrace();
-            }
-        }
+      }
     }
-    //2. Invocation
+    // 2. Invocation
     try {
-      if(frameParam)
+      if (frameParam)
         return (boolean) mth.invoke(obj, new Object[] { this, event });
       else
         return (boolean) mth.invoke(obj, new Object[] { event });

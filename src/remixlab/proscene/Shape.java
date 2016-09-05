@@ -176,12 +176,12 @@ class Shape {
     if (!isSetable(object, methodName))
       return false;
     boolean success = false;
-    if (object == iFrame || object == iFrame.scene())
+    if (object == iFrame || object == iFrame.scene() || object == iFrame.scene().pApplet())
       PApplet.println("Warning: you can use the simpler setShape(methodName) method too");
     try {
       singleParam(object, methodName);
       success = true;
-    } catch (Exception e) {
+    } catch (Exception e1) {
       try {
         if (iFrame.isEyeFrame()) {
           PApplet.println("Warning: no eyeFrame shape set. Either the " + methodName
@@ -190,9 +190,10 @@ class Shape {
         }
         doubleParam(object, methodName);
         success = true;
-      } catch (Exception e1) {
+      } catch (Exception e2) {
         PApplet.println("Warning: no shape set with " + methodName + " method");
         e1.printStackTrace();
+        e2.printStackTrace();
       }
     }
     if (success)
@@ -218,19 +219,35 @@ class Shape {
         return false;
       singleParam(iFrame, methodName);
       success = true;
-    } catch (Exception e) {
+    } catch (Exception e1) {
       if (!isSetable(iFrame.scene(), methodName))
         return false;
       try {
         singleParam(iFrame.scene(), methodName);
         success = true;
-      } catch (Exception e1) {
+      } catch (Exception e2) {
         try {
           doubleParam(iFrame.scene(), methodName);
           success = true;
-        } catch (Exception e2) {
-          PApplet.println("Warning: no shape set with " + methodName + " method");
-          e2.printStackTrace();
+        } catch (Exception e3) {
+          if (!isSetable(iFrame.scene().pApplet(), methodName))
+            return false;
+          try {
+            singleParam(iFrame.scene().pApplet(), methodName);
+            success = true;
+          } catch (Exception e4) {
+            try {
+              doubleParam(iFrame.scene().pApplet(), methodName);
+              success = true;
+            } catch (Exception e5) {
+              PApplet.println("Warning: no shape set with " + methodName + " method");
+              e1.printStackTrace();
+              e2.printStackTrace();
+              e3.printStackTrace();
+              e4.printStackTrace();
+              e5.printStackTrace();
+            }
+          }
         }
       }
     }

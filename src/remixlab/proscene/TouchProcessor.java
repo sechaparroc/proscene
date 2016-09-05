@@ -24,15 +24,21 @@ import remixlab.dandelion.geom.Vec;
 class TouchProcessor {
   // heuristic constants
   enum Gestures {
-    TAP_ID("Briefly touch surface with fingertip", DroidTouchAgent.TAP_ID),
-    DRAG_ONE_ID("Move fingertip over surface without losing contact", DroidTouchAgent.DRAG_ONE_ID),
-    DRAG_TWO_ID("Move two fingertips over surface without losing contact", DroidTouchAgent.DRAG_TWO_ID),
-    DRAG_THREE_ID("Move three fingertips over surface without losing contact", DroidTouchAgent.DRAG_THREE_ID),
-    TURN_TWO_ID("Touch surface with two fingers and move them in a clockwise or counterclockwise direction", DroidTouchAgent.TURN_TWO_ID),
-    TURN_THREE_ID("Touch surface with three fingers and move them in a clockwise or counterclockwise direction", DroidTouchAgent.TURN_THREE_ID),
-    PINCH_TWO_ID("Touch surface with two fingers and bring them together or move them appart", DroidTouchAgent.PINCH_TWO_ID),
-    PINCH_THREE_ID("Touch surface with three fingers and bring them together or move them appart", DroidTouchAgent.PINCH_THREE_ID),
-    OPPOSABLE_THREE_ID("Press surface with two fingers and move third finger over surface without losing contact", DroidTouchAgent.OPPOSABLE_THREE_ID);
+    TAP_ID("Briefly touch surface with fingertip", DroidTouchAgent.TAP_ID), DRAG_ONE_ID(
+        "Move fingertip over surface without losing contact",
+        DroidTouchAgent.DRAG_ONE_ID), DRAG_TWO_ID("Move two fingertips over surface without losing contact",
+            DroidTouchAgent.DRAG_TWO_ID), DRAG_THREE_ID("Move three fingertips over surface without losing contact",
+                DroidTouchAgent.DRAG_THREE_ID), TURN_TWO_ID(
+                    "Touch surface with two fingers and move them in a clockwise or counterclockwise direction",
+                    DroidTouchAgent.TURN_TWO_ID), TURN_THREE_ID(
+                        "Touch surface with three fingers and move them in a clockwise or counterclockwise direction",
+                        DroidTouchAgent.TURN_THREE_ID), PINCH_TWO_ID(
+                            "Touch surface with two fingers and bring them together or move them appart",
+                            DroidTouchAgent.PINCH_TWO_ID), PINCH_THREE_ID(
+                                "Touch surface with three fingers and bring them together or move them appart",
+                                DroidTouchAgent.PINCH_THREE_ID), OPPOSABLE_THREE_ID(
+                                    "Press surface with two fingers and move third finger over surface without losing contact",
+                                    DroidTouchAgent.OPPOSABLE_THREE_ID);
 
     String description;
     int id;
@@ -373,7 +379,7 @@ class TouchProcessor {
   }
 
   // -------------------------------------------------------------------------------------
-  //TODO implement me in a cleaner way
+  // TODO implement me in a cleaner way
   @SuppressWarnings("unchecked")
   synchronized ArrayList<TouchPoint> getPoints() {
     return (ArrayList<TouchPoint>) touchPoints.clone();
