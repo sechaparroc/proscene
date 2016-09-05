@@ -920,6 +920,9 @@ public class InteractiveFrame extends GenericFrame {
   
   @Override
   public boolean checkIfGrabsInput(BogusEvent event) {
+    // TODO performance boost, but will not allow to be reflective on events derived from default ones
+    //if(event instanceof KeyboardEvent || event instanceof ClickEvent || event instanceof MotionEvent)
+    //  return super.checkIfGrabsInput(event);
     Method mth = null;
     Object obj = this;
     boolean frameParam = false;

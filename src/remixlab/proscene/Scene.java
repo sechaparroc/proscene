@@ -198,9 +198,6 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
-    registerEvent(ClickEvent.class, ClickShortcut.class);
-    registerEvent(KeyboardEvent.class, KeyboardShortcut.class);
-    registerEvent(MotionEvent.class, MotionShortcut.class);
     if (platform() == Platform.PROCESSING_ANDROID) {
       defMotionAgent = new DroidTouchAgent(this);
       defKeyboardAgent = new DroidKeyAgent(this);
@@ -1603,10 +1600,6 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().shader(pickingBufferShaderTriangle);
     pickingBuffer().shader(pickingBufferShaderLine, LINES);
     pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
-  }
-  
-  public static void registerEvent(Class<?> Event, Class<?> Shortcut) {
-    Profile.registerEvent(Event, Shortcut);
   }
 
   /**
