@@ -15,6 +15,10 @@
 
 package remixlab.proscene;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -94,6 +98,11 @@ public class InteractiveFrame extends GenericFrame {
   protected Shape fShape, pShape;
 
   HighlightingMode highlight;
+  
+  //TODO static?
+  protected 
+  //static 
+  List<Method> grabsList = new ArrayList<Method>();
 
   /**
    * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
@@ -857,8 +866,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Shifts the frame shape respect to the frame {@link #position()}. Default value is
-   * zero.
+   * Same as {@code shiftFrontShape(shift); shiftPickingShape(shift)}.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
    * 
@@ -870,10 +878,28 @@ public class InteractiveFrame extends GenericFrame {
     shiftPickingShape(shift);
   }
 
+  /**
+   * Shifts the front-frame shape respect to the frame {@link #position()}. Default value is
+   * zero.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
+   * 
+   * @see #shiftShape(Vec)
+   * @see #shiftPickingShape(Vec)
+   */
   public void shiftFrontShape(Vec shift) {
     fShape.shift(shift);
   }
 
+  /**
+   * Shifts the picking-frame shape respect to the frame {@link #position()}. Default value is
+   * zero.
+   * <p>
+   * This method is only meaningful when frame is not eyeFrame.
+   * 
+   * @see #shiftShape(Vec)
+   * @see #shiftFrontShape(Vec)
+   */
   public void shiftPickingShape(Vec shift) {
     pShape.shift(shift);
   }
@@ -890,6 +916,46 @@ public class InteractiveFrame extends GenericFrame {
       return;
     }
     updatePickingBufferCache();
+  }
+  
+  @Override
+  public boolean checkIfGrabsInput(BogusEvent event) {
+    Method mth = null;
+    Object obj = this;
+    boolean frameParam = false;
+    //1. Retrieving
+    try {
+    mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
+    }
+    catch (Exception e1) {
+      obj = scene().pApplet();
+      try {
+        mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
+        }
+        catch (Exception e2) {
+          frameParam = true;
+          try {
+            mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { InteractiveFrame.class, event.getClass() });
+            }
+            catch (Exception e3) {      
+              PApplet.println("Error: no picking condition for " + event.getClass().getName());
+              e1.printStackTrace();
+              e2.printStackTrace();
+              e3.printStackTrace();
+            }
+        }
+    }
+    //2. Invocation
+    try {
+      if(frameParam)
+        return (boolean) mth.invoke(obj, new Object[] { this, event });
+      else
+        return (boolean) mth.invoke(obj, new Object[] { event });
+    } catch (Exception e) {
+      PApplet.println("Error: no picking condition");
+      e.printStackTrace();
+    }
+    return false;
   }
 
   /**
@@ -920,7 +986,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   @Override
-  protected boolean checkIfGrabsInput(KeyboardEvent event) {
+  public boolean checkIfGrabsInput(KeyboardEvent event) {
     return profile.hasBinding(event.shortcut());
   }
 
