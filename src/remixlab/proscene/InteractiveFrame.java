@@ -440,17 +440,6 @@ public class InteractiveFrame extends GenericFrame {
     profile.removeBinding(new MotionShortcut(id));
   }
 
-  /**
-   * Remove all the motion bindings related to the agent. Same as
-   * {@code profile.removeBindings(agent, MotionShortcut.class)}.
-   * 
-   * @see #removeMotionBinding(int)
-   * @see remixlab.bias.ext.Profile#removeBindings(Agent, Class)
-   */
-  public void removeMotionBindings(Agent agent) {
-    profile.removeBindings(agent, MotionShortcut.class);
-  }
-
   // Key
 
   /**
@@ -671,17 +660,6 @@ public class InteractiveFrame extends GenericFrame {
    */
   public void removeClickBindings() {
     profile.removeBindings(ClickShortcut.class);
-  }
-
-  /**
-   * Remove the click bindings related to the agent. Same as
-   * {@code profile.removeBindings(agent, ClickShortcut.class)}.
-   * 
-   * @see #removeClickBinding(int, int)
-   * @see remixlab.bias.ext.Profile#removeBindings(Agent, Class)
-   */
-  public void removeClickBindings(Agent agent) {
-    profile.removeBindings(agent, ClickShortcut.class);
   }
 
   /**

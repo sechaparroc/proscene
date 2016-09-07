@@ -10,8 +10,6 @@
 
 package remixlab.proscene;
 
-//import java.util.Arrays;
-
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -45,15 +43,11 @@ public class MouseAgent extends Agent {
   public MouseAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
-    LEFT_ID = scene().registerMotionID(37, this, 2);
-    CENTER_ID = scene().registerMotionID(3, this, 2);
-    RIGHT_ID = scene().registerMotionID(39, this, 2);
-    WHEEL_ID = scene().registerMotionID(8, this, 1);
-    NO_BUTTON = scene().registerMotionID(BogusEvent.NO_ID, this, 2);
-    // click ids are anonymous (since they are the same as motions)
-    scene().registerClickID(LEFT_ID, this);
-    scene().registerClickID(CENTER_ID, this);
-    scene().registerClickID(RIGHT_ID, this);
+    LEFT_ID = scene().registerMotionID(37, 2);
+    CENTER_ID = scene().registerMotionID(3, 2);
+    RIGHT_ID = scene().registerMotionID(39, 2);
+    WHEEL_ID = scene().registerMotionID(8, 1);
+    NO_BUTTON = scene().registerMotionID(BogusEvent.NO_ID, 2);
     setPickingMode(PickingMode.MOVE);
   }
 
@@ -168,8 +162,8 @@ public class MouseAgent extends Agent {
    * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
    */
   protected void setDefaultBindings(InteractiveFrame frame) {
-    frame.removeMotionBindings(this);
-    frame.removeClickBindings(this);
+    frame.removeMotionBindings();
+    frame.removeClickBindings();
 
     frame.setMotionBinding(LEFT_ID, "rotate");
     frame.setMotionBinding(CENTER_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");

@@ -1605,43 +1605,23 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code return Profile.registerMotionID(id, agent.getClass(), dof)}.
+   * Same as {@code return MotionEvent.registerID(id, dof)}.
    * 
-   * @see #registerMotionID(int, Agent, int)
-   * @see remixlab.bias.ext.Profile#registerMotionID(int, Class, int)
+   * @see #registerMotionID(int)
+   * @see remixlab.bias.event.MotionEvent#registerID(int)
    */
-  public int registerMotionID(int id, Agent agent, int dof) {
-    return Profile.registerMotionID(id, agent.getClass(), dof);
+  public int registerMotionID(int id, int dof) {
+    return MotionShortcut.registerID(id, dof);
   }
 
   /**
-   * Same as {@code return Profile.registerMotionID(agent.getClass(), dof)}.
+   * Same as {@code return MotionEvent.registerID(dof)}.
    *
-   * @see #registerMotionID(int, Agent, int)
-   * @see remixlab.bias.ext.Profile#registerMotionID(Class, int)
+   * @see #registerMotionID(int, int)
+   * @see remixlab.bias.event.MotionEvent#registerID(int, int)
    */
-  public int registerMotionID(Agent agent, int dof) {
-    return Profile.registerMotionID(agent.getClass(), dof);
-  }
-
-  /**
-   * Same as {@code return Profile.registerClickID(id, agent.getClass())}.
-   * 
-   * @see #registerClickID(Agent)
-   * @see remixlab.bias.ext.Profile#registerClickID(int, Class)
-   */
-  public int registerClickID(int id, Agent agent) {
-    return Profile.registerClickID(id, agent.getClass());
-  }
-
-  /**
-   * Same as {@code return Profile.registerClickID(agent.getClass())}.
-   * 
-   * @see #registerClickID(Agent)
-   * @see remixlab.bias.ext.Profile#registerClickID(Class)
-   */
-  public int registerClickID(Agent agent) {
-    return Profile.registerClickID(agent.getClass());
+  public int registerMotionID(int dof) {
+    return MotionShortcut.registerID(dof);
   }
 
   protected boolean unchachedBuffer;

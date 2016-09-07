@@ -25,21 +25,43 @@ public class DroidTouchAgent extends Agent {
   public DroidTouchAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
-    TAP_ID = scene().registerClickID(this);
-    DRAG_ONE_ID = scene().registerMotionID(this, 6);
-    DRAG_TWO_ID = scene().registerMotionID(this, 6);
-    DRAG_THREE_ID = scene().registerMotionID(this, 6);
-    TURN_TWO_ID = scene().registerMotionID(this, 6);
-    TURN_THREE_ID = scene().registerMotionID(this, 6);
-    PINCH_TWO_ID = scene().registerMotionID(this, 6);
-    PINCH_THREE_ID = scene().registerMotionID(this, 6);
-    OPPOSABLE_THREE_ID = scene().registerMotionID(this, 6);
+    TAP_ID = 1;//scene().registerClickID(this);
+    DRAG_ONE_ID = scene().registerMotionID(6);
+    DRAG_TWO_ID = scene().registerMotionID(6);
+    DRAG_THREE_ID = scene().registerMotionID(6);
+    TURN_TWO_ID = scene().registerMotionID(6);
+    TURN_THREE_ID = scene().registerMotionID(6);
+    PINCH_TWO_ID = scene().registerMotionID(6);
+    PINCH_THREE_ID = scene().registerMotionID(6);
+    OPPOSABLE_THREE_ID = scene().registerMotionID(6);
     touchProcessor = new TouchProcessor();
+    /*
+    TAP_ID = scene().registerClickID(1, this);
+    DRAG_ONE_ID = scene().registerMotionID(1, 6);
+    DRAG_TWO_ID = scene().registerMotionID(2, 6);
+    DRAG_THREE_ID = scene().registerMotionID(3, 6);
+    TURN_TWO_ID = scene().registerMotionID(4, 6);
+    TURN_THREE_ID = scene().registerMotionID(5, 6);
+    PINCH_TWO_ID = scene().registerMotionID(6, 6);
+    PINCH_THREE_ID = scene().registerMotionID(7, 6);
+    OPPOSABLE_THREE_ID = scene().registerMotionID(8, 6);
+    touchProcessor = new TouchProcessor();
+    // */
+    //debug
+    System.out.println("TAP_ID " + TAP_ID);
+    System.out.println("DRAG_ONE_ID " + DRAG_ONE_ID);
+    System.out.println("DRAG_TWO_ID " + DRAG_TWO_ID);
+    System.out.println("DRAG_THREE_ID " + DRAG_THREE_ID);
+    System.out.println("TURN_TWO_ID " + TURN_TWO_ID);
+    System.out.println("TURN_THREE_ID " + TURN_THREE_ID);
+    System.out.println("PINCH_TWO_ID " + PINCH_TWO_ID);
+    System.out.println("PINCH_THREE_ID " + PINCH_THREE_ID);
+    System.out.println("OPPOSABLE_THREE_ID " + OPPOSABLE_THREE_ID);
   }
 
   protected void setDefaultBindings(InteractiveFrame frame) {
-    frame.removeMotionBindings(this);
-    frame.removeClickBindings(this);
+    frame.removeMotionBindings();
+    frame.removeClickBindings();
 
     frame.setMotionBinding(DRAG_ONE_ID, "rotate");
     frame.setMotionBinding(TURN_TWO_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");
@@ -107,7 +129,7 @@ public class DroidTouchAgent extends Agent {
       }
       gesture = touchProcessor.parseGesture();
       if (gesture != null) {
-        PApplet.print("Gesto " + gesture.id());
+        PApplet.print("Gesto " + gesture + ", id: " + gesture.id());
         if (prevEvent.id() != gesture.id()) {
           prevEvent = null;
         }
