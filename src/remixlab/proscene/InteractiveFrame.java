@@ -933,7 +933,7 @@ public class InteractiveFrame extends GenericFrame {
       else
         return (boolean) mth.invoke(obj, new Object[] { event });
     } catch (Exception e) {
-      PApplet.println("Error: no picking condition");
+      PApplet.println("Error: no picking condition found");
       e.printStackTrace();
     }
     return false;
