@@ -107,11 +107,13 @@ public class DroidTouchAgent extends Agent {
       if (e.getPointerCount() == 1)
         updateTrackedGrabber(d6Event);
       */
-      d2Event = new DOF2Event(null, touchProcessor.getCx(), touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
-      d2PrevEvent = d2Event.get();
+      
+      //d2Event = new DOF2Event(null, touchProcessor.getCx(), touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
+      //d2PrevEvent = d2Event.get();
       d2Event = new DOF2Event(d2PrevEvent, touchProcessor.getCx(), touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
       if (e.getPointerCount() == 1)
         updateTrackedGrabber(d2Event);
+      d2PrevEvent = d2Event.get();
     } else if (flushed) {
       PApplet.print("up");
       touchProcessor.pointUp(id);
