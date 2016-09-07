@@ -179,7 +179,7 @@ public class Scene extends AbstractScene implements PConstants {
   public Scene(PApplet p, PGraphics pg, int x, int y) {
     // 1. P5 objects
     parent = p;
-    //TODO decide me
+    // TODO decide me
     Profile.context = pApplet();
     mainPGgraphics = pg;
     offscreen = pg != p.g;
