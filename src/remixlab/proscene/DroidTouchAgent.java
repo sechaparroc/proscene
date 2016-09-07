@@ -15,6 +15,15 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.proscene.TouchProcessor.Gestures;
 
+/**
+ * Proscene Android touch-agent. A Processing fully fledged touch
+ * {@link remixlab.bias.core.Agent}.
+ *
+ * @see remixlab.bias.core.Agent
+ * @see remixlab.proscene.KeyAgent
+ * @see remixlab.proscene.DroidKeyAgent
+ * @see remixlab.proscene.MouseAgent
+ */
 public class DroidTouchAgent extends Agent {
   Scene scene;
   boolean fired, flushed;
@@ -105,9 +114,8 @@ public class DroidTouchAgent extends Agent {
       gesture = touchProcessor.parseGesture();
       if (gesture != null) {
         PApplet.print("Gesto " + gesture + ", id: " + gesture.id());
-        /*
-         * if (d6PrevEvent.id() != gesture.id()) d6PrevEvent = null; //
-         */
+        // TODO is this necessary?
+        // if (d6PrevEvent.id() != gesture.id()) d6PrevEvent = null;
         switch (gesture) {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
@@ -151,10 +159,12 @@ public class DroidTouchAgent extends Agent {
         default:
           break;
         }
-        /*
-         * if (gesture != null) { if (d6PrevEvent != null) handle(d6Event); d6PrevEvent =
-         * d6Event.get(); } //
-         */
+        // TODO is this necessary?
+        // if (gesture != null) {
+        // if (d6PrevEvent != null)
+        // handle(d6Event);
+        // d6PrevEvent = d6Event.get();
+        // }
       }
     }
   }

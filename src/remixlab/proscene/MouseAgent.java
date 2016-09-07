@@ -14,8 +14,8 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 /**
- * Proscene mouse-agent. A Processing fully fledged mouse {@link remixlab.bias.core.Agent}
- * .
+ * Proscene mouse-agent. A Processing fully fledged mouse
+ * {@link remixlab.bias.core.Agent}.
  *
  * @see remixlab.bias.core.Agent
  * @see remixlab.proscene.KeyAgent
