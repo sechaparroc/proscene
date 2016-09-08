@@ -70,7 +70,6 @@ public class DroidTouchAgent extends Agent {
     int action = e.getAction();
     int code = action & android.view.MotionEvent.ACTION_MASK;
     int index = action >> android.view.MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-    int turnOrientation;
     float x = e.getX(index);
     float y = e.getY(index);
     int id = e.getPointerId(index);
@@ -99,8 +98,7 @@ public class DroidTouchAgent extends Agent {
           handle(
               new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), gesture.id()));
         }
-        this.disableTracking();
-        this.enableTracking();
+        this.resetTrackedGrabber();
       }
     } else if (code == android.view.MotionEvent.ACTION_MOVE) {
       PApplet.print("move");
@@ -116,6 +114,11 @@ public class DroidTouchAgent extends Agent {
         PApplet.print("Gesto " + gesture + ", id: " + gesture.id());
         // TODO is this necessary?
         // if (d6PrevEvent.id() != gesture.id()) d6PrevEvent = null;
+        // should be done by fire and flush events as it's done in dof2 events now
+        // dof1 code moved below (uncer how to handle dof1 null events) and left commented
+        // Note, however, that some actions such as translateZ (see my comments PINCH_TWO_ID)
+        // should be re-implemented first to support fire and flush events, such as it's
+        // done with zoomOnRegion (refer to the GenericFrame class).
         switch (gesture) {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
@@ -138,20 +141,37 @@ public class DroidTouchAgent extends Agent {
           PApplet.print("opposable");
           break;
         case PINCH_TWO_ID:
+          // TODO
+          // translateZ on the eyeFrame works only the first time the gesture is performed
+          // after the second time it behaves weirdly.
+          // Maybe it has to do with the handling of null events?
         case PINCH_THREE_ID: // Pinch
+          // TODO how to handle dof1 null events
+          // if (d1PrevEvent != null)
+          // if (d1PrevEvent.id() != gesture.id())
+          // d1PrevEvent = null;
           d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getZ(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          // if (d1PrevEvent != null)
           handle(d1Event);
           d1PrevEvent = d1Event.get();
           PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
         case TURN_THREE_ID: // Rotate
-          turnOrientation = 1;
-          // TODO needs testing
-          if (inputGrabber() instanceof InteractiveFrame)
-            turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
-          d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getR() * turnOrientation, MotionEvent.NO_MODIFIER_MASK,
-              gesture.id());
+          // TODO how to handle dof1 null events
+          // if (d1PrevEvent != null)
+          // if (d1PrevEvent.id() != gesture.id())
+          // d1PrevEvent = null;
+          // int turnOrientation = 1;
+          // TODO ennumarate which actions need turn, as it should be handled at the
+          // GenericFrame
+          // and not here
+          // if (inputGrabber() instanceof InteractiveFrame)
+          // turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
+          // d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getR() * turnOrientation,
+          // MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          // if (d1PrevEvent != null)
           handle(d1Event);
           d1PrevEvent = d1Event.get();
           PApplet.print("rotate");

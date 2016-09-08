@@ -1,8 +1,9 @@
 /**
- * Frame Interaction.
+ * Basic Use Android.
  * by Victor Forero and Jean Pierre Charalambos.
  * 
- * Android version of the Basics.BasicUse example.
+ * This example sets up a basic Android scene with some box shapes
+ * iFrames.
  * 
  * Press 'f' to display the interactive frame picking hint.
  * Press 'h' to display the global shortcuts in the console.
