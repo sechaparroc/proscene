@@ -114,12 +114,13 @@ public class DroidTouchAgent extends Agent {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
         case DRAG_THREE_ID:// Drag
-          newevent = new DOF2Event((DOF2Event) oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
-              MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          newevent = new DOF2Event(oldevent instanceof DOF2Event ? (DOF2Event) oldevent : null, touchProcessor.getCx(),
+              touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
           PApplet.print("drag");
           break;
         case OPPOSABLE_THREE_ID:
-          newevent = new DOF2Event((DOF2Event) oldevent, x, y, MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          newevent = new DOF2Event(oldevent instanceof DOF2Event ? (DOF2Event) oldevent : null, x, y,
+              MotionEvent.NO_MODIFIER_MASK, gesture.id());
           PApplet.print("opposable");
           break;
         case PINCH_TWO_ID:
@@ -128,8 +129,8 @@ public class DroidTouchAgent extends Agent {
           // after the second time it behaves weirdly.
           // Maybe it has to do with the handling of null events?
         case PINCH_THREE_ID: // Pinch
-          newevent = new DOF1Event((DOF1Event) oldevent, touchProcessor.getZ(), MotionEvent.NO_MODIFIER_MASK,
-              gesture.id());
+          newevent = new DOF1Event(oldevent instanceof DOF1Event ? (DOF1Event) oldevent : null, touchProcessor.getZ(),
+              MotionEvent.NO_MODIFIER_MASK, gesture.id());
           PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
@@ -139,8 +140,8 @@ public class DroidTouchAgent extends Agent {
           // GenericFrame and not here
           // if (inputGrabber() instanceof InteractiveFrame)
           // turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
-          newevent = new DOF1Event((DOF1Event) oldevent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK,
-              gesture.id());
+          newevent = new DOF1Event(oldevent instanceof DOF1Event ? (DOF1Event) oldevent : null, touchProcessor.getR(),
+              MotionEvent.NO_MODIFIER_MASK, gesture.id());
           PApplet.print("rotate");
           break;
         default:
