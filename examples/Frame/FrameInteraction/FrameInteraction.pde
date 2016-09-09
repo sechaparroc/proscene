@@ -77,9 +77,9 @@ void setup() {
   //frame4 will behave as frame3 since the latter is passed as its
   //referenceFrame() in its constructor 
   frame4 = new InteractiveFrame(scene, frame3);
-  // note that the following:
   frame4.setFrontShape("boxDrawing");
   frame4.setPickingShape("boxPicking");
+  // note that the following:
   //frame4.setFrontShape(this, "boxDrawing");
   //frame4.setPickingShape(this, "boxPicking");
   // also works. The first parameter points to the class where your code is implemented.
