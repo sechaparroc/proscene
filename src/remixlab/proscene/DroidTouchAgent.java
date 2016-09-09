@@ -30,6 +30,8 @@ public class DroidTouchAgent extends Agent {
   protected TouchProcessor touchProcessor;
   public static int TAP_ID, DRAG_ONE_ID, DRAG_TWO_ID, DRAG_THREE_ID, TURN_TWO_ID, TURN_THREE_ID, PINCH_TWO_ID,
       PINCH_THREE_ID, OPPOSABLE_THREE_ID;
+  // TODO: debug
+  private boolean debug;
 
   public DroidTouchAgent(Scene scn) {
     super(scn.inputHandler());
@@ -71,20 +73,24 @@ public class DroidTouchAgent extends Agent {
     float y = e.getY(index);
     int id = e.getPointerId(index);
     Gestures gesture;
-    PApplet.println("touch");
-    PApplet.print(x + " " + y + " " + id);
+    if (debug) {
+      PApplet.println("touch");
+      PApplet.print(x + " " + y + " " + id);
+    }
     // pass the events to the TouchProcessor
     if (code == android.view.MotionEvent.ACTION_DOWN || code == android.view.MotionEvent.ACTION_POINTER_DOWN) {
-      PApplet.print("down");
+      if (debug)
+        PApplet.print("down");
       touchProcessor.pointDown(x, y, id);
       touchProcessor.parse();
-      newevent = new DOF2Event((DOF2Event) oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
+      newevent = new DOF2Event(oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
           MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
       if (e.getPointerCount() == 1)
         updateTrackedGrabber(newevent);
       oldevent = newevent.get();
     } else if (code == android.view.MotionEvent.ACTION_UP || code == android.view.MotionEvent.ACTION_POINTER_UP) {
-      PApplet.print("up");
+      if (debug)
+        PApplet.print("up");
       touchProcessor.pointUp(id);
       if (e.getPointerCount() == 1) {
         gesture = touchProcessor.parseTap();
@@ -94,7 +100,8 @@ public class DroidTouchAgent extends Agent {
         resetTrackedGrabber();
       }
     } else if (code == android.view.MotionEvent.ACTION_MOVE) {
-      PApplet.print("move");
+      if (debug)
+        PApplet.print("move");
       int numPointers = e.getPointerCount();
       for (int i = 0; i < numPointers; i++) {
         id = e.getPointerId(i);
@@ -104,7 +111,8 @@ public class DroidTouchAgent extends Agent {
       }
       gesture = touchProcessor.parseGesture();
       if (gesture != null) {
-        PApplet.print("Gesto " + gesture + ", id: " + gesture.id());
+        if (debug)
+          PApplet.print("Gesture " + gesture + ", id: " + gesture.id());
         // as gestures are reduced differently according to their types, we nullify
         // the previous event when the current gesture differs from the previous one
         if (oldevent != null)
@@ -114,14 +122,15 @@ public class DroidTouchAgent extends Agent {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
         case DRAG_THREE_ID:// Drag
-          newevent = new DOF2Event(oldevent instanceof DOF2Event ? (DOF2Event) oldevent : null, touchProcessor.getCx(),
-              touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          PApplet.print("drag");
+          newevent = new DOF2Event(oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
+              MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          if (debug)
+            PApplet.print("drag");
           break;
         case OPPOSABLE_THREE_ID:
-          newevent = new DOF2Event(oldevent instanceof DOF2Event ? (DOF2Event) oldevent : null, x, y,
-              MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          PApplet.print("opposable");
+          newevent = new DOF2Event(oldevent, x, y, MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          if (debug)
+            PApplet.print("opposable");
           break;
         case PINCH_TWO_ID:
           // TODO
@@ -129,20 +138,20 @@ public class DroidTouchAgent extends Agent {
           // after the second time it behaves weirdly.
           // Maybe it has to do with the handling of null events?
         case PINCH_THREE_ID: // Pinch
-          newevent = new DOF1Event(oldevent instanceof DOF1Event ? (DOF1Event) oldevent : null, touchProcessor.getZ(),
-              MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          PApplet.print("pinch");
+          newevent = new DOF1Event(oldevent, touchProcessor.getZ(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          if (debug)
+            PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
         case TURN_THREE_ID: // Rotate
           // int turnOrientation = 1;
-          // TODO ennumerate which actions need turn, as it should be handled at the
+          // TODO enumerate which actions need turn, as it should be handled at the
           // GenericFrame and not here
           // if (inputGrabber() instanceof InteractiveFrame)
           // turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
-          newevent = new DOF1Event(oldevent instanceof DOF1Event ? (DOF1Event) oldevent : null, touchProcessor.getR(),
-              MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          PApplet.print("rotate");
+          newevent = new DOF1Event(oldevent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          if (debug)
+            PApplet.print("rotate");
           break;
         default:
           break;
