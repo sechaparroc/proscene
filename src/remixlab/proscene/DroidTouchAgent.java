@@ -26,7 +26,7 @@ import remixlab.proscene.TouchProcessor.Gestures;
  */
 public class DroidTouchAgent extends Agent {
   Scene scene;
-  boolean fired, flushed;
+  //boolean fired, flushed;
   protected DOF2Event d2Event, d2PrevEvent;
   protected DOF1Event d1Event, d1PrevEvent;
   // protected DOF6Event d6Event, d6PrevEvent;
@@ -77,9 +77,7 @@ public class DroidTouchAgent extends Agent {
     PApplet.println("touch");
     PApplet.print(x + " " + y + " " + id);
     // pass the events to the TouchProcessor
-    fired = (code == android.view.MotionEvent.ACTION_DOWN || code == android.view.MotionEvent.ACTION_POINTER_DOWN);
-    flushed = (code == android.view.MotionEvent.ACTION_UP || code == android.view.MotionEvent.ACTION_POINTER_UP);
-    if (fired) {
+    if (code == android.view.MotionEvent.ACTION_DOWN || code == android.view.MotionEvent.ACTION_POINTER_DOWN) {
       // touch(new DOF6Event(x, y, 0, 0, 0, 0));
       PApplet.print("down");
       touchProcessor.pointDown(x, y, id);
@@ -89,7 +87,7 @@ public class DroidTouchAgent extends Agent {
       if (e.getPointerCount() == 1)
         updateTrackedGrabber(d2Event);
       d2PrevEvent = d2Event.get();
-    } else if (flushed) {
+    } else if (code == android.view.MotionEvent.ACTION_UP || code == android.view.MotionEvent.ACTION_POINTER_UP) {
       PApplet.print("up");
       touchProcessor.pointUp(id);
       if (e.getPointerCount() == 1) {
@@ -126,17 +124,25 @@ public class DroidTouchAgent extends Agent {
           // d6Event = new DOF6Event(d6PrevEvent, touchProcessor.getCx(),
           // touchProcessor.getCy(), 0, 0, 0, 0, MotionEvent.NO_MODIFIER_MASK,
           // gesture.id());
+          if (d2PrevEvent != null)
+            if (d2PrevEvent.id() != gesture.id())
+              d2PrevEvent = null;
           d2Event = new DOF2Event(d2PrevEvent, touchProcessor.getCx(), touchProcessor.getCy(),
               MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          handle(fired ? d2Event.fire() : flushed ? d2Event.flush() : d2Event);
+          //handle(fired ? d2Event.fire() : flushed ? d2Event.flush() : d2Event);
+          handle(d2Event);
           d2PrevEvent = d2Event.get();
           PApplet.print("drag");
           break;
         case OPPOSABLE_THREE_ID:
+          if (d2PrevEvent != null)
+            if (d2PrevEvent.id() != gesture.id())
+              d2PrevEvent = null;
           // d6Event = new DOF6Event(d6PrevEvent, x, y, 0, 0, 0, 0,
           // MotionEvent.NO_MODIFIER_MASK, gesture.id());
           d2Event = new DOF2Event(d2PrevEvent, x, y, MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          handle(fired ? d2Event.fire() : flushed ? d2Event.flush() : d2Event);
+          //handle(fired ? d2Event.fire() : flushed ? d2Event.flush() : d2Event);
+          handle(d2Event);
           d2PrevEvent = d2Event.get();
           PApplet.print("opposable");
           break;
@@ -147,21 +153,21 @@ public class DroidTouchAgent extends Agent {
           // Maybe it has to do with the handling of null events?
         case PINCH_THREE_ID: // Pinch
           // TODO how to handle dof1 null events
-          // if (d1PrevEvent != null)
-          // if (d1PrevEvent.id() != gesture.id())
-          // d1PrevEvent = null;
+          if (d1PrevEvent != null)
+            if (d1PrevEvent.id() != gesture.id())
+              d1PrevEvent = null;
           d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getZ(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          // if (d1PrevEvent != null)
-          handle(d1Event);
+          if (d1PrevEvent != null)
+            handle(d1Event);
           d1PrevEvent = d1Event.get();
           PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
         case TURN_THREE_ID: // Rotate
           // TODO how to handle dof1 null events
-          // if (d1PrevEvent != null)
-          // if (d1PrevEvent.id() != gesture.id())
-          // d1PrevEvent = null;
+          if (d1PrevEvent != null)
+            if (d1PrevEvent.id() != gesture.id())
+              d1PrevEvent = null;
           // int turnOrientation = 1;
           // TODO ennumarate which actions need turn, as it should be handled at the
           // GenericFrame
@@ -171,8 +177,8 @@ public class DroidTouchAgent extends Agent {
           // d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getR() * turnOrientation,
           // MotionEvent.NO_MODIFIER_MASK, gesture.id());
           d1Event = new DOF1Event(d1PrevEvent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          // if (d1PrevEvent != null)
-          handle(d1Event);
+          if (d1PrevEvent != null)
+            handle(d1Event);
           d1PrevEvent = d1Event.get();
           PApplet.print("rotate");
           break;
