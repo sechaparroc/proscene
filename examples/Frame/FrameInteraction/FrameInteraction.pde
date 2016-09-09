@@ -17,7 +17,7 @@
  * resp.), and then calling scene.drawFrames() in draw() (frame2, frame3 and frame4).
  * Note that in frame4 different visual representations for the front and picking shapes
  * are set with setFrontShape() and setPickingShape() resp. Also note that setShape() is
- * just a wrapper method that call both functions on the same shape paramenter.
+ * just a wrapper method that call both functions on the same shape parameter.
  * 
  * Frame picking is achieved by tracking the pointer and checking whether or not it
  * lies within the frame 'selection area': a square around the frame's projected origin
@@ -52,9 +52,9 @@ void setup() {
   frame1.translate(50, 50);
 
   // frame 2
-  PShape sphere = createShape(SPHERE, 40);
-  sphere.setFill(color(255,255,0));
-  frame2 = new InteractiveFrame(scene, sphere);
+  // Thanks to the Processing Foundation for providing the rocket shape
+  frame2 = new InteractiveFrame(scene, loadShape("rocket.obj"));
+  frame2.scale(0.2);
   frame2.setMotionBinding(LEFT, "translate");
   frame2.setMotionBinding(RIGHT, "scale");
 
@@ -65,15 +65,25 @@ void setup() {
   //frame3.setShape("drawAxes");
   //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
   frame3.translate(-100, -50);
-  frame3.setMotionBinding(this, LEFT, "boxCustomMotion");
-  frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
+  frame3.setMotionBinding(LEFT, "boxCustomMotion");
+  frame3.setClickBinding(LEFT, 1, "boxCustomClick");
+  // note that the following: 
+  //frame3.setMotionBinding(this, LEFT, "boxCustomMotion");
+  //frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
+  // also works. The first parameter points to the class where your code is implemented.
+  // You will always need it when your code is declared within a class different than the PApplet.
   
   //frame 4
   //frame4 will behave as frame3 since the latter is passed as its
   //referenceFrame() in its constructor 
   frame4 = new InteractiveFrame(scene, frame3);
-  frame4.setFrontShape(this, "boxDrawing");
-  frame4.setPickingShape(this, "boxPicking");
+  // note that the following:
+  frame4.setFrontShape("boxDrawing");
+  frame4.setPickingShape("boxPicking");
+  //frame4.setFrontShape(this, "boxDrawing");
+  //frame4.setPickingShape(this, "boxPicking");
+  // also works. The first parameter points to the class where your code is implemented.
+  // You will always need it when your code is declared within a class different than the PApplet.
   frame4.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
   frame4.translate(0, 100);
 }

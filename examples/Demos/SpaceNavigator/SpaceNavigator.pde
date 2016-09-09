@@ -102,7 +102,8 @@ void setup() {
 
   hidAgent = new HIDAgent(scene);
   
-  //the iFrame is added to all scene agents (that's why we previously instantiated the hidAgent)
+  // the iFrame is added to all scene agents (that's why we previously instantiated the hidAgent)
+  // Thanks to the Processing Foundation for providing the rocket shape
   iFrame = new InteractiveFrame(scene, loadShape("rocket.obj"));
   iFrame.translate(new Vec(275, 180, 0));
   iFrame.scale(0.3);
