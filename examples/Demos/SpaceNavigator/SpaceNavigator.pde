@@ -40,7 +40,10 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
-int SN_ID;// id of the SpaceNavigator gesture
+// the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
+// an unique id that may be use to bind (frame) actions to the gesture, pretty much in
+// the same way as it's done with the LEFT and RIGHT mouse gestures.
+static final int SN_ID = Scene.registerMotionID(6);
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
 
@@ -62,10 +65,6 @@ public class HIDAgent extends Agent {
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
-    // the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
-    // an unique id that may be use to bind (frame) actions to the gesture, pretty much in
-    // the same way as it's done with the LEFT and RIGHT mouse gestures.
-    SN_ID = scn.registerMotionID(6);
     addGrabber(scene.eyeFrame());
     setDefaultGrabber(scene.eyeFrame());
   }

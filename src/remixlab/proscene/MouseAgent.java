@@ -22,8 +22,13 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
  */
-public class MouseAgent extends Agent {
-  public static int LEFT_ID, CENTER_ID, RIGHT_ID, WHEEL_ID, NO_BUTTON;
+public class MouseAgent extends Agent {  
+  public static final int 
+  LEFT_ID = Scene.registerMotionID(37, 2),
+  CENTER_ID = Scene.registerMotionID(3, 2),
+  RIGHT_ID = Scene.registerMotionID(39, 2),
+  WHEEL_ID = Scene.registerMotionID(8, 1),
+  NO_BUTTON = Scene.registerMotionID(BogusEvent.NO_ID, 2);
   protected float xSens = 1f;
   protected float ySens = 1f;
   protected Scene scene;
@@ -43,11 +48,6 @@ public class MouseAgent extends Agent {
   public MouseAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
-    LEFT_ID = scene().registerMotionID(37, 2);
-    CENTER_ID = scene().registerMotionID(3, 2);
-    RIGHT_ID = scene().registerMotionID(39, 2);
-    WHEEL_ID = scene().registerMotionID(8, 1);
-    NO_BUTTON = scene().registerMotionID(BogusEvent.NO_ID, 2);
     setPickingMode(PickingMode.MOVE);
   }
 

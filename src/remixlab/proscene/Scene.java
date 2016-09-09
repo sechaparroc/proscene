@@ -1610,7 +1610,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #registerMotionID(int)
    * @see remixlab.bias.event.MotionEvent#registerID(int)
    */
-  public int registerMotionID(int id, int dof) {
+  public static int registerMotionID(int id, int dof) {
     return MotionShortcut.registerID(id, dof);
   }
 
@@ -1620,7 +1620,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #registerMotionID(int, int)
    * @see remixlab.bias.event.MotionEvent#registerID(int, int)
    */
-  public int registerMotionID(int dof) {
+  public static int registerMotionID(int dof) {
     return MotionShortcut.registerID(dof);
   }
 

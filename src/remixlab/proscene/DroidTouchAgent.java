@@ -28,23 +28,22 @@ public class DroidTouchAgent extends Agent {
   Scene scene;
   protected MotionEvent newevent, oldevent;
   protected TouchProcessor touchProcessor;
-  public static int TAP_ID, DRAG_ONE_ID, DRAG_TWO_ID, DRAG_THREE_ID, TURN_TWO_ID, TURN_THREE_ID, PINCH_TWO_ID,
-      PINCH_THREE_ID, OPPOSABLE_THREE_ID;
+  public static final int
+  TAP_ID = 1,
+  DRAG_ONE_ID = Scene.registerMotionID(2),
+  DRAG_TWO_ID = Scene.registerMotionID(2),
+  DRAG_THREE_ID = Scene.registerMotionID(2),
+  TURN_TWO_ID = Scene.registerMotionID(2),
+  TURN_THREE_ID = Scene.registerMotionID(1),
+  PINCH_TWO_ID = Scene.registerMotionID(1),
+  PINCH_THREE_ID = Scene.registerMotionID(1),
+  OPPOSABLE_THREE_ID = Scene.registerMotionID(1);
   // TODO: debug
   private boolean debug;
 
   public DroidTouchAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
-    TAP_ID = 1;
-    DRAG_ONE_ID = scene().registerMotionID(2);
-    DRAG_TWO_ID = scene().registerMotionID(2);
-    DRAG_THREE_ID = scene().registerMotionID(2);
-    OPPOSABLE_THREE_ID = scene().registerMotionID(2);
-    TURN_TWO_ID = scene().registerMotionID(1);
-    TURN_THREE_ID = scene().registerMotionID(1);
-    PINCH_TWO_ID = scene().registerMotionID(1);
-    PINCH_THREE_ID = scene().registerMotionID(1);
     touchProcessor = new TouchProcessor();
   }
 
