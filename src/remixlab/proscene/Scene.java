@@ -852,7 +852,8 @@ public class Scene extends AbstractScene implements PConstants {
       throw new RuntimeException(
           "Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead");
     if (inputHandler().isAgentRegistered(keyboardAgent())) {
-      parent.unregisterMethod("keyEvent", keyboardAgent());
+      // TODO DROID broke in Android
+      //parent.unregisterMethod("keyEvent", keyboardAgent());
       return inputHandler().unregisterAgent(keyboardAgent());
     }
     return false;
