@@ -206,6 +206,7 @@ class Shape {
    * <p>
    * High-level routine where the object declaring the graphics procedure is not given and
    * hence need to be inferred. It could be either the
+   * {@link remixlab.proscene.Scene#pApplet()}, the
    * {@link remixlab.proscene.InteractiveFrame} instance this shape is attached to or the
    * {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame instance.
    * <p>
@@ -214,30 +215,30 @@ class Shape {
    */
   boolean set(String methodName) {
     boolean success = false;
+    if (!isSetable(iFrame.scene().pApplet(), methodName))
+      return false;
     try {
-      if (!isSetable(iFrame, methodName))
-        return false;
-      singleParam(iFrame, methodName);
+      singleParam(iFrame.scene().pApplet(), methodName);
       success = true;
     } catch (Exception e1) {
-      if (!isSetable(iFrame.scene(), methodName))
-        return false;
       try {
-        singleParam(iFrame.scene(), methodName);
+        doubleParam(iFrame.scene().pApplet(), methodName);
         success = true;
       } catch (Exception e2) {
+        if (!isSetable(iFrame.scene(), methodName))
+          return false;
         try {
-          doubleParam(iFrame.scene(), methodName);
+          singleParam(iFrame.scene(), methodName);
           success = true;
         } catch (Exception e3) {
-          if (!isSetable(iFrame.scene().pApplet(), methodName))
-            return false;
           try {
-            singleParam(iFrame.scene().pApplet(), methodName);
+            doubleParam(iFrame.scene(), methodName);
             success = true;
           } catch (Exception e4) {
             try {
-              doubleParam(iFrame.scene().pApplet(), methodName);
+              if (!isSetable(iFrame, methodName))
+                return false;
+              singleParam(iFrame, methodName);
               success = true;
             } catch (Exception e5) {
               PApplet.println("Warning: no shape set with " + methodName + " method");

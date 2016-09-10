@@ -904,20 +904,20 @@ public class InteractiveFrame extends GenericFrame {
     // instanceof MotionEvent)
     // return super.checkIfGrabsInput(event);
     Method mth = null;
-    Object obj = this;
+    Object obj = scene().pApplet();
     boolean frameParam = false;
     // 1. Retrieving
     try {
       mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
     } catch (Exception e1) {
-      obj = scene().pApplet();
       try {
-        mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
-      } catch (Exception e2) {
+        mth = obj.getClass().getMethod("checkIfGrabsInput",
+            new Class<?>[] { InteractiveFrame.class, event.getClass() });
         frameParam = true;
+      } catch (Exception e2) {
+        obj = this;
         try {
-          mth = obj.getClass().getMethod("checkIfGrabsInput",
-              new Class<?>[] { InteractiveFrame.class, event.getClass() });
+          mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[] { event.getClass() });
         } catch (Exception e3) {
           PApplet.println("Error: no picking condition for " + event.getClass().getName());
           e1.printStackTrace();
