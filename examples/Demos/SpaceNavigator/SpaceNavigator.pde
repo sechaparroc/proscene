@@ -40,10 +40,10 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
-// the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
-// an unique id that may be use to bind (frame) actions to the gesture, pretty much in
+// SN_ID will be assigned id 1 with 6 degrees-of-freedom. The id may
+// be used to bind (frame) actions to the gesture, pretty much in
 // the same way as it's done with the LEFT and RIGHT mouse gestures.
-static final int SN_ID = Scene.registerMotionID(6);
+static final int SN_ID = Scene.registerMotionID(1, 6);
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
 
