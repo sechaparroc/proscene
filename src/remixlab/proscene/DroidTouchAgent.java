@@ -28,16 +28,10 @@ public class DroidTouchAgent extends Agent {
   Scene scene;
   protected MotionEvent newevent, oldevent;
   protected TouchProcessor touchProcessor;
-  public static final int
-  TAP_ID = 1,
-  DRAG_ONE_ID = Scene.registerMotionID(2),
-  DRAG_TWO_ID = Scene.registerMotionID(2),
-  DRAG_THREE_ID = Scene.registerMotionID(2),
-  TURN_TWO_ID = Scene.registerMotionID(2),
-  TURN_THREE_ID = Scene.registerMotionID(1),
-  PINCH_TWO_ID = Scene.registerMotionID(1),
-  PINCH_THREE_ID = Scene.registerMotionID(1),
-  OPPOSABLE_THREE_ID = Scene.registerMotionID(1);
+  public static final int TAP_ID = 1, DRAG_ONE_ID = Scene.registerMotionID(2), DRAG_TWO_ID = Scene.registerMotionID(2),
+      DRAG_THREE_ID = Scene.registerMotionID(2), OPPOSABLE_THREE_ID = Scene.registerMotionID(2),
+      TURN_TWO_ID = Scene.registerMotionID(1), TURN_THREE_ID = Scene.registerMotionID(1),
+      PINCH_TWO_ID = Scene.registerMotionID(1), PINCH_THREE_ID = Scene.registerMotionID(1);
   // TODO: debug
   private boolean debug;
 
@@ -52,7 +46,9 @@ public class DroidTouchAgent extends Agent {
     frame.removeClickBindings();
 
     frame.setMotionBinding(DRAG_ONE_ID, "rotate");
-    frame.setMotionBinding(TURN_TWO_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");
+    // TODO TURN_TWO_ID currently implemented as it were a DOF1Event
+    // frame.setMotionBinding(TURN_TWO_ID, frame.isEyeFrame() ? "zoomOnRegion" :
+    // "screenRotate");
     frame.setMotionBinding(DRAG_TWO_ID, "translate");
     frame.setMotionBinding(PINCH_TWO_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
   }
@@ -82,8 +78,8 @@ public class DroidTouchAgent extends Agent {
         PApplet.print("down");
       touchProcessor.pointDown(x, y, id);
       touchProcessor.parse();
-      newevent = new DOF2Event(oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
-          MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
+      newevent = new DOF2Event(oldevent, touchProcessor.getCx(), touchProcessor.getCy(), MotionEvent.NO_MODIFIER_MASK,
+          MotionEvent.NO_ID);
       if (e.getPointerCount() == 1)
         updateTrackedGrabber(newevent);
       oldevent = newevent.get();
@@ -112,11 +108,6 @@ public class DroidTouchAgent extends Agent {
       if (gesture != null) {
         if (debug)
           PApplet.print("Gesture " + gesture + ", id: " + gesture.id());
-        // as gestures are reduced differently according to their types, we nullify
-        // the previous event when the current gesture differs from the previous one
-        if (oldevent != null)
-          if (oldevent.id() != gesture.id())
-            oldevent = null;
         switch (gesture) {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
@@ -142,7 +133,7 @@ public class DroidTouchAgent extends Agent {
             PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
-        case TURN_THREE_ID: // Rotate
+        case TURN_THREE_ID:
           // int turnOrientation = 1;
           // TODO enumerate which actions need turn, as it should be handled at the
           // GenericFrame and not here
@@ -150,7 +141,7 @@ public class DroidTouchAgent extends Agent {
           // turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
           newevent = new DOF1Event(oldevent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
           if (debug)
-            PApplet.print("rotate");
+            PApplet.print("turn");
           break;
         default:
           break;
