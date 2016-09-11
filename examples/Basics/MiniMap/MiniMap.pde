@@ -79,11 +79,7 @@ void draw() {
     auxCanvas.beginDraw();
     auxScene.beginDraw();
     auxCanvas.background(29, 153, 243);
-    // all frames but iFrame defined their own color 'frameDrawing'
-    // and in 3D we use a textured image for the zNear plane by default
-    // Thus this color will only affect the iFrame in 2D
-    if(auxScene.is2D())
-      auxScene.pg().fill(255, 0, 255, 125);
+    auxScene.pg().fill(255, 0, 255, 125);
     auxScene.drawFrames();
     auxScene.endDraw();
     auxCanvas.endDraw();
@@ -96,9 +92,9 @@ void keyPressed() {
   if (key == ' ')
     showMiniMap = !showMiniMap;
   if (key == 'x')
-    iFrame.setShape(this, "eyeDrawing");
+    iFrame.setShape("eyeDrawing");
   if (key == 'y')
-    iFrame.setShape(scene.eyeFrame());
+    scene.eyeFrame().setShape("drawEye");
 }
 
 void frameDrawing(PGraphics pg) {
