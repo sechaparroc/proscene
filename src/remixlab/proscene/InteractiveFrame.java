@@ -16,8 +16,6 @@
 package remixlab.proscene;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import processing.core.*;
 import remixlab.bias.core.*;
@@ -98,11 +96,6 @@ public class InteractiveFrame extends GenericFrame {
   protected Shape fShape, pShape;
 
   HighlightingMode highlight;
-
-  // TODO static?
-  protected
-  // static
-  List<Method> grabsList = new ArrayList<Method>();
 
   /**
    * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,

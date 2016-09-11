@@ -40,10 +40,7 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
-// SN_ID will be assigned id 1 with 6 degrees-of-freedom. The id may
-// be used to bind (frame) actions to the gesture, pretty much in
-// the same way as it's done with the LEFT and RIGHT mouse gestures.
-static final int SN_ID = Scene.registerMotionID(1, 6);
+static int SN_ID;
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
 
@@ -65,6 +62,10 @@ public class HIDAgent extends Agent {
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
+    // SN_ID will be assigned an unique id with 6 DOF's. The id may be
+    // used to bind (frame) actions to the gesture, pretty much in
+    // the same way as it's done with the LEFT and RIGHT mouse gestures.
+    SN_ID = Scene.registerMotionID(6);
     addGrabber(scene.eyeFrame());
     setDefaultGrabber(scene.eyeFrame());
   }
