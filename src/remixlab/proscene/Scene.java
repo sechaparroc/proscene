@@ -853,7 +853,7 @@ public class Scene extends AbstractScene implements PConstants {
           "Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead");
     if (inputHandler().isAgentRegistered(keyboardAgent())) {
       // TODO DROID broke in Android
-      //parent.unregisterMethod("keyEvent", keyboardAgent());
+      // parent.unregisterMethod("keyEvent", keyboardAgent());
       return inputHandler().unregisterAgent(keyboardAgent());
     }
     return false;
@@ -1609,7 +1609,7 @@ public class Scene extends AbstractScene implements PConstants {
    * Same as {@code return MotionEvent.registerID(id, dof)}.
    * 
    * @see #registerMotionID(int)
-   * @see remixlab.bias.event.MotionEvent#registerID(int)
+   * @see remixlab.bias.event.MotionShortcut#registerID(int)
    */
   public static int registerMotionID(int id, int dof) {
     return MotionShortcut.registerID(id, dof);
@@ -1619,7 +1619,7 @@ public class Scene extends AbstractScene implements PConstants {
    * Same as {@code return MotionEvent.registerID(dof)}.
    *
    * @see #registerMotionID(int, int)
-   * @see remixlab.bias.event.MotionEvent#registerID(int, int)
+   * @see remixlab.bias.event.MotionShortcut#registerID(int, int)
    */
   public static int registerMotionID(int dof) {
     return MotionShortcut.registerID(dof);
