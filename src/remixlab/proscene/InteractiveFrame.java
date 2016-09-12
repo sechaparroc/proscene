@@ -889,9 +889,18 @@ public class InteractiveFrame extends GenericFrame {
     updatePickingBufferCache();
   }
 
+  /**
+   * Checks for the existence of the
+   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link #scene()} {@link remixlab.proscene.Scene#pApplet()} and it doesn't find it
+   * there, looks for it at this instance.
+   * <p>
+   * Allows to register a {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}
+   * on custom {@code BogusEvent} types without the need to derive from this class.
+   */
   @Override
   public boolean checkIfGrabsInput(BogusEvent event) {
-    // TODO performance boost, but will not allow to be reflective on events derived from
+    // TODO: Performance boost, but will not allow to be reflective on events derived from
     // default ones
     // if(event instanceof KeyboardEvent || event instanceof ClickEvent || event
     // instanceof MotionEvent)
