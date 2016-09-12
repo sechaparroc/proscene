@@ -17,8 +17,8 @@ package remixlab.proscene;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import remixlab.util.*;
 
+import remixlab.util.*;
 import remixlab.dandelion.geom.Vec;
 
 class TouchProcessor {
@@ -90,6 +90,9 @@ class TouchProcessor {
   float old_cx, old_cy;
   float r;
   float z = 1;
+
+  // tap info
+  int tapType;
 
   boolean pointsChanged = false;
 
@@ -188,11 +191,20 @@ class TouchProcessor {
     }
   }
 
+  // TODO testing: original was this method, without the tapType property
+  // synchronized Gestures parseTap() {
+  // if (handleTaps() == null)
+  // return null;
+  // else
+  // return Gestures.TAP_ID;
+  // }
+
   synchronized Gestures parseTap() {
-    if (handleTaps() == null)
+    TapEvent event = handleTaps();
+    if (event == null)
       return null;
-    else
-      return Gestures.TAP_ID;
+    this.setTapType(event.type + 1);
+    return Gestures.TAP_ID;
   }
 
   synchronized Gestures parseGesture() {
@@ -426,6 +438,14 @@ class TouchProcessor {
 
   void setR(float r) {
     this.r = r;
+  }
+
+  void setTapType(int t) {
+    this.tapType = t;
+  }
+
+  int getTapType() {
+    return tapType;
   }
 }
 

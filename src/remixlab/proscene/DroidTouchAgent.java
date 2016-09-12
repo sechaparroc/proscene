@@ -51,6 +51,8 @@ public class DroidTouchAgent extends Agent {
     // "screenRotate");
     frame.setMotionBinding(DRAG_TWO_ID, "translate");
     frame.setMotionBinding(PINCH_TWO_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+    // TODO touch processor double tap seems to be broken as it never gets identified.
+    frame.setClickBinding(TAP_ID, 1, "center");
   }
 
   /**
@@ -89,9 +91,12 @@ public class DroidTouchAgent extends Agent {
       touchProcessor.pointUp(id);
       if (e.getPointerCount() == 1) {
         gesture = touchProcessor.parseTap();
-        if (gesture == Gestures.TAP_ID)
-          handle(
-              new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), gesture.id()));
+        if (gesture == Gestures.TAP_ID) {
+          if (debug)
+            PApplet.print("tap " + touchProcessor.getTapType());
+          handle(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), gesture.id(),
+              touchProcessor.getTapType()));
+        }
         resetTrackedGrabber();
       }
     } else if (code == android.view.MotionEvent.ACTION_MOVE) {
