@@ -1,130 +1,89 @@
 /**
  * Frame Interaction.
- * by Victor Forero and Jean Pierre Charalambos.
+ * by Jean Pierre Charalambos.
  * 
  * Android version of the Frame.FrameInteraction example.
  * 
- * Press 'f' to display the interactive frame picking hint.
- * Press 'h' to display the global shortcuts in the console.
- * Press 'H' to display the current camera profile keyboard shortcuts
- * and mouse bindings in the console.
+ * This example requires the Processing Android Mode and an Android device.
  */
 
-//import remixlab.bias.event.*;
 import remixlab.proscene.*;
 import android.view.MotionEvent;
 
 Scene scene;
 InteractiveFrame frame1, frame2, frame3, frame4;
 
-//Choose one of P3D for a 3D scene, or P2D for a 2D scene
 String renderer = P3D;
 
 void setup() {
-  //size(displayWidth, displayHeight, P3D);
   fullScreen(P3D, 1);
   scene = new Scene(this);
   scene.eyeFrame().setDamping(0);
   scene.setPickingVisualHint(true);
 
   //frame 1
-  frame1 = new InteractiveFrame(scene);
+  frame1 = new InteractiveFrame(scene, "drawTorusSolenoid");
   frame1.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
   frame1.setGrabsInputThreshold(scene.radius()/4);
   frame1.translate(50, 50);
 
   // frame 2
-  PShape sphere = createShape(SPHERE, 40);
-  sphere.setFill(color(255,255,0));
-  frame2 = new InteractiveFrame(scene, sphere);
-  //frame2.setMotionBinding(LEFT, "translate");
-  //frame2.setMotionBinding(RIGHT, "scale");
+  // Thanks to the Processing Foundation for providing the rocket shape
+  frame2 = new InteractiveFrame(scene, loadShape("rocket.obj"));
+  frame2.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+  frame2.setGrabsInputThreshold(scene.radius()*4);
+  frame2.scale(0.2);
+  // comment the previous 4 lines and do it with a cylinder:
+  //frame2 = new InteractiveFrame(scene, "cylinder");
 
   //frame 3
   frame3 = new InteractiveFrame(scene);
   frame3.setFrontShape("drawAxes");
-  frame3.setPickingShape(this, "boxPicking");
+  frame3.setPickingShape(this, "sphere");
+  frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
   frame3.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
   frame3.translate(-100, -50);
-  //frame3.setMotionBinding(this, LEFT, "boxCustomMotion");
-  //frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
   
   //frame 4
   //frame4 will behave as frame3 since the latter is passed as its
   //referenceFrame() in its constructor 
   frame4 = new InteractiveFrame(scene, frame3);
-  frame4.setFrontShape(this, "boxDrawing");
-  frame4.setPickingShape(this, "boxPicking");
-  frame4.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
+  frame4.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+  frame4.setShape(this, "box");
   frame4.translate(0, 100);
+  
+  // If picking is not too slow in your Android, comment to enable it
+  scene.disablePickingBuffer();
 }
 
-void boxDrawing(PGraphics pg) {
-  pg.fill(0,255,0);
+void cylinder(PGraphics pg) {
+  pg.fill(0,0,255,125);
+  scene.drawCylinder(pg);
+}
+
+void box(PGraphics pg) {
+  pg.fill(0,255,0,125);
   pg.strokeWeight(3);
   pg.box(30);
 }
 
-void boxPicking(PGraphics pg) {
+void sphere(PGraphics pg) {
   pg.noStroke();
-  pg.fill(255,0,0,126);
-  pg.sphere(30);
+  pg.fill(0,255,255,125);
+  pg.strokeWeight(3);
+  pg.sphere(20);
 }
-
-/*
-void boxCustomMotion(InteractiveFrame frame, MotionEvent event) {
-  frame.screenRotate(event);
-}
-
-void boxCustomClick(InteractiveFrame frame) {
-  if(frame.scene().mouseAgent().pickingMode() == MouseAgent.PickingMode.MOVE)
-    frame.center();
-}
-*/
 
 void draw() {
-  background(0);    
-  // 1. Apply the frame transformation before your drawing
-
-  // Save the current model view matrix
-  pushMatrix();
-  pushStyle();
-  // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(Scene.toPMatrix(iFrame.matrix())); //is possible but inefficient
-  frame1.applyTransformation();//very efficient
-  // Draw an axis using the Scene static function
-  scene.drawAxes(20);
-
-  if (frame1.grabsInput())
-    fill(255, 0, 0);
-  else 
-    fill(0, 255, 255);
-  scene.drawTorusSolenoid();
-
-  popStyle();
-  popMatrix();
-
-  // 2. Draw frames for which visual representations have been set
+  background(0);
+  // Set the torus fill color
+  fill(255,255,0,125);
   scene.drawFrames();
 }
 
+// Processing currently doesn't support registering Android MotionEvent. 
+// This method thus needs to be declared.
 public boolean surfaceTouchEvent(MotionEvent event) {
   scene.droidTouchAgent().touchEvent(event);
   return true;
 }
-
-/*
-void keyPressed() {
-  if(key == ' ')
-    if( scene.mouseAgent().pickingMode() == MouseAgent.PickingMode.CLICK ) {
-      scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.MOVE);
-      scene.eyeFrame().setMotionBinding(LEFT, "rotate");
-      scene.eyeFrame().removeMotionBinding(MouseAgent.NO_BUTTON);
-    }
-    else {
-      scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
-      scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
-      scene.eyeFrame().removeMotionBinding(LEFT);
-    }
-}
-*/

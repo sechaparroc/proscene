@@ -2,13 +2,9 @@
  * Basic Use Android.
  * by Victor Forero and Jean Pierre Charalambos.
  * 
- * This example sets up a basic Android scene with some box shapes
- * iFrames.
+ * This example sets up a basic Android scene with some box shape iFrames.
  * 
- * Press 'f' to display the interactive frame picking hint.
- * Press 'h' to display the global shortcuts in the console.
- * Press 'H' to display the current camera profile keyboard shortcuts
- * and mouse bindings in the console.
+ * This example requires the Processing Android Mode and an Android device.
  */
 
 import remixlab.proscene.*;
@@ -42,6 +38,8 @@ void draw() {
     boxes[i].draw(); 
 }
 
+// Processing currently doesn't support registering Android MotionEvent. 
+// This method thus needs to be declared.
 public boolean surfaceTouchEvent(MotionEvent event) {
   scene.droidTouchAgent().touchEvent(event);
   return true;

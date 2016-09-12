@@ -1,4 +1,4 @@
-ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0--b5-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/latest/proscene.zip) [![Dependencies](https://img.shields.io/badge/dependencies-processing%203-orange.svg)](http://processing.org/) [![License](https://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
+ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0--b6-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/latest/proscene.zip) [![Dependencies](https://img.shields.io/badge/dependencies-processing%203-orange.svg)](http://processing.org/) [![License](https://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 ========
 
 **Table of Contents**
@@ -38,6 +38,7 @@ ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0--b5-brightgree
 * Object picking.
 * Screen drawing, i.e., drawing of 2d primitives on top of another (2d or 3d) scene.
 * Off-screen rendering mode support.
+* Save and load configurations.
 * 2D and 3D Interactive [mini-maps](https://en.wikipedia.org/wiki/Mini-map).
 * Handy set of complete documented [examples](https://github.com/remixlab/proscene/tree/master/examples) that illustrates the use of the package.
 * A complete [API reference documentation](http://remixlab.github.io/proscene-javadocs/).

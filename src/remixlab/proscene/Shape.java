@@ -146,8 +146,8 @@ class Shape {
    * in {@code object}.
    */
   void singleParam(Object object, String methodName) throws NoSuchMethodException, SecurityException {
-    obj = object;
     mth = object.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+    obj = object;
   }
 
   /**
@@ -157,8 +157,8 @@ class Shape {
    * function prototype in {@code object}.
    */
   void doubleParam(Object object, String methodName) throws NoSuchMethodException, SecurityException {
-    obj = object;
     mth = object.getClass().getMethod(methodName, new Class<?>[] { InteractiveFrame.class, PGraphics.class });
+    obj = object;
   }
 
   /**
@@ -205,13 +205,17 @@ class Shape {
    * Immediate mode.
    * <p>
    * High-level routine where the object declaring the graphics procedure is not given and
-   * hence need to be inferred. It could be either the
-   * {@link remixlab.proscene.Scene#pApplet()}, the
-   * {@link remixlab.proscene.InteractiveFrame} instance this shape is attached to or the
-   * {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame instance.
-   * <p>
-   * Looks for a {@link #singleParam(Object, String)} function prototype first. If nothing
-   * is hit, then looks for a {@link #doubleParam(Object, String)} function prototype.
+   * hence need to be inferred. It could be either:
+   * <ol>
+   * <li>The {@link remixlab.proscene.Scene#pApplet()};</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame} instance this shape is attached
+   * to, or;</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame
+   * instance.
+   * </ol>
+   * The algorithm looks for a {@link #singleParam(Object, String)} function prototype
+   * first. If nothing is hit, then looks for a {@link #doubleParam(Object, String)}
+   * function prototype, within the objects in the above order.
    */
   boolean set(String methodName) {
     boolean success = false;
@@ -225,20 +229,20 @@ class Shape {
         doubleParam(iFrame.scene().pApplet(), methodName);
         success = true;
       } catch (Exception e2) {
-        if (!isSetable(iFrame.scene(), methodName))
+        if (!isSetable(iFrame, methodName))
           return false;
         try {
-          singleParam(iFrame.scene(), methodName);
+          singleParam(iFrame, methodName);
           success = true;
-        } catch (Exception e3) {
+        } catch (Exception e4) {
+          if (!isSetable(iFrame.scene(), methodName))
+            return false;
           try {
-            doubleParam(iFrame.scene(), methodName);
+            singleParam(iFrame.scene(), methodName);
             success = true;
-          } catch (Exception e4) {
+          } catch (Exception e3) {
             try {
-              if (!isSetable(iFrame, methodName))
-                return false;
-              singleParam(iFrame, methodName);
+              doubleParam(iFrame.scene(), methodName);
               success = true;
             } catch (Exception e5) {
               PApplet.println("Warning: no shape set with " + methodName + " method");
