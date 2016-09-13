@@ -10,13 +10,14 @@
 1. Comment all examples describing which gestures are supported and how bindings work.
 2. Fix double tap.
 3. Support 3 and 6 DOFs.
-4. Implement key agent, see processing/processing-android/#246
-5. Register Motion and Key Events when they get support upstream, same processing/processing-android/#246.
+4. Implement the key agent.
+5. Register Motion and Key Events when they get support upstream, see thie [issue](https://github.com/processing/processing-android/issues/246).
 
 ## JS
 
-1. Set webgl matrices
-2. Release a first proof-of-concept (as we've just done with Android)
+1. Set webgl matrices,
+2. Test if the latest release can still be transpiled into JS code.
+2. Release a first proof-of-concept (as we've just done with Android).
 
 ## Demos
 
