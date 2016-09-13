@@ -3,7 +3,7 @@
 ## Foundation
 
 1. Support for all the upcoming demos
-2. Make [interactoveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
+2. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
 
 ## Android
 
