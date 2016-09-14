@@ -689,23 +689,7 @@ public class InteractiveFrame extends GenericFrame {
    * Returns a description of all the bindings this frame holds.
    */
   public String info() {
-    String result = new String();
-    String info = profile().info(KeyboardShortcut.class);
-    if (!info.isEmpty()) {
-      result = "Key bindings:\n";
-      result += Scene.parseKeyInfo(info);
-    }
-    info = profile().info(MotionShortcut.class);
-    if (!info.isEmpty()) {
-      result += "Motion bindings:\n";
-      result += Scene.parseInfo(info);
-    }
-    info = profile().info(ClickShortcut.class);
-    if (!info.isEmpty()) {
-      result += "Click bindings:\n";
-      result += Scene.parseInfo(info);
-    }
-    return result;
+    return profile.info();
   }
 
   /**

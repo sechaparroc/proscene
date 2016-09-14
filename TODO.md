@@ -3,7 +3,14 @@
 ## Foundation
 
 1. Support for all the upcoming demos
-2. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
+2. Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.
+3. Improve iFrame reflective algorithms API docs.
+4. Test the new 'checkIfGrabsInput' performance.
+5. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
+Idea: 3-step process at the Profile:
+* (Profile): Order the output of info() according to the Shortcut type
+* (Profile): Add the titles according to the Shortcut type
+* (Scene): Parse the result. Q: Perhaps also at the Profile?
 
 ## Android
 
@@ -23,5 +30,5 @@
 
 1. Include @sechaparroc experiments.
 2. [Platonic](http://blog.jpcarrascal.com/2016/04/platonic-solids-in-processing/) [solids](https://github.com/jpcarrascal/ProcessingPlatonicSolids).
-3. A BIAS custom touch agent to handle DOF2 events.
+3. A BIAS custom touch agent to handle (absolute? which sounds good for an student workshop) DOF2 events.
 4. A BIAS custom touch agent to handle custom events.
