@@ -110,13 +110,11 @@ class Shape {
    * Retained mode.
    */
   void set(PShape ps) {
-    if (shp == ps)
+    if (!isSetable(ps))
       return;
-    if (!isReset()) {
-      System.out.println("overwritting shape by set(PShape ps)");
-      reset();
-    }
     shp = ps;
+    mth = null;
+    obj = null;
     iFrame.modified();
   }
 
@@ -128,10 +126,8 @@ class Shape {
   void set(Shape other) {
     if (equals(other))
       return;
-    if (!isReset()) {
-      System.out.println("Overwriting shape by set(Shape other)");
-      reset();
-    }
+    if (!isReset())
+      System.out.println("Overwriting shape with other frame shape");
     shp = other.shp;
     obj = other.obj;
     mth = other.mth;
@@ -176,28 +172,27 @@ class Shape {
     if (!isSetable(object, methodName))
       return false;
     boolean success = false;
-    if (object == iFrame || object == iFrame.scene() || object == iFrame.scene().pApplet())
-      PApplet.println("Warning: you can use the simpler setShape(methodName) method too");
     try {
       singleParam(object, methodName);
       success = true;
     } catch (Exception e1) {
       try {
         if (iFrame.isEyeFrame()) {
-          PApplet.println("Warning: no eyeFrame shape set. Either the " + methodName
-              + " wasn't found, or perhaps it takes an extra InteractiveFrame param?");
+          System.out.println("Warning: not shape set! Check the existance of one of the following method prototypes: "
+              + prototypes(object, methodName));
           return false;
         }
         doubleParam(object, methodName);
         success = true;
       } catch (Exception e2) {
-        PApplet.println("Warning: no shape set with " + methodName + " method");
-        e1.printStackTrace();
-        e2.printStackTrace();
+        System.out.println("Warning: not shape set! Check the existance of one of the following method prototypes: "
+            + prototypes(object, methodName));
       }
     }
-    if (success)
+    if (success) {
+      shp = null;
       iFrame.modified();
+    }
     return success;
   }
 
@@ -245,20 +240,37 @@ class Shape {
               doubleParam(iFrame.scene(), methodName);
               success = true;
             } catch (Exception e5) {
-              PApplet.println("Warning: no shape set with " + methodName + " method");
-              e1.printStackTrace();
-              e2.printStackTrace();
-              e3.printStackTrace();
-              e4.printStackTrace();
-              e5.printStackTrace();
+              System.out
+                  .println("Warning: not shape set! Check the existance of one of the following method prototypes: "
+                      + prototypes(iFrame.scene().pApplet(), methodName) + ", " + prototypes(iFrame, methodName) + ", "
+                      + prototypes(iFrame.scene(), methodName));
             }
           }
         }
       }
     }
-    if (success)
+    if (success) {
+      shp = null;
       iFrame.modified();
+    }
     return success;
+  }
+
+  /**
+   * Internal use.
+   * 
+   * @see #set(String)
+   * @see #set(Object, String)
+   */
+  String prototypes(Object object, String action) {
+    String sgn1 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+        + PGraphics.class.getSimpleName() + ")";
+    if (!(object instanceof InteractiveFrame) && !iFrame.isEyeFrame()) {
+      String sgn2 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+          + InteractiveFrame.class.getSimpleName() + ", " + PGraphics.class.getSimpleName() + ")";
+      return sgn1 + ", " + sgn2;
+    }
+    return sgn1;
   }
 
   /**
@@ -275,13 +287,21 @@ class Shape {
   }
 
   boolean isSetable(Object object, String methodName) {
+    if (object == null || methodName == null)
+      return false;
     if (isImmediate())
       if (obj == object && mth.getName().equals(methodName))
         return false;
-    if (!isReset()) {
-      System.out.println("Warning: overwritting shape by set(Object object, String methodName)");
-      reset();
-    }
+    if (!isReset())
+      System.out.println("Warning: overwritting shape in immediate mode");
+    return true;
+  }
+
+  boolean isSetable(PShape shape) {
+    if (shape == null || shape == shp)
+      return false;
+    if (!isReset())
+      System.out.println("Warning: overwritting shape in retained mode");
     return true;
   }
 
@@ -289,7 +309,7 @@ class Shape {
    * Checks if internal references are null.
    */
   boolean isReset() {
-    return shp == null && mth == null;
+    return shp == null && mth == null && shp == null && shift == null;
   }
 
   /**

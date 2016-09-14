@@ -3,7 +3,7 @@
 ## Foundation
 
 1. Support for all the upcoming demos
-2. Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.
+2. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
 3. Improve iFrame reflective algorithms API docs.
 4. Test the new 'checkIfGrabsInput' performance.
 5. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
