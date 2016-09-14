@@ -8,8 +8,8 @@
 4. Test the new 'checkIfGrabsInput' performance.
 5. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
 Idea: 3-step process at the Profile:
-* (Profile): Order the output of info() according to the Shortcut type
-* (Profile): Add the titles according to the Shortcut type
+* ~~(Profile): Order the output of info() according to the Shortcut type~~
+* ~~(Profile): Add the titles according to the Shortcut type~~
 * (Scene): Parse the result. Q: Perhaps also at the Profile?
 
 ## Android
