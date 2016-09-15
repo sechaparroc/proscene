@@ -200,6 +200,7 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
+    initVKeys();
     if (platform() == Platform.PROCESSING_ANDROID) {
       defMotionAgent = new DroidTouchAgent(this);
       defKeyboardAgent = new DroidKeyAgent(this);
@@ -878,6 +879,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   // INFO
 
+  /*
   protected static String parseInfo(String info) {
     // mouse:
     String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
@@ -894,6 +896,7 @@ public class Scene extends AbstractScene implements PConstants {
     // add other agents here:
     return info;
   }
+  */
 
   @Override
   public String info() {
@@ -901,7 +904,7 @@ public class Scene extends AbstractScene implements PConstants {
     String info = profile().info(KeyboardShortcut.class);
     if (!info.isEmpty()) {
       result = "1. Scene key bindings:\n";
-      result += Profile.parseKeyInfo(info);
+      result += info;
     }
     info = eyeFrame().info(); // frame already parses info :P
     if (!info.isEmpty()) {
@@ -1564,8 +1567,16 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #registerMotionID(int)
    * @see remixlab.bias.event.MotionShortcut#registerID(int)
    */
+  /*
   public static int registerMotionID(int id, int dof) {
     return MotionShortcut.registerID(id, dof);
+  }
+  */
+  
+  public static int registerMotionID(int id, int dof, String description) {
+    MotionShortcut.registerID(id, dof);
+    registerID(id, description);
+    return id;
   }
 
   /**
@@ -1574,8 +1585,68 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #registerMotionID(int, int)
    * @see remixlab.bias.event.MotionShortcut#registerID(int, int)
    */
+  /*
   public static int registerMotionID(int dof) {
     return MotionShortcut.registerID(dof);
+  }
+  */
+  
+  public static int registerMotionID(int dof, String description) {
+    int id = MotionShortcut.registerID(dof);
+    registerID(id, description);
+    return id;
+  }
+  
+  public static int registerID(int id, String description) {
+    Profile.registerID(id, description);
+    return id;
+  }
+  
+  public static void registerVKey(int id, String description) {
+    Profile.registerVKey(id, description);
+  }
+  
+  protected void initVKeys() {
+    // numbers:
+    registerVKey(48, "0_vkey");
+    registerVKey(49, "1_vkey");
+    registerVKey(50, "2_vkey");
+    registerVKey(51, "3_vkey");
+    registerVKey(52, "4_vkey");
+    registerVKey(53, "5_vkey");
+    registerVKey(54, "6_vkey");
+    registerVKey(55, "7_vkey");
+    registerVKey(56, "8_vkey");
+    registerVKey(57, "9_vkey");
+    // the left-right-up-down keys
+    registerVKey(37, "LEFT_vkey");
+    registerVKey(38, "UP_vkey");
+    registerVKey(39, "RIGHT_vkey");
+    registerVKey(40, "DOWN_vkey");
+    // the function keys
+    registerVKey(112, "F1_vkey");
+    registerVKey(113, "F2_vkey");
+    registerVKey(114, "F3_vkey");
+    registerVKey(115, "F4_vkey");
+    registerVKey(116, "F5_vkey");
+    registerVKey(117, "F6_vkey");
+    registerVKey(118, "F7_vkey");
+    registerVKey(119, "F8_vkey");
+    registerVKey(120, "F9_vkey");
+    registerVKey(121, "F10_vkey");
+    registerVKey(122, "F11_vkey");
+    registerVKey(123, "F12_vkey");
+    // other common keys
+    registerVKey(3, "CANCEL_vkey");
+    registerVKey(155, "INSERT_vkey");
+    registerVKey(127, "DELETE_vkey");
+    registerVKey(27, "SCAPE_vkey");
+    registerVKey(10, "ENTER_vkey");
+    registerVKey(33, "PAGEUP_vkey");
+    registerVKey(34, "PAGEDOWN_vkey");
+    registerVKey(35, "END_vkey");
+    registerVKey(36, "HOME_vkey");
+    registerVKey(65368, "BEGIN_vkey");
   }
 
   protected boolean unchachedBuffer;

@@ -294,7 +294,7 @@ class Shape {
       if (obj == object && mth.getName().equals(methodName))
         return false;
     if (!isReset())
-      System.out.println("Warning: overwritting shape in immediate mode");
+      System.out.println("Warning: overwriting shape in immediate mode");
     return true;
   }
 
@@ -302,7 +302,7 @@ class Shape {
     if (shape == null || shape == shp)
       return false;
     if (!isReset())
-      System.out.println("Warning: overwritting shape in retained mode");
+      System.out.println("Warning: overwriting shape in retained mode");
     return true;
   }
 
