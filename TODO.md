@@ -2,11 +2,12 @@
 
 ## Foundation
 
-1. Support for all the upcoming demos
-2. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
-3. Improve iFrame reflective algorithms API docs.
-4. Test the new 'checkIfGrabsInput' performance.
-5. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
+1. Improve the keyboard, currently IFrame and Scene bindings are conflicting.
+2. Support for all the upcoming demos
+3. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
+4. ~~Improve iFrame reflective algorithms API docs.~~
+5. Test the new 'checkIfGrabsInput' performance.
+6. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
 Idea: 3-step process at the Profile:
 * ~~(Profile): Order the output of info() according to the Shortcut type~~
 * ~~(Profile): Add the titles according to the Shortcut type~~
