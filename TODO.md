@@ -14,7 +14,7 @@ Idea: 3-step process at the Profile:
 
 ## Android
 
-1. Comment all examples describing which gestures are supported and how bindings work.
+1. Comment all examples describing *which gestures are supported* (depict them) and how bindings work.
 2. Fix double tap.
 3. Support 3 and 6 DOFs.
 4. Implement the key agent.

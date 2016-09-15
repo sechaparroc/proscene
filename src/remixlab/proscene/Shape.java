@@ -243,7 +243,8 @@ class Shape {
               System.out
                   .println("Warning: not shape set! Check the existance of one of the following method prototypes: "
                       + prototypes(iFrame.scene().pApplet(), methodName) + ", " + prototypes(iFrame, methodName) + ", "
-                      + prototypes(iFrame.scene(), methodName));
+                      + prototypes(iFrame.scene(), methodName)
+                      + ". Or, if your shape lies within a different object, use setShape(Object object, String methodName) instead.");
             }
           }
         }
