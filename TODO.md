@@ -11,7 +11,7 @@
 Idea: 3-step process at the Profile:
 * ~~(Profile): Order the output of info() according to the Shortcut type~~
 * ~~(Profile): Add the titles according to the Shortcut type~~
-* (Scene): Parse the result. Q: Perhaps also at the Profile?
+* ~~(Scene): Parse the result. Q: Perhaps also at the Profile?~~
 
 ## Android
 
