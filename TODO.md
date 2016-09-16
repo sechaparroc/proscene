@@ -7,7 +7,7 @@
 3. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
 4. ~~Improve iFrame reflective algorithms API docs.~~
 5. Test the new 'checkIfGrabsInput' performance.
-6. Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.
+6. ~~Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.~~
 Idea: 3-step process at the Profile:
 * ~~(Profile): Order the output of info() according to the Shortcut type~~
 * ~~(Profile): Add the titles according to the Shortcut type~~
@@ -19,7 +19,7 @@ Idea: 3-step process at the Profile:
 2. Fix double tap.
 3. Support 3 and 6 DOFs.
 4. Implement the key agent.
-5. Register Motion and Key Events when they get support upstream, see thie [issue](https://github.com/processing/processing-android/issues/246).
+5. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
 
 ## JS
 
