@@ -1573,11 +1573,13 @@ public class Scene extends AbstractScene implements PConstants {
   }
   */
   
+  /*
   public static int registerMotionID(int id, int dof, String description) {
     MotionShortcut.registerID(id, dof);
     registerID(id, description);
     return id;
   }
+  */
 
   /**
    * Same as {@code return MotionEvent.registerID(dof)}.
@@ -1588,8 +1590,7 @@ public class Scene extends AbstractScene implements PConstants {
   /*
   public static int registerMotionID(int dof) {
     return MotionShortcut.registerID(dof);
-  }
-  */
+  }  
   
   public static int registerMotionID(int dof, String description) {
     int id = MotionShortcut.registerID(dof);
@@ -1599,6 +1600,24 @@ public class Scene extends AbstractScene implements PConstants {
   
   public static int registerID(int id, String description) {
     Shortcut.registerID(id, description);
+    return id;
+  }
+  */
+  
+  public static int registerMotionID(int id, int dof, String description) {
+    MotionShortcut.registerID(id, dof);
+    Shortcut.registerID(MotionShortcut.class, id, description);
+    return id;
+  }
+  
+  public static int registerMotionID(int dof, String description) {
+    int id = MotionShortcut.registerID(dof);
+    Shortcut.registerID(MotionShortcut.class, id, description);
+    return id;
+  }
+  
+  public static int registerID(int id, String description) {
+    Shortcut.registerID(KeyboardShortcut.class, id, description);
     return id;
   }
   
