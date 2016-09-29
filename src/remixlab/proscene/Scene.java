@@ -1598,55 +1598,51 @@ public class Scene extends AbstractScene implements PConstants {
   }
   
   public static int registerID(int id, String description) {
-    Profile.registerID(id, description);
+    Shortcut.registerID(id, description);
     return id;
-  }
-  
-  public static void registerVKey(int id, String description) {
-    Profile.registerVKey(id, description);
   }
   
   protected void initVKeys() {
     // numbers:
-    registerVKey(48, "0_vkey");
-    registerVKey(49, "1_vkey");
-    registerVKey(50, "2_vkey");
-    registerVKey(51, "3_vkey");
-    registerVKey(52, "4_vkey");
-    registerVKey(53, "5_vkey");
-    registerVKey(54, "6_vkey");
-    registerVKey(55, "7_vkey");
-    registerVKey(56, "8_vkey");
-    registerVKey(57, "9_vkey");
+    registerID(48, "0");
+    registerID(49, "1");
+    registerID(50, "2");
+    registerID(51, "3");
+    registerID(52, "4");
+    registerID(53, "5");
+    registerID(54, "6");
+    registerID(55, "7");
+    registerID(56, "8");
+    registerID(57, "9");
     // the left-right-up-down keys
-    registerVKey(37, "LEFT_vkey");
-    registerVKey(38, "UP_vkey");
-    registerVKey(39, "RIGHT_vkey");
-    registerVKey(40, "DOWN_vkey");
+    registerID(37, "LEFT");
+    registerID(38, "UP");
+    registerID(39, "RIGHT");
+    registerID(40, "DOWN");
     // the function keys
-    registerVKey(112, "F1_vkey");
-    registerVKey(113, "F2_vkey");
-    registerVKey(114, "F3_vkey");
-    registerVKey(115, "F4_vkey");
-    registerVKey(116, "F5_vkey");
-    registerVKey(117, "F6_vkey");
-    registerVKey(118, "F7_vkey");
-    registerVKey(119, "F8_vkey");
-    registerVKey(120, "F9_vkey");
-    registerVKey(121, "F10_vkey");
-    registerVKey(122, "F11_vkey");
-    registerVKey(123, "F12_vkey");
+    registerID(112, "F1");
+    registerID(113, "F2");
+    registerID(114, "F3");
+    registerID(115, "F4");
+    registerID(116, "F5");
+    registerID(117, "F6");
+    registerID(118, "F7");
+    registerID(119, "F8");
+    registerID(120, "F9");
+    registerID(121, "F10");
+    registerID(122, "F11");
+    registerID(123, "F12");
     // other common keys
-    registerVKey(3, "CANCEL_vkey");
-    registerVKey(155, "INSERT_vkey");
-    registerVKey(127, "DELETE_vkey");
-    registerVKey(27, "SCAPE_vkey");
-    registerVKey(10, "ENTER_vkey");
-    registerVKey(33, "PAGEUP_vkey");
-    registerVKey(34, "PAGEDOWN_vkey");
-    registerVKey(35, "END_vkey");
-    registerVKey(36, "HOME_vkey");
-    registerVKey(65368, "BEGIN_vkey");
+    registerID(3, "CANCEL");
+    registerID(155, "INSERT");
+    registerID(127, "DELETE");
+    registerID(27, "SCAPE");
+    registerID(10, "ENTER");
+    registerID(33, "PAGEUP");
+    registerID(34, "PAGEDOWN");
+    registerID(35, "END");
+    registerID(36, "HOME");
+    registerID(65368, "BEGIN");
   }
 
   protected boolean unchachedBuffer;
