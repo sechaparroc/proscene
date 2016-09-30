@@ -23,10 +23,13 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
-  public static final int LEFT_ID = Scene.registerMotionID(37, 2, "LEFT"),
-      CENTER_ID = Scene.registerMotionID(3, 2, "CENTER"), RIGHT_ID = Scene.registerMotionID(39, 2, "RIGHT"),
-      WHEEL_ID = Scene.registerMotionID(8, 1, "WHEEL"),
-      NO_BUTTON = Scene.registerMotionID(BogusEvent.NO_ID, 2, "NO_BUTTON");
+  public static final int LEFT_ID = MotionShortcut.registerID(37, 2, "LEFT"),
+      CENTER_ID = MotionShortcut.registerID(3, 2, "CENTER"), RIGHT_ID = MotionShortcut.registerID(39, 2, "RIGHT"),
+      WHEEL_ID = MotionShortcut.registerID(8, 1, "WHEEL"),
+      NO_BUTTON = MotionShortcut.registerID(BogusEvent.NO_ID, 2, "NO_BUTTON"),
+      LEFT_CLICK_ID = ClickShortcut.registerID(LEFT_ID, "LEFT"),
+      RIGHT_CLICK_ID = ClickShortcut.registerID(RIGHT_ID, "RIGHT"),
+      CENTER_CLICK_ID = ClickShortcut.registerID(CENTER_ID, "CENTER");
   protected float xSens = 1f;
   protected float ySens = 1f;
   protected Scene scene;
@@ -168,7 +171,7 @@ public class MouseAgent extends Agent {
     frame.setMotionBinding(RIGHT_ID, "translate");
     frame.setMotionBinding(WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
 
-    frame.setClickBinding(LEFT_ID, 2, "align");
-    frame.setClickBinding(RIGHT_ID, 2, "center");
+    frame.setClickBinding(LEFT_CLICK_ID, 2, "align");
+    frame.setClickBinding(RIGHT_CLICK_ID, 2, "center");
   }
 }

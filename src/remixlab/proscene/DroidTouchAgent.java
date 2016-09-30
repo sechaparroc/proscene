@@ -28,11 +28,14 @@ public class DroidTouchAgent extends Agent {
   Scene scene;
   protected MotionEvent newevent, oldevent;
   protected TouchProcessor touchProcessor;
-  public static final int TAP_ID = Scene.registerID(1, "TAP"), DRAG_ONE_ID = Scene.registerMotionID(2, "DRAG_ONE"),
-      DRAG_TWO_ID = Scene.registerMotionID(2, "DRAG_TWO"), DRAG_THREE_ID = Scene.registerMotionID(2, "DRAG_THREE"),
-      OPPOSABLE_THREE_ID = Scene.registerMotionID(2, "OPPOSABLE_THREE"),
-      TURN_TWO_ID = Scene.registerMotionID(1, "TURN_TWO"), TURN_THREE_ID = Scene.registerMotionID(1, "TURN_THREE"),
-      PINCH_TWO_ID = Scene.registerMotionID(1, "PINCH_TWO"), PINCH_THREE_ID = Scene.registerMotionID(1, "PINCH_THREE");
+  public static final int TAP_ID = ClickShortcut.registerID("TAP"),
+      DRAG_ONE_ID = MotionShortcut.registerID(2, "DRAG_ONE"), DRAG_TWO_ID = MotionShortcut.registerID(2, "DRAG_TWO"),
+      DRAG_THREE_ID = MotionShortcut.registerID(2, "DRAG_THREE"),
+      OPPOSABLE_THREE_ID = MotionShortcut.registerID(2, "OPPOSABLE_THREE"),
+      TURN_TWO_ID = MotionShortcut.registerID(1, "TURN_TWO"),
+      TURN_THREE_ID = MotionShortcut.registerID(1, "TURN_THREE"),
+      PINCH_TWO_ID = MotionShortcut.registerID(1, "PINCH_TWO"),
+      PINCH_THREE_ID = MotionShortcut.registerID(1, "PINCH_THREE");
   // TODO: debug
   private boolean debug;
 
@@ -64,6 +67,11 @@ public class DroidTouchAgent extends Agent {
   }
 
   public void touchEvent(android.view.MotionEvent e) {
+    // TODO debug
+    if (e == null) {
+      System.out.println("Warning: android MotionEvent is null");
+      return;
+    }
     int action = e.getAction();
     int code = action & android.view.MotionEvent.ACTION_MASK;
     int index = action >> android.view.MotionEvent.ACTION_POINTER_INDEX_SHIFT;

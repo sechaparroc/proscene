@@ -202,7 +202,7 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
-    initVKeys();
+    initVKeys(platform() == Platform.PROCESSING_ANDROID ? android.view.KeyEvent.class : KeyEvent.class);
     if (platform() == Platform.PROCESSING_ANDROID) {
       defMotionAgent = new DroidTouchAgent(this);
       defKeyboardAgent = new DroidKeyAgent(this);
@@ -1561,90 +1561,71 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code return MotionEvent.registerID(id, dof)}.
-   * 
-   * @see #registerMotionID(int)
-   * @see remixlab.bias.event.MotionShortcut#registerID(int)
+   * Internal use. Programmatically register virtual keys.
    */
-  /*
-   * public static int registerMotionID(int id, int dof) { return
-   * MotionShortcut.registerID(id, dof); }
-   */
-
-  /*
-   * public static int registerMotionID(int id, int dof, String description) {
-   * MotionShortcut.registerID(id, dof); registerID(id, description); return id; }
-   */
-
-  /**
-   * Same as {@code return MotionEvent.registerID(dof)}.
-   *
-   * @see #registerMotionID(int, int)
-   * @see remixlab.bias.event.MotionShortcut#registerID(int, int)
-   */
-  /*
-   * public static int registerMotionID(int dof) { return MotionShortcut.registerID(dof);
-   * }
-   * 
-   * public static int registerMotionID(int dof, String description) { int id =
-   * MotionShortcut.registerID(dof); registerID(id, description); return id; }
-   * 
-   * public static int registerID(int id, String description) { Shortcut.registerID(id,
-   * description); return id; }
-   */
-
-  public static int registerMotionID(int id, int dof, String description) {
-    MotionShortcut.registerID(id, dof);
-    Shortcut.registerID(MotionShortcut.class, id, description);
-    return id;
-  }
-
-  public static int registerMotionID(int dof, String description) {
-    int id = MotionShortcut.registerID(dof);
-    Shortcut.registerID(MotionShortcut.class, id, description);
-    return id;
-  }
-
-  public static int registerID(int id, String description) {
-    Shortcut.registerID(KeyboardShortcut.class, id, description);
-    return id;
-  }
-
-  protected void initVKeys() {
+  protected void initVKeys(Class<?> keyEventClass) {
+    // TODO android needs testing
     // idea took from here:
     // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
     // and here:
     // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
-    Field[] fields = KeyEvent.class.getDeclaredFields();
+    Field[] fields = keyEventClass.getDeclaredFields();
     for (Field f : fields) {
-      if (Modifier.isStatic(f.getModifiers())) {
+      if (Modifier.isStatic(f.getModifiers()) && Modifier.isPublic(f.getModifiers())) {
         Class<?> clazzType = f.getType();
-        if (clazzType.toString().equals("int"))
+        if (clazzType.toString().equals("int")) {
+          int id = -1;
           try {
-            registerID(f.getInt(KeyEvent.class), f.getName());
+            id = f.getInt(keyEventClass);
+            if (!KeyboardShortcut.hasID(id))
+              KeyboardShortcut.registerID(id, f.getName());
           } catch (Exception e) {
             System.out.println("Warning: couldn't register key");
             e.printStackTrace();
           }
+        }
       }
     }
-
-    /*
-     * // numbers: registerID(48, "0"); registerID(49, "1"); registerID(50, "2");
-     * registerID(51, "3"); registerID(52, "4"); registerID(53, "5"); registerID(54, "6");
-     * registerID(55, "7"); registerID(56, "8"); registerID(57, "9"); // the
-     * left-right-up-down keys registerID(37, KeyEvent.getKeyText(37)); registerID(38,
-     * "UP"); registerID(39, "RIGHT"); registerID(40, "DOWN"); // the function keys
-     * registerID(112, "F1"); registerID(113, "F2"); registerID(114, "F3");
-     * registerID(115, "F4"); registerID(116, "F5"); registerID(117, "F6");
-     * registerID(118, "F7"); registerID(119, "F8"); registerID(120, "F9");
-     * registerID(121, "F10"); registerID(122, "F11"); registerID(123, "F12"); // other
-     * common keys registerID(3, "CANCEL"); registerID(155, "INSERT"); } catch
-     * (IllegalAccessException e) { // TODO Auto-generated catch block
-     * e.printStackTrace(); } //S registerID(127, "DELETE"); registerID(27, "SCAPE");
-     * registerID(10, "ENTER"); registerID(33, "PAGEUP"); registerID(34, "PAGEDOWN");
-     * registerID(35, "END"); registerID(36, "HOME"); registerID(65368, "BEGIN");
-     */
+    // // numbers:
+    // KeyboardShortcut.registerID(48, "0");
+    // KeyboardShortcut.registerID(49, "1");
+    // KeyboardShortcut.registerID(50, "2");
+    // KeyboardShortcut.registerID(51, "3");
+    // KeyboardShortcut.registerID(52, "4");
+    // KeyboardShortcut.registerID(53, "5");
+    // KeyboardShortcut.registerID(54, "6");
+    // KeyboardShortcut.registerID(55, "7");
+    // KeyboardShortcut.registerID(56, "8");
+    // KeyboardShortcut.registerID(57, "9");
+    // // the left-right-up-down keys
+    // KeyboardShortcut.registerID(37, KeyEvent.getKeyText(37));
+    // KeyboardShortcut.registerID(38, "UP");
+    // KeyboardShortcut.registerID(39, "RIGHT");
+    // KeyboardShortcut.registerID(40, "DOWN");
+    // // the function keys
+    // KeyboardShortcut.registerID(112, "F1");
+    // KeyboardShortcut.registerID(113, "F2");
+    // KeyboardShortcut.registerID(114, "F3");
+    // KeyboardShortcut.registerID(115, "F4");
+    // KeyboardShortcut.registerID(116, "F5");
+    // KeyboardShortcut.registerID(117, "F6");
+    // KeyboardShortcut.registerID(118, "F7");
+    // KeyboardShortcut.registerID(119, "F8");
+    // KeyboardShortcut.registerID(120, "F9");
+    // KeyboardShortcut.registerID(121, "F10");
+    // KeyboardShortcut.registerID(122, "F11");
+    // KeyboardShortcut.registerID(123, "F12");
+    // // other common keys
+    // KeyboardShortcut.registerID(3, "CANCEL");
+    // KeyboardShortcut.registerID(155, "INSERT");
+    // KeyboardShortcut.registerID(127, "DELETE");
+    // KeyboardShortcut.registerID(27, "SCAPE");
+    // KeyboardShortcut.registerID(10, "ENTER");
+    // KeyboardShortcut.registerID(33, "PAGEUP");
+    // KeyboardShortcut.registerID(34, "PAGEDOWN");
+    // KeyboardShortcut.registerID(35, "END");
+    // KeyboardShortcut.registerID(36, "HOME");
+    // KeyboardShortcut.registerID(65368, "BEGIN");
   }
 
   protected boolean unchachedBuffer;

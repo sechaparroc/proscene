@@ -65,7 +65,7 @@ public class HIDAgent extends Agent {
     // SN_ID will be assigned an unique id with 6 DOF's. The id may be
     // used to bind (frame) actions to the gesture, pretty much in
     // the same way as it's done with the LEFT and RIGHT mouse gestures.
-    SN_ID = Scene.registerMotionID(6);
+    SN_ID = MotionShortcut.registerID(6, "SN_SENSOR");
     addGrabber(scene.eyeFrame());
     setDefaultGrabber(scene.eyeFrame());
   }
