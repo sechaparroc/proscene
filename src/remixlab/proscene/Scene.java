@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import java.awt.event.KeyEvent;
+import java.lang.reflect.Field;
 // begin: GWT-incompatible
 ///*
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.FloatBuffer;
 // end: GWT-incompatible
 //*/
@@ -880,23 +882,20 @@ public class Scene extends AbstractScene implements PConstants {
   // INFO
 
   /*
-  protected static String parseInfo(String info) {
-    // mouse:
-    String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
-    String r = "ID_" + String.valueOf(MouseAgent.RIGHT_ID);
-    String c = "ID_" + String.valueOf(MouseAgent.CENTER_ID);
-    String w = "ID_" + String.valueOf(MouseAgent.WHEEL_ID);
-    String n = "ID_" + String.valueOf(MouseAgent.NO_BUTTON);
-
-    // ... and replace it with proper descriptions:
-
-    info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c, "CENTER_BUTTON").replace(w, "WHEEL")
-        .replace(n, "NO_BUTTON");
-
-    // add other agents here:
-    return info;
-  }
-  */
+   * protected static String parseInfo(String info) { // mouse: String l = "ID_" +
+   * String.valueOf(MouseAgent.LEFT_ID); String r = "ID_" +
+   * String.valueOf(MouseAgent.RIGHT_ID); String c = "ID_" +
+   * String.valueOf(MouseAgent.CENTER_ID); String w = "ID_" +
+   * String.valueOf(MouseAgent.WHEEL_ID); String n = "ID_" +
+   * String.valueOf(MouseAgent.NO_BUTTON);
+   * 
+   * // ... and replace it with proper descriptions:
+   * 
+   * info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c,
+   * "CENTER_BUTTON").replace(w, "WHEEL") .replace(n, "NO_BUTTON");
+   * 
+   * // add other agents here: return info; }
+   */
 
   @Override
   public String info() {
@@ -1568,18 +1567,14 @@ public class Scene extends AbstractScene implements PConstants {
    * @see remixlab.bias.event.MotionShortcut#registerID(int)
    */
   /*
-  public static int registerMotionID(int id, int dof) {
-    return MotionShortcut.registerID(id, dof);
-  }
-  */
-  
+   * public static int registerMotionID(int id, int dof) { return
+   * MotionShortcut.registerID(id, dof); }
+   */
+
   /*
-  public static int registerMotionID(int id, int dof, String description) {
-    MotionShortcut.registerID(id, dof);
-    registerID(id, description);
-    return id;
-  }
-  */
+   * public static int registerMotionID(int id, int dof, String description) {
+   * MotionShortcut.registerID(id, dof); registerID(id, description); return id; }
+   */
 
   /**
    * Same as {@code return MotionEvent.registerID(dof)}.
@@ -1588,80 +1583,68 @@ public class Scene extends AbstractScene implements PConstants {
    * @see remixlab.bias.event.MotionShortcut#registerID(int, int)
    */
   /*
-  public static int registerMotionID(int dof) {
-    return MotionShortcut.registerID(dof);
-  }  
-  
-  public static int registerMotionID(int dof, String description) {
-    int id = MotionShortcut.registerID(dof);
-    registerID(id, description);
-    return id;
-  }
-  
-  public static int registerID(int id, String description) {
-    Shortcut.registerID(id, description);
-    return id;
-  }
-  */
-  
+   * public static int registerMotionID(int dof) { return MotionShortcut.registerID(dof);
+   * }
+   * 
+   * public static int registerMotionID(int dof, String description) { int id =
+   * MotionShortcut.registerID(dof); registerID(id, description); return id; }
+   * 
+   * public static int registerID(int id, String description) { Shortcut.registerID(id,
+   * description); return id; }
+   */
+
   public static int registerMotionID(int id, int dof, String description) {
     MotionShortcut.registerID(id, dof);
     Shortcut.registerID(MotionShortcut.class, id, description);
     return id;
   }
-  
+
   public static int registerMotionID(int dof, String description) {
     int id = MotionShortcut.registerID(dof);
     Shortcut.registerID(MotionShortcut.class, id, description);
     return id;
   }
-  
+
   public static int registerID(int id, String description) {
     Shortcut.registerID(KeyboardShortcut.class, id, description);
     return id;
   }
-  
+
   protected void initVKeys() {
-    // numbers:
-    registerID(48, "0");
-    registerID(49, "1");
-    registerID(50, "2");
-    registerID(51, "3");
-    registerID(52, "4");
-    registerID(53, "5");
-    registerID(54, "6");
-    registerID(55, "7");
-    registerID(56, "8");
-    registerID(57, "9");
-    // the left-right-up-down keys
-    registerID(37, "LEFT");
-    registerID(38, "UP");
-    registerID(39, "RIGHT");
-    registerID(40, "DOWN");
-    // the function keys
-    registerID(112, "F1");
-    registerID(113, "F2");
-    registerID(114, "F3");
-    registerID(115, "F4");
-    registerID(116, "F5");
-    registerID(117, "F6");
-    registerID(118, "F7");
-    registerID(119, "F8");
-    registerID(120, "F9");
-    registerID(121, "F10");
-    registerID(122, "F11");
-    registerID(123, "F12");
-    // other common keys
-    registerID(3, "CANCEL");
-    registerID(155, "INSERT");
-    registerID(127, "DELETE");
-    registerID(27, "SCAPE");
-    registerID(10, "ENTER");
-    registerID(33, "PAGEUP");
-    registerID(34, "PAGEDOWN");
-    registerID(35, "END");
-    registerID(36, "HOME");
-    registerID(65368, "BEGIN");
+    // idea took from here:
+    // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
+    // and here:
+    // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
+    Field[] fields = KeyEvent.class.getDeclaredFields();
+    for (Field f : fields) {
+      if (Modifier.isStatic(f.getModifiers())) {
+        Class<?> clazzType = f.getType();
+        if (clazzType.toString().equals("int"))
+          try {
+            registerID(f.getInt(KeyEvent.class), f.getName());
+          } catch (Exception e) {
+            System.out.println("Warning: couldn't register key");
+            e.printStackTrace();
+          }
+      }
+    }
+
+    /*
+     * // numbers: registerID(48, "0"); registerID(49, "1"); registerID(50, "2");
+     * registerID(51, "3"); registerID(52, "4"); registerID(53, "5"); registerID(54, "6");
+     * registerID(55, "7"); registerID(56, "8"); registerID(57, "9"); // the
+     * left-right-up-down keys registerID(37, KeyEvent.getKeyText(37)); registerID(38,
+     * "UP"); registerID(39, "RIGHT"); registerID(40, "DOWN"); // the function keys
+     * registerID(112, "F1"); registerID(113, "F2"); registerID(114, "F3");
+     * registerID(115, "F4"); registerID(116, "F5"); registerID(117, "F6");
+     * registerID(118, "F7"); registerID(119, "F8"); registerID(120, "F9");
+     * registerID(121, "F10"); registerID(122, "F11"); registerID(123, "F12"); // other
+     * common keys registerID(3, "CANCEL"); registerID(155, "INSERT"); } catch
+     * (IllegalAccessException e) { // TODO Auto-generated catch block
+     * e.printStackTrace(); } //S registerID(127, "DELETE"); registerID(27, "SCAPE");
+     * registerID(10, "ENTER"); registerID(33, "PAGEUP"); registerID(34, "PAGEDOWN");
+     * registerID(35, "END"); registerID(36, "HOME"); registerID(65368, "BEGIN");
+     */
   }
 
   protected boolean unchachedBuffer;
