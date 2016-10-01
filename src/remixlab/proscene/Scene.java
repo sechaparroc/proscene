@@ -3191,39 +3191,39 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code setKeyBinding(mask, KeyAgent.keyCode(key), methodName)}.
+   * Same as {@code setKeyBinding(mask, keyCode(key), methodName)}.
    * 
    * @see #setKeyBinding(int, int, String)
    */
   public void setKeyBinding(int mask, char key, String methodName) {
-    setKeyBinding(mask, KeyAgent.keyCode(key), methodName);
+    setKeyBinding(mask, keyCode(key), methodName);
   }
 
   /**
-   * Same as {@code setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName)}.
+   * Same as {@code setKeyBinding(object, mask, keyCode(key), methodName)}.
    * 
    * @see #setKeyBinding(Object, int, int, String)
    */
   public void setKeyBinding(Object object, int mask, char key, String methodName) {
-    setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName);
+    setKeyBinding(object, mask, keyCode(key), methodName);
   }
 
   /**
-   * Same as {@code return hasKeyBinding(mask, KeyAgent.keyCode(key))}.
+   * Same as {@code return hasKeyBinding(mask, keyCode(key))}.
    * 
    * @see #hasKeyBinding(int, int)
    */
   public boolean hasKeyBinding(int mask, char key) {
-    return hasKeyBinding(mask, KeyAgent.keyCode(key));
+    return hasKeyBinding(mask, keyCode(key));
   }
 
   /**
-   * Same as {@code removeKeyBinding(mask, KeyAgent.keyCode(key))}.
+   * Same as {@code removeKeyBinding(mask, keyCode(key))}.
    * 
    * @see #removeKeyBinding(int, int)
    */
   public void removeKeyBinding(int mask, char key) {
-    removeKeyBinding(mask, KeyAgent.keyCode(key));
+    removeKeyBinding(mask, keyCode(key));
   }
 
   /**
