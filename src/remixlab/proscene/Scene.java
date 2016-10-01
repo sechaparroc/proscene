@@ -348,6 +348,15 @@ public class Scene extends AbstractScene implements PConstants {
       platform = Platform.PROCESSING_DESKTOP;
   }
 
+  /**
+   * Either returns {@link remixlab.proscene.KeyAgent#keyCode(char)} or
+   * {@link remixlab.proscene.DroidKeyAgent#keyCode(char)} depending on
+   * {@link #platform()}.
+   */
+  public static int keyCode(char key) {
+    return platform() == Platform.PROCESSING_ANDROID ? DroidKeyAgent.keyCode(key) : KeyAgent.keyCode(key);
+  }
+
   // P5-WRAPPERS
 
   /**
@@ -880,22 +889,6 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   // INFO
-
-  /*
-   * protected static String parseInfo(String info) { // mouse: String l = "ID_" +
-   * String.valueOf(MouseAgent.LEFT_ID); String r = "ID_" +
-   * String.valueOf(MouseAgent.RIGHT_ID); String c = "ID_" +
-   * String.valueOf(MouseAgent.CENTER_ID); String w = "ID_" +
-   * String.valueOf(MouseAgent.WHEEL_ID); String n = "ID_" +
-   * String.valueOf(MouseAgent.NO_BUTTON);
-   * 
-   * // ... and replace it with proper descriptions:
-   * 
-   * info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c,
-   * "CENTER_BUTTON").replace(w, "WHEEL") .replace(n, "NO_BUTTON");
-   * 
-   * // add other agents here: return info; }
-   */
 
   @Override
   public String info() {
@@ -1569,6 +1562,8 @@ public class Scene extends AbstractScene implements PConstants {
     // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
     // and here:
     // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
+    String prefix = keyEventClass.getName().contains("android") ? "KEYCODE_" : "VK_";
+    int l = prefix.length();
     Field[] fields = keyEventClass.getDeclaredFields();
     for (Field f : fields) {
       if (Modifier.isStatic(f.getModifiers()) && Modifier.isPublic(f.getModifiers())) {
@@ -1577,8 +1572,9 @@ public class Scene extends AbstractScene implements PConstants {
           int id = -1;
           try {
             id = f.getInt(keyEventClass);
-            if (!KeyboardShortcut.hasID(id))
-              KeyboardShortcut.registerID(id, f.getName());
+            String name = f.getName();
+            if (!KeyboardShortcut.hasID(id) && name.substring(0, l).equals(prefix))
+              KeyboardShortcut.registerID(id, name);
           } catch (Exception e) {
             System.out.println("Warning: couldn't register key");
             e.printStackTrace();

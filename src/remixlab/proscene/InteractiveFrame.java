@@ -373,6 +373,8 @@ public class InteractiveFrame extends GenericFrame {
     removeKeyBindings();
     setKeyBinding('n', "align");
     setKeyBinding('c', "center");
+    // TODO debug
+    setKeyBinding(BogusEvent.CTRL, 'c', "center");
     setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
     setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
     setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
@@ -545,39 +547,39 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code setKeyBinding(mask, KeyAgent.keyCode(key), action)}.
+   * Same as {@code setKeyBinding(mask, Scene.keyCode(key), action)}.
    * 
    * @see #setKeyBinding(int, int, String)
    */
   public void setKeyBinding(int mask, char key, String action) {
-    setKeyBinding(mask, KeyAgent.keyCode(key), action);
+    setKeyBinding(mask, Scene.keyCode(key), action);
   }
 
   /**
-   * Same as {@code setKeyBinding(object, mask, KeyAgent.keyCode(key), action)}.
+   * Same as {@code setKeyBinding(object, mask, Scene.keyCode(key), action)}.
    * 
    * @see #setKeyBinding(Object, int, int, String)
    */
   public void setKeyBinding(Object object, int mask, char key, String action) {
-    setKeyBinding(object, mask, KeyAgent.keyCode(key), action);
+    setKeyBinding(object, mask, Scene.keyCode(key), action);
   }
 
   /**
-   * Same as {@code hasKeyBinding(mask, KeyAgent.keyCode(key))}.
+   * Same as {@code hasKeyBinding(mask, Scene.keyCode(key))}.
    * 
    * @see #hasKeyBinding(int, int)
    */
   public boolean hasKeyBinding(int mask, char key) {
-    return hasKeyBinding(mask, KeyAgent.keyCode(key));
+    return hasKeyBinding(mask, Scene.keyCode(key));
   }
 
   /**
-   * Same as {@code removeKeyBinding(mask, KeyAgent.keyCode(key))}.
+   * Same as {@code removeKeyBinding(mask, Scene.keyCode(key))}.
    * 
    * @see #removeKeyBinding(int, int)
    */
   public void removeKeyBinding(int mask, char key) {
-    removeKeyBinding(mask, KeyAgent.keyCode(key));
+    removeKeyBinding(mask, Scene.keyCode(key));
   }
 
   /**
