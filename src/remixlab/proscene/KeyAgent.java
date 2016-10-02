@@ -60,6 +60,9 @@ public class KeyAgent extends Agent {
     if (type || press)
       updateTrackedGrabber(currentEvent);
 
+    // System.out.println((press ? "pressed: " : type ? "typed: " : release ? "released: "
+    // : "ooops! ") + printEvent(currentEvent));
+
     handle(release ? currentEvent.flush() : currentEvent.fire());
   }
 
@@ -67,11 +70,13 @@ public class KeyAgent extends Agent {
 
   // protected String printEvent(KeyboardEvent event) {
   // return " mod: " + KeyboardEvent.modifiersText(event.modifiers()) + " vkey: " +
-  // event.id() + " char: " + event.key(); }
+  // event.id() + " char: " + event.key();
+  // }
   //
   // protected String printAction(KeyboardEvent event) {
-  // return " scene: " + scene.profile().action(event.shortcut()) + " eye: " +
-  // scene.eyeFrame().profile().action(event.shortcut()); }
+  // return " scene: " + scene.profile().action(event.shortcut()) + " eye: "
+  // + scene.eyeFrame().profile().action(event.shortcut());
+  // }
 
   /**
    * Same as {@code return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key)}.

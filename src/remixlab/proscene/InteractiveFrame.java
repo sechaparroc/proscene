@@ -373,8 +373,6 @@ public class InteractiveFrame extends GenericFrame {
     removeKeyBindings();
     setKeyBinding('n', "align");
     setKeyBinding('c', "center");
-    // TODO debug
-    setKeyBinding(BogusEvent.CTRL, 'c', "center");
     setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
     setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
     setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
@@ -957,6 +955,34 @@ public class InteractiveFrame extends GenericFrame {
   @Override
   public boolean checkIfGrabsInput(KeyboardEvent event) {
     return profile.hasBinding(event.shortcut());
+  }
+
+  protected boolean vkeyAction;
+
+  /**
+   * Internal use. Inspired in Processing key event flow. Bypasses the key event so that
+   * {@link remixlab.bias.event.KeyboardShortcut}s work smoothly. Call it at the beginning
+   * of your {@link #performInteraction(KeyboardEvent)} method to discard useless keyboard
+   * events.
+   */
+  protected boolean bypassKey(BogusEvent event) {
+    if (!profile.hasBinding(event.shortcut()))
+      return true;
+    if (event instanceof KeyboardEvent) {
+      if (event.fired())
+        if (event.id() == 0)// TYPE event
+          return vkeyAction;
+        else {
+          vkeyAction = true;
+          return false;
+        }
+      if (event.flushed()) {
+        if (event.flushed() && vkeyAction)
+          vkeyAction = false;
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
