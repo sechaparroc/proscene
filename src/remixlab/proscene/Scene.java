@@ -3068,9 +3068,9 @@ public class Scene extends AbstractScene implements PConstants {
    * events.
    */
   protected boolean bypassKey(BogusEvent event) {
-    if (!profile.hasBinding(event.shortcut()))
-      return true;
     if (event instanceof KeyboardEvent) {
+      if (!profile.hasBinding(event.shortcut()))
+        return true;
       if (event.fired())
         if (event.id() == 0)// TYPE event
           return vkeyAction;
