@@ -2,7 +2,7 @@
 
 ## Foundation
 
-1. Improve the keyboard, currently IFrame and Scene bindings are conflicting.
+1. ~~Improve the keyboard, currently IFrame and Scene bindings are conflicting.~~
 2. Verify support for all the upcoming demos.
 3. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
 4. ~~Improve iFrame reflective algorithms API docs.~~

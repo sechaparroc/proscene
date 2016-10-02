@@ -903,7 +903,7 @@ public class Scene extends AbstractScene implements PConstants {
       result += "2. Eye bindings:\n";
       result += info;
     }
-    if (this.leadingFrames().size() > 0)
+    if (this.leadingFrames().size() > 1)
       result += "3. For a specific frame bindings use: frame.info():\n";
     return result;
   }
