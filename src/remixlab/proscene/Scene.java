@@ -3069,8 +3069,10 @@ public class Scene extends AbstractScene implements PConstants {
    */
   protected boolean bypassKey(BogusEvent event) {
     if (event instanceof KeyboardEvent) {
-      if (!profile.hasBinding(event.shortcut()))
+      if (!profile.hasBinding(event.shortcut())) {
+        vkeyAction = false;
         return true;
+      }
       if (event.fired())
         if (event.id() == 0)// TYPE event
           return vkeyAction;
@@ -3079,8 +3081,7 @@ public class Scene extends AbstractScene implements PConstants {
           return false;
         }
       if (event.flushed()) {
-        if (event.flushed() && vkeyAction)
-          vkeyAction = false;
+        vkeyAction = false;
         return true;
       }
     }

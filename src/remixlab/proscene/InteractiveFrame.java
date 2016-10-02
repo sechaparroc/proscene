@@ -373,16 +373,20 @@ public class InteractiveFrame extends GenericFrame {
     removeKeyBindings();
     setKeyBinding('n', "align");
     setKeyBinding('c', "center");
-    setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
+    // translations
     setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
-    setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
+    setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
     setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.LEFT_KEY, "rotateXNeg");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY, "rotateXPos");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.DOWN_KEY, "rotateYNeg");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.UP_KEY, "rotateYPos");
-    setKeyBinding('z', "rotateZNeg");
-    setKeyBinding('Z', "rotateZPos");
+    setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
+    setKeyBinding(BogusEvent.SHIFT, KeyAgent.UP_KEY, "translateZPos");
+    setKeyBinding(BogusEvent.SHIFT, KeyAgent.DOWN_KEY, "translateZNeg");
+    // rotations
+    setKeyBinding(BogusEvent.CTRL, KeyAgent.RIGHT_KEY, "rotateXPos");
+    setKeyBinding(BogusEvent.CTRL, KeyAgent.LEFT_KEY, "rotateXNeg");
+    setKeyBinding(BogusEvent.CTRL, KeyAgent.UP_KEY, "rotateYPos");
+    setKeyBinding(BogusEvent.CTRL, KeyAgent.DOWN_KEY, "rotateYNeg");
+    setKeyBinding(BogusEvent.ALT, KeyAgent.UP_KEY, "rotateZPos");
+    setKeyBinding(BogusEvent.ALT, KeyAgent.DOWN_KEY, "rotateZNeg");
   }
 
   // good for all dofs :P
@@ -967,8 +971,10 @@ public class InteractiveFrame extends GenericFrame {
    */
   protected boolean bypassKey(BogusEvent event) {
     if (event instanceof KeyboardEvent) {
-      if (!profile.hasBinding(event.shortcut()))
+      if (!profile.hasBinding(event.shortcut())) {
+        vkeyAction = false;
         return true;
+      }
       if (event.fired())
         if (event.id() == 0)// TYPE event
           return vkeyAction;
@@ -977,8 +983,7 @@ public class InteractiveFrame extends GenericFrame {
           return false;
         }
       if (event.flushed()) {
-        if (event.flushed() && vkeyAction)
-          vkeyAction = false;
+        vkeyAction = false;
         return true;
       }
     }
