@@ -3048,44 +3048,13 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code if (!bypassKey(event)) profile.handle(event)}.
+   * Same as {@code profile.handle(event)}.
    * 
-   * @see #bypassKey(BogusEvent)
    * @see remixlab.bias.ext.Profile#handle(BogusEvent)
    */
   @Override
   public void performInteraction(BogusEvent event) {
-    if (!bypassKey(event))
-      profile.handle(event);
-  }
-
-  protected boolean vkeyAction;
-
-  /**
-   * Internal use. Inspired in Processing key event flow. Bypasses the key event so that
-   * {@link remixlab.bias.event.KeyboardShortcut}s work smoothly. Call it at the beginning
-   * of your {@link #performInteraction(KeyboardEvent)} method to discard useless keyboard
-   * events.
-   */
-  protected boolean bypassKey(BogusEvent event) {
-    if (event instanceof KeyboardEvent) {
-      if (!profile.hasBinding(event.shortcut())) {
-        vkeyAction = false;
-        return true;
-      }
-      if (event.fired())
-        if (event.id() == 0)// TYPE event
-          return vkeyAction;
-        else {
-          vkeyAction = true;
-          return false;
-        }
-      if (event.flushed()) {
-        vkeyAction = false;
-        return true;
-      }
-    }
-    return false;
+    profile.handle(event);
   }
 
   /**

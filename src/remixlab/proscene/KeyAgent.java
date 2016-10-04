@@ -45,37 +45,82 @@ public class KeyAgent extends Agent {
     return scene;
   }
 
+  protected boolean bypass;
+
   /**
    * Processing keyEvent method to be registered at the PApplet's instance.
+   * <p>
+   * Current implementation requires grabber objects to have a
+   * {@link remixlab.bias.ext.Profile} and to implement
+   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on a
+   * {@code KeyboardEvent} as follows:
+   * 
+   * <pre>
+   * {@code
+   * public boolean checkIfGrabsInput(KeyboardEvent event) {
+   *   return profile.hasBinding(event.shortcut());
+   * }
+   * }
+   * </pre>
+   * 
+   * in this way an agent grabber will grab input as long as it defines a binding for a
+   * given triggered key shortcut. The default grabber will just have the highest
+   * precedence among all agent grabbers, provided that more than one grabber defines a
+   * binding for the same key shortcut.
    */
   public void keyEvent(processing.event.KeyEvent e) {
+    // According to Processing key event flow .e.g.,
+    // RIGHT_ARROW
+    // pressed: mod: vkey: 39 description: VK_RIGHT
+    // released: mod: vkey: 39 description: VK_RIGHT
+    // pressed: mod: vkey: 27 description: VK_ESCAPE
+    // '1'
+    // pressed: mod: vkey: 49 description: VK_1
+    // typed: char: 1
+    // released: mod: vkey: 49 description: VK_1
+    // pressed: mod: vkey: 27 description: VK_ESCAPE
+    // CTRL + '1'
+    // pressed: mod: CTRL vkey: 17 description: VK_CONTROL
+    // pressed: mod: CTRL vkey: 49 description: VK_1
+    // typed: char: 1
+    // released: mod: CTRL vkey: 49 description: VK_1
+    // released: mod: CTRL vkey: 17 description: VK_CONTROL
+    // pressed: mod: vkey: 27 description: VK_ESCAPE
+    // we need to bypass TYPE events when a press event generates an action on the tracked
+    // grabber
     press = e.getAction() == processing.event.KeyEvent.PRESS;
     release = e.getAction() == processing.event.KeyEvent.RELEASE;
     type = e.getAction() == processing.event.KeyEvent.TYPE;
-
-    if (type)
-      currentEvent = new KeyboardEvent(e.getKey());
-    else if (press || release)
-      currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
-    if (type || press)
-      updateTrackedGrabber(currentEvent);
-
-    // System.out.println((press ? "pressed: " : type ? "typed: " : release ? "released: "
-    // : "ooops! ") + printEvent(currentEvent));
-
-    handle(release ? currentEvent.flush() : currentEvent.fire());
+    currentEvent = type ? (new KeyboardEvent(e.getKey())).fire()
+        : press ? (new KeyboardEvent(e.getModifiers(), e.getKeyCode())).fire()
+            : (new KeyboardEvent(e.getModifiers(), e.getKeyCode())).flush();
+    if (press) {
+      bypass = updateTrackedGrabber(currentEvent) != null;
+      if (bypass)
+        handle(currentEvent);
+    }
+    if (type && !bypass) {
+      // if(updateTrackedGrabber(currentEvent) != null)
+      // handle(currentEvent);
+      bypass = updateTrackedGrabber(currentEvent) != null;
+      if (bypass)
+        handle(currentEvent);
+    }
+    // debug
+    // System.out.println(press ? "pressed: " + printEvent(currentEvent) :
+    // type ? "typed: " + printTypedEvent(currentEvent) :
+    // release ? "released: " + printEvent(currentEvent) : "ooops! ");
   }
 
-  // debug
+  // TODO debug
 
   // protected String printEvent(KeyboardEvent event) {
   // return " mod: " + KeyboardEvent.modifiersText(event.modifiers()) + " vkey: " +
-  // event.id() + " char: " + event.key();
+  // event.id() + " description: " + KeyboardShortcut.description(event.id());
   // }
   //
-  // protected String printAction(KeyboardEvent event) {
-  // return " scene: " + scene.profile().action(event.shortcut()) + " eye: "
-  // + scene.eyeFrame().profile().action(event.shortcut());
+  // protected String printTypedEvent(KeyboardEvent event) {
+  // return " char: " + event.key();
   // }
 
   /**

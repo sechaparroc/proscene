@@ -313,15 +313,13 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code if (!bypassKey(event)) profile.handle(event)}.
+   * Same as {@code profile.handle(event)}.
    * 
-   * @see #bypassKey(BogusEvent)
    * @see remixlab.bias.ext.Profile#handle(BogusEvent)
    */
   @Override
   public void performInteraction(BogusEvent event) {
-    if (!bypassKey(event))
-      profile.handle(event);
+    profile.handle(event);
   }
 
   /**
@@ -378,8 +376,8 @@ public class InteractiveFrame extends GenericFrame {
     setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
     setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
     setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.UP_KEY, "translateZPos");
-    setKeyBinding(BogusEvent.SHIFT, KeyAgent.DOWN_KEY, "translateZNeg");
+    setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.UP_KEY, "translateZPos");
+    setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.DOWN_KEY, "translateZNeg");
     // rotations
     setKeyBinding(BogusEvent.CTRL, KeyAgent.RIGHT_KEY, "rotateXPos");
     setKeyBinding(BogusEvent.CTRL, KeyAgent.LEFT_KEY, "rotateXNeg");
@@ -956,38 +954,14 @@ public class InteractiveFrame extends GenericFrame {
     return false;
   }
 
+  /**
+   * Same as {@code return profile.hasBinding(event.shortcut())}.
+   * 
+   * @see remixlab.proscene.KeyAgent#keyEvent(processing.event.KeyEvent)
+   */
   @Override
   public boolean checkIfGrabsInput(KeyboardEvent event) {
     return profile.hasBinding(event.shortcut());
-  }
-
-  protected boolean vkeyAction;
-
-  /**
-   * Internal use. Inspired in Processing key event flow. Bypasses the key event so that
-   * {@link remixlab.bias.event.KeyboardShortcut}s work smoothly. Call it at the beginning
-   * of your {@link #performInteraction(KeyboardEvent)} method to discard useless keyboard
-   * events.
-   */
-  protected boolean bypassKey(BogusEvent event) {
-    if (event instanceof KeyboardEvent) {
-      if (!profile.hasBinding(event.shortcut())) {
-        vkeyAction = false;
-        return true;
-      }
-      if (event.fired())
-        if (event.id() == 0)// TYPE event
-          return vkeyAction;
-        else {
-          vkeyAction = true;
-          return false;
-        }
-      if (event.flushed()) {
-        vkeyAction = false;
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
