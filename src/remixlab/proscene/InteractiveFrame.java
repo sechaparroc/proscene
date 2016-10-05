@@ -30,7 +30,10 @@ import remixlab.util.*;
  * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
  * instance which allows {@link remixlab.bias.core.Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
- * <b>*Binding*()</b> methods).
+ * <b>*Binding*()</b> methods). Refer to
+ * {@link remixlab.bias.ext.Profile#setBinding(Shortcut, String)} and
+ * {@link remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)} for the type of
+ * actions and method signatures that may be bound.
  * <p>
  * Visual representations (PShapes or arbitrary graphics procedures) may be related to an
  * interactive-frame in two different ways:
@@ -458,7 +461,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.setBinding(object, new KeyboardShortcut(vkey), action)}.
    * 
-   * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+   * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
    */
   public void setKeyBinding(Object object, int vkey, String action) {
     profile.setBinding(object, new KeyboardShortcut(vkey), action);
@@ -1163,7 +1166,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code unsetFrontShape(); unsetPickingShape();}.
+   * Same as {@code resetFrontShape(); resetPickingShape();}.
    * 
    * @see #setShape(PShape)
    * @see #setShape(Object, String)
@@ -1179,7 +1182,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Unsets the front-shape which is wrapped by this interactive-frame.
+   * Resets the front-shape which is wrapped by this interactive-frame.
    * 
    * @see #resetShape()
    * @see #setFrontShape(PShape)
@@ -1194,7 +1197,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Unsets the picking-shape which is wrapped by this interactive-frame.
+   * Resets the picking-shape which is wrapped by this interactive-frame.
    * 
    * @see #resetShape()
    * @see #resetFrontShape()
@@ -1242,15 +1245,19 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Immediate mode rendering of the front shape using a graphics handler.
+   * Immediate mode rendering of the front shape using a graphics procedure
+   * ({@code methodName}) implemented by the {@code object}.
    * <p>
-   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
-   * handler is a method that returns void and takes either an InteractiveFrame parameter
-   * followed by a PGraphics parameter, or just a single PGraphics parameter. Note that
-   * the version that takes an InteractiveFrame parameter isn't allowed if this frame
-   * {@link #isEyeFrame()}.
+   * Attempt to set an immediate mode visual representation to the frame from the graphics
+   * procedure {@code methodName} implemented by the {@code object}. The graphics
+   * procedure may have two different prototypes:
+   * <ol>
+   * <li><b>public void methodName(PGraphics)</b></li>
+   * <li><b>public void methodName(InteractiveFrame, PGraphics)</b></li>
+   * </ol>
+   * Note that the latter prototype isn't available if this frame {@link #isEyeFrame()}.
    * 
-   * @param obj
+   * @param object
    *          the object defining the shape graphics-procedure
    * @param methodName
    *          the front-shape graphics-procedure
@@ -1263,27 +1270,31 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
    */
-  public void setFrontShape(Object obj, String methodName) {
+  public void setFrontShape(Object object, String methodName) {
     if (pShape.mth != null)
-      if (pShape.obj == obj && pShape.mth.getName().equals(methodName)) {
+      if (pShape.obj == object && pShape.mth.getName().equals(methodName)) {
         fShape.set(pShape);
         // version without copying the shift reference:
         // fShape.set(pShape.obj, pShape.mth);
         return;
       }
-    fShape.set(obj, methodName);
+    fShape.set(object, methodName);
   }
 
   /**
-   * Immediate mode rendering of the picking shape using a graphics handler.
+   * Immediate mode rendering of the picking shape using a graphics procedure
+   * ({@code methodName}) implemented by the {@code object}.
    * <p>
-   * Attempt to add a graphics handler as the frame picking-shape. The default
-   * picking-shape handler is a method that returns void and takes either an
-   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
-   * PGraphics parameter. Note that the version that takes an InteractiveFrame parameter
-   * isn't allowed if this frame {@link #isEyeFrame()}.
+   * Attempt to set an immediate mode visual representation to the frame from the graphics
+   * procedure {@code methodName} implemented by the {@code object}. The graphics
+   * procedure may have two different prototypes:
+   * <ol>
+   * <li><b>public void methodName(PGraphics)</b></li>
+   * <li><b>public void methodName(InteractiveFrame, PGraphics)</b></li>
+   * </ol>
+   * Note that the latter prototype isn't available if this frame {@link #isEyeFrame()}.
    * 
-   * @param obj
+   * @param object
    *          the object defining the shape graphics-procedure
    * @param methodName
    *          the front-shape graphics-procedure
@@ -1296,27 +1307,40 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetPickingShape()
    * @see #resetShape()
    */
-  public void setPickingShape(Object obj, String methodName) {
+  public void setPickingShape(Object object, String methodName) {
     if (fShape.mth != null)
-      if (fShape.obj == obj && fShape.mth.getName().equals(methodName)) {
+      if (fShape.obj == object && fShape.mth.getName().equals(methodName)) {
         pShape.set(fShape);
         updatePickingBufferCache();
         // version without copying the shift reference:
         // pShape.set(fShape.obj, fShape.mth);
         return;
       }
-    if (pShape.set(obj, methodName))
+    if (pShape.set(object, methodName))
       updatePickingBufferCache();
   }
 
   /**
-   * Immediate mode rendering of the front shape using a graphics handler.
+   * Immediate mode rendering of the front shape using a graphics procedure
+   * ({@code methodName}).
    * <p>
-   * Attempt to add a graphics handler as the frame front-shape. The default front-shape
-   * handler is a method that returns void and takes either an InteractiveFrame parameter
-   * followed by a PGraphics parameter, or just a single PGraphics parameter. The object
-   * to handle the front-shape may be either {@code this} frame or the {@link #scene()}
-   * (this method looks for it in that order).
+   * Attempt to set an immediate mode visual representation to the frame from the graphics
+   * procedure defined by {@code methodName} which may have two different prototypes:
+   * <ol>
+   * <li><b>public void methodName(PGraphics)</b></li>
+   * <li><b>public void methodName(InteractiveFrame, PGraphics)</b></li>
+   * </ol>
+   * These prototypes may (or may not) be used depending on the object declaring the
+   * procedure, as follows:
+   * <ol>
+   * <li>The {@link remixlab.proscene.Scene#pApplet()}, which may use both
+   * prototypes;</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame} instance this shape is attached
+   * to, which may use only prototype 1, or;</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame
+   * instance, which may use both prototypes.
+   * </ol>
+   * The algorithm looks for the prototypes within the objects in the above order.
    * 
    * @param methodName
    *          the front-shape graphics-procedure
@@ -1343,13 +1367,26 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Immediate mode rendering of the picking shape using a graphics handler.
+   * Immediate mode rendering of the picking shape using a graphics procedure
+   * ({@code methodName}).
    * <p>
-   * Attempt to add a graphics handler as the frame picking-shape. The default
-   * picking-shape handler is a method that returns void and takes either an
-   * InteractiveFrame parameter followed by a PGraphics parameter, or just a single
-   * PGraphics parameter. The object to handle the picking-shape may be either
-   * {@code this} frame or the {@link #scene()} (this method looks for it in that order).
+   * Attempt to set an immediate mode visual representation to the frame from the graphics
+   * procedure defined by {@code methodName} which may have two different prototypes:
+   * <ol>
+   * <li><b>public void methodName(PGraphics)</b></li>
+   * <li><b>public void methodName(InteractiveFrame, PGraphics)</b></li>
+   * </ol>
+   * These prototypes may (or may not) be used depending on the object declaring the
+   * procedure, as follows:
+   * <ol>
+   * <li>The {@link remixlab.proscene.Scene#pApplet()}, which may use both
+   * prototypes;</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame} instance this shape is attached
+   * to, which may use only prototype 1, or;</li>
+   * <li>The {@link remixlab.proscene.InteractiveFrame#scene()} handling that frame
+   * instance, which may use both prototypes.
+   * </ol>
+   * The algorithm looks for the prototypes within the objects in the above order.
    * 
    * @param methodName
    *          the shape graphics-procedure

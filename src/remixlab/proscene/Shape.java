@@ -99,8 +99,6 @@ class Shape {
           mth.invoke(obj, new Object[] { iFrame, pg });
         } catch (Exception e2) {
           PApplet.println("Something went wrong when invoking your " + mth.getName() + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
         }
       }
     }
