@@ -1449,11 +1449,11 @@ public class Scene extends AbstractScene implements PConstants {
         eye().deletePath(id);
         JSONArray keyFrames = path.getJSONArray("keyFrames");
         for (int j = 0; j < keyFrames.size(); j++) {
-          GenericFrame keyFrame = eye().detachFrame();
+          InteractiveFrame keyFrame = detachFrame(eye());
           pruneBranch(keyFrame);
           keyFrame.fromFrame(toFrame(keyFrames.getJSONObject(j)));
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
-          keyFrame.setGrabsInputThreshold(20);
+          keyFrame.setGrabsInputThreshold(AbstractScene.platform() == Platform.PROCESSING_ANDROID ? 50 : 20);
           if (pathsVisualHint())
             motionAgent().addGrabber(keyFrame);
           if (!eye().keyFrameInterpolatorMap().containsKey(id))
@@ -1582,6 +1582,14 @@ public class Scene extends AbstractScene implements PConstants {
         }
       }
     }
+  }
+
+  @Override
+  protected InteractiveFrame detachFrame(Eye eye) {
+    InteractiveFrame frame = new InteractiveFrame(this);
+    pruneBranch(frame);
+    frame.fromFrame(eye.frame());
+    return frame;
   }
 
   protected boolean unchachedBuffer;
