@@ -1449,7 +1449,7 @@ public class Scene extends AbstractScene implements PConstants {
         eye().deletePath(id);
         JSONArray keyFrames = path.getJSONArray("keyFrames");
         for (int j = 0; j < keyFrames.size(); j++) {
-          InteractiveFrame keyFrame = detachFrame(eye());
+          InteractiveFrame keyFrame = eyeFrame().detach();
           pruneBranch(keyFrame);
           keyFrame.fromFrame(toFrame(keyFrames.getJSONObject(j)));
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
@@ -1582,14 +1582,6 @@ public class Scene extends AbstractScene implements PConstants {
         }
       }
     }
-  }
-
-  @Override
-  protected InteractiveFrame detachFrame(Eye eye) {
-    InteractiveFrame frame = new InteractiveFrame(this);
-    pruneBranch(frame);
-    frame.fromFrame(eye.frame());
-    return frame;
   }
 
   protected boolean unchachedBuffer;

@@ -309,6 +309,14 @@ public class InteractiveFrame extends GenericFrame {
     return new InteractiveFrame(this);
   }
 
+  @Override
+  protected InteractiveFrame detach() {
+    InteractiveFrame frame = new InteractiveFrame(scene());
+    scene().pruneBranch(frame);
+    frame.fromFrame(this);
+    return frame;
+  }
+
   // common api
   @Override
   public Scene scene() {
