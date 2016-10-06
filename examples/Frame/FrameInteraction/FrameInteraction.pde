@@ -156,6 +156,7 @@ void keyPressed() {
       scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
       scene.eyeFrame().removeMotionBinding(LEFT);
     }
+  // set the default grabber at both the scene.motionAgent() and the scene.keyAgent()
   if(key == 'v') {
     scene.inputHandler().setDefaultGrabber(frame1);
     println(frame1.info());
