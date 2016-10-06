@@ -126,13 +126,14 @@ public class DroidTouchAgent extends Agent {
         case DRAG_ONE_ID:
         case DRAG_TWO_ID:
         case DRAG_THREE_ID:// Drag
-          newevent = new DOF2Event(oldevent, touchProcessor.getCx(), touchProcessor.getCy(),
-              MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          newevent = new DOF2Event(oldevent, touchProcessor.getCx() - scene.originCorner().x(),
+              touchProcessor.getCy() - scene.originCorner().y(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
           if (debug)
             PApplet.print("drag");
           break;
         case OPPOSABLE_THREE_ID:
-          newevent = new DOF2Event(oldevent, x, y, MotionEvent.NO_MODIFIER_MASK, gesture.id());
+          newevent = new DOF2Event(oldevent, x - scene.originCorner().x(), y - scene.originCorner().y(),
+              MotionEvent.NO_MODIFIER_MASK, gesture.id());
           if (debug)
             PApplet.print("opposable");
           break;

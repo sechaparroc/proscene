@@ -106,6 +106,8 @@ public class KeyAgent extends Agent {
       if (bypass)
         handle(currentEvent);
     }
+    if (release)
+      resetTrackedGrabber();
     // debug
     // System.out.println(press ? "pressed: " + printEvent(currentEvent) :
     // type ? "typed: " + printTypedEvent(currentEvent) :

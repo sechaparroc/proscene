@@ -57,6 +57,9 @@ void setup() {
   frame2.scale(0.2);
   frame2.setMotionBinding(LEFT, "translate");
   frame2.setMotionBinding(RIGHT, "scale");
+  frame2.setKeyBinding('u', "translateXPos");
+  frame2.setKeyBinding(UP, "translateZPos");
+  frame2.setKeyBinding(Event.CTRL, UP, "translateZNeg");
 
   //frame 3
   frame3 = new InteractiveFrame(scene, "drawAxes");
@@ -72,6 +75,8 @@ void setup() {
   //frame3.setClickBinding(this, LEFT, 1, "boxCustomClick");
   // also works. The first parameter points to the class where your code is implemented.
   // You will always need it when your code is declared within a class different than the PApplet.
+  frame3.setKeyBinding(LEFT, "rotateYPos");
+  frame3.setKeyBinding((Event.SHIFT | Event.CTRL), LEFT, "rotateXNeg");
   
   //frame 4
   //frame4 will behave as frame3 since the latter is passed as its
@@ -86,6 +91,10 @@ void setup() {
   // You will always need it when your code is declared within a class different than the PApplet.
   frame4.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
   frame4.translate(0, 100);
+  // if two frames have the same key binding (frame2 has also the 'u' binding)
+  // the one that is the default grabber takes higher precedence
+  frame4.setKeyBinding('u', "translateXPos");
+  frame4.setKeyBinding(Event.SHIFT, 'u', "translateXNeg");
 }
 
 void boxDrawing(PGraphics pg) {
@@ -147,4 +156,24 @@ void keyPressed() {
       scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
       scene.eyeFrame().removeMotionBinding(LEFT);
     }
+  if(key == 'v') {
+    scene.inputHandler().setDefaultGrabber(frame1);
+    println(frame1.info());
+  }
+  if(key == 'x') {
+    scene.inputHandler().setDefaultGrabber(frame2);
+    println(frame2.info());
+  }
+  if(key == 'y') {
+    scene.inputHandler().setDefaultGrabber(frame3);
+    println(frame3.info());
+  }
+  if(key == 'z') {
+    scene.inputHandler().setDefaultGrabber(frame4);
+    println(frame4.info());
+  }
+  if(key == 'w') {
+    scene.inputHandler().setDefaultGrabber(scene.eyeFrame());
+    println(scene.eyeFrame().info());
+  }
 }
