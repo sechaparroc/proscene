@@ -2611,7 +2611,6 @@ public class Scene extends AbstractScene implements PConstants {
       int nbSteps = 30;
       pg().strokeWeight(2 * pg().strokeWeight);
       pg().noFill();
-
       List<Frame> path = kfi.path();
       if (((mask & 1) != 0) && path.size() > 1) {
         pg().beginShape();
@@ -2642,6 +2641,9 @@ public class Scene extends AbstractScene implements PConstants {
       }
       pg().strokeWeight(pg().strokeWeight / 2f);
     }
+    // draw the picking targets:
+    for (int index = 0; index < kfi.numberOfKeyFrames(); index++)
+      drawPickingTarget(kfi.keyFrame(index));
     pg().popStyle();
   }
 
@@ -2824,10 +2826,10 @@ public class Scene extends AbstractScene implements PConstants {
       System.err.println("eye frames don't have a picking target");
       return;
     }
-    if (!motionAgent().hasGrabber(iFrame)) {
-      System.err.println("add iFrame to motionAgent before drawing picking target");
-      return;
-    }
+    // if (!inputHandler().hasGrabber(iFrame)) {
+    // System.err.println("add iFrame to motionAgent before drawing picking target");
+    // return;
+    // }
     Vec center = projectedCoordinatesOf(iFrame.position());
     if (motionAgent().isInputGrabber(iFrame)) {
       pg().pushStyle();
