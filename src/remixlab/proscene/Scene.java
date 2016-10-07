@@ -1455,7 +1455,7 @@ public class Scene extends AbstractScene implements PConstants {
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
           keyFrame.setGrabsInputThreshold(AbstractScene.platform() == Platform.PROCESSING_ANDROID ? 50 : 20);
           if (pathsVisualHint())
-            motionAgent().addGrabber(keyFrame);
+            inputHandler().addGrabber(keyFrame);
           if (!eye().keyFrameInterpolatorMap().containsKey(id))
             eye().setKeyFrameInterpolator(id, new KeyFrameInterpolator(this, eyeFrame()));
           eye().keyFrameInterpolator(id).addKeyFrame(keyFrame, keyFrames.getJSONObject(j).getFloat("time"));
@@ -2831,7 +2831,7 @@ public class Scene extends AbstractScene implements PConstants {
     // return;
     // }
     Vec center = projectedCoordinatesOf(iFrame.position());
-    if (motionAgent().isInputGrabber(iFrame)) {
+    if (inputHandler().isInputGrabber(iFrame)) {
       pg().pushStyle();
       pg().strokeWeight(2 * pg().strokeWeight);
       pg().colorMode(HSB, 255);
