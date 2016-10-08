@@ -1440,7 +1440,7 @@ public class Scene extends AbstractScene implements PConstants {
       setVisualHints(json.getInt("visualHints"));
       if (is3D())
         camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
-      eyeFrame().fromFrame(toFrame(json.getJSONObject("eye")));
+      eyeFrame().set(toFrame(json.getJSONObject("eye")));
       // keyFrames
       JSONArray paths = json.getJSONArray("paths");
       for (int i = 0; i < paths.size(); i++) {
@@ -1451,7 +1451,7 @@ public class Scene extends AbstractScene implements PConstants {
         for (int j = 0; j < keyFrames.size(); j++) {
           InteractiveFrame keyFrame = eyeFrame().detach();
           pruneBranch(keyFrame);
-          keyFrame.fromFrame(toFrame(keyFrames.getJSONObject(j)));
+          keyFrame.set(toFrame(keyFrames.getJSONObject(j)));
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
           keyFrame.setGrabsInputThreshold(AbstractScene.platform() == Platform.PROCESSING_ANDROID ? 50 : 20);
           if (pathsVisualHint())
@@ -3238,11 +3238,11 @@ public class Scene extends AbstractScene implements PConstants {
   /**
    * Same as {@code profile.from(otherScene.profile())}.
    * 
-   * @see remixlab.bias.ext.Profile#from(Profile)
+   * @see remixlab.bias.ext.Profile#set(Profile)
    * @see #setProfile(Profile)
    */
   public void setBindings(Scene otherScene) {
-    profile.from(otherScene.profile());
+    profile.set(otherScene.profile());
   }
 
   /**

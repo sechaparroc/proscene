@@ -62,7 +62,6 @@ class Shape {
     if (iFrame.isEyeFrame())
       AbstractScene.showOnlyEyeWarning("shift", true);
     shift = s;
-    iFrame.modified();
   }
 
   /**
@@ -113,7 +112,6 @@ class Shape {
     shp = ps;
     mth = null;
     obj = null;
-    iFrame.modified();
   }
 
   /**
@@ -130,7 +128,6 @@ class Shape {
     obj = other.obj;
     mth = other.mth;
     shift = other.shift;
-    iFrame.modified();
   }
 
   /**
@@ -187,10 +184,8 @@ class Shape {
             + prototypes(object, methodName));
       }
     }
-    if (success) {
+    if (success)
       shp = null;
-      iFrame.modified();
-    }
     return success;
   }
 
@@ -248,10 +243,8 @@ class Shape {
         }
       }
     }
-    if (success) {
+    if (success)
       shp = null;
-      iFrame.modified();
-    }
     return success;
   }
 
@@ -282,7 +275,6 @@ class Shape {
     mth = null;
     obj = null;
     shift = null;
-    iFrame.modified();
   }
 
   boolean isSetable(Object object, String methodName) {

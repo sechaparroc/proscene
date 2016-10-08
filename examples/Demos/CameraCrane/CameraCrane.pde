@@ -60,8 +60,8 @@ public void setup() {
   armCam = new ArmCam(60, -60, 2);
   heliCam = new HeliCam();
 
-  heliScene.camera().frame().fromFrame(heliCam.frame(3));
-  armScene.camera().frame().fromFrame(armCam.frame(5));  
+  heliScene.camera().frame().setWorldMatrix(heliCam.frame(3));
+  armScene.camera().frame().setWorldMatrix(armCam.frame(5));  
 
   armScene.eyeFrame().setMotionBinding(LEFT, "lookAround");
   armScene.eyeFrame().setMotionBinding(CENTER, null);

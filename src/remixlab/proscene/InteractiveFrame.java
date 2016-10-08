@@ -81,7 +81,7 @@ public class InteractiveFrame extends GenericFrame {
 
     InteractiveFrame other = (InteractiveFrame) obj;
     return new EqualsBuilder().appendSuper(super.equals(obj)).append(fShape, other.fShape).append(pShape, other.pShape)
-        .isEquals();
+        .append(profile, other.profile).isEquals();
   }
 
   /**
@@ -282,7 +282,7 @@ public class InteractiveFrame extends GenericFrame {
     highlight = HighlightingMode.FRONT_SHAPE;
     setProfile(new Profile(this));
     if (referenceFrame instanceof InteractiveFrame)
-      this.profile.from(((InteractiveFrame) referenceFrame).profile);
+      this.profile.set(((InteractiveFrame) referenceFrame).profile);
     else {
       if (Scene.platform() == Platform.PROCESSING_DESKTOP)
         setDefaultMouseBindings();
@@ -295,7 +295,7 @@ public class InteractiveFrame extends GenericFrame {
   protected InteractiveFrame(InteractiveFrame otherFrame) {
     super(otherFrame);
     setProfile(new Profile(this));
-    this.profile.from(otherFrame.profile);
+    this.profile.set(otherFrame.profile);
     this.highlight = otherFrame.highlight;
     this.id = otherFrame.id;
     this.fShape = new Shape(this);
@@ -313,7 +313,7 @@ public class InteractiveFrame extends GenericFrame {
   protected InteractiveFrame detach() {
     InteractiveFrame frame = new InteractiveFrame(scene());
     scene().pruneBranch(frame);
-    frame.fromFrame(this);
+    frame.setWorldMatrix(this);
     return frame;
   }
 
@@ -691,11 +691,11 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.from(otherFrame.profile())}.
    * 
-   * @see remixlab.bias.ext.Profile#from(Profile)
+   * @see remixlab.bias.ext.Profile#set(Profile)
    * @see #setProfile(Profile)
    */
   public void setBindings(InteractiveFrame otherFrame) {
-    profile.from(otherFrame.profile());
+    profile.set(otherFrame.profile());
   }
 
   /**
@@ -706,60 +706,25 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code sync(this, otherFrame)}.
-   * 
-   * @see #sync(GenericFrame, GenericFrame)
-   */
-  public void sync(InteractiveFrame otherFrame) {
-    sync(this, otherFrame);
-  }
-
-  /**
-   * If {@code f1} has been more recently updated than {@code f2}, calls
-   * {@code f2.fromFrame(f1)}, otherwise calls {@code f1.fromFrame(f2)}. Does nothing if
-   * both objects were updated at the same frame.
-   * <p>
-   * This method syncs only the global geometry attributes ({@link #position()},
-   * {@link #orientation()} and {@link #magnitude()}) among the two frames. The
-   * {@link #referenceFrame()} and {@link #constraint()} (if any) of each frame are kept
-   * separately.
-   * 
-   * @see #fromFrame(Frame)
-   */
-  public static void sync(InteractiveFrame f1, InteractiveFrame f2) {
-    if (f1 == null || f2 == null)
-      return;
-    if (f1.lastUpdate() == f2.lastUpdate())
-      return;
-    InteractiveFrame source = (f1.lastUpdate() > f2.lastUpdate()) ? f1 : f2;
-    InteractiveFrame target = (f1.lastUpdate() > f2.lastUpdate()) ? f2 : f1;
-    target.fromFrame(source);
-  }
-
-  /**
-   * Calls {@link remixlab.dandelion.core.GenericFrame#fromFrame(Frame)}, and
+   * Calls {@link #setWorldMatrix(Frame)}, {@link #setBindings(InteractiveFrame)}, and
    * {@link #setShape(InteractiveFrame)} on the other frame instance.
+   * <p>
+   * After calling {@code set} a call to {@code this.equals(otherFrame)} should return
+   * {@code true}.
    */
-  public void fromFrame(InteractiveFrame otherFrame) {
-    super.fromFrame(otherFrame);
-    // TODO Should also decide whether or not to include the profile which
-    // indirectly implies that it also should implement the equals and hashCode methods.
-    // if ((isEyeFrame() && otherFrame.isEyeFrame()) || (!isEyeFrame() &&
-    // !otherFrame.isEyeFrame()))
-    // setBindings(otherFrame);
+  public void set(InteractiveFrame otherFrame) {
+    setWorldMatrix(otherFrame);
+    setBindings(otherFrame);
     setShape(otherFrame);
   }
 
   /**
-   * Internal use. Automatically call by all methods which change the Frame state.
-   * <p>
-   * Overridden just to make it visible to the Shape class.
-   * <p>
-   * It can be discarded if the Shape class is made inner class of the InteractiveFrame.
+   * @deprecated use {@link #set(Frame)}.
    */
-  @Override
-  protected void modified() {
-    super.modified();
+  @Deprecated
+  public void fromFrame(InteractiveFrame otherFrame) {
+    super.fromFrame(otherFrame);
+    setShape(otherFrame);
   }
 
   /**

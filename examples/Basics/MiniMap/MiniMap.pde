@@ -49,16 +49,17 @@ void setup() {
   auxScene.showAll();
 
   auxFrame1 = new InteractiveFrame(auxScene);
-  auxFrame1.fromFrame(frame1);
+  auxFrame1.set(frame1);
   auxFrame2 = new InteractiveFrame(auxScene, auxFrame1);
-  auxFrame2.fromFrame(frame2);
+  auxFrame2.set(frame2);
   auxFrame3 = new InteractiveFrame(auxScene, auxFrame2);
-  auxFrame3.fromFrame(frame3);
+  auxFrame3.set(frame3);
 
   iFrame = new InteractiveFrame(auxScene);
   //to not scale the iFrame on mouse hover uncomment:
   //iFrame.setHighlightingMode(InteractiveFrame.HighlightingMode.NONE);
-  iFrame.fromFrame(scene.eyeFrame());
+  iFrame.setWorldMatrix(scene.eyeFrame());
+  iFrame.setShape(scene.eyeFrame());
   handleAgents();
 }
 
@@ -94,7 +95,7 @@ void keyPressed() {
   if (key == 'x')
     iFrame.setShape("eyeDrawing");
   if (key == 'y')
-    scene.eyeFrame().setShape("drawEye");
+    iFrame.setShape(scene.eyeFrame());
 }
 
 void frameDrawing(PGraphics pg) {
