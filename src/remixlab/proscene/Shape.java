@@ -83,7 +83,7 @@ class Shape {
         pg.flush();
         if (pg.shapeMode == PApplet.CENTER) {
           pg.pushMatrix();
-          iFrame.translate(-shp.getWidth() / 2, -shp.getHeight() / 2);
+          pg.translate(-shp.getWidth() / 2, -shp.getHeight() / 2);
         }
         shp.draw(pg); // needs to handle recorder too
         if (pg.shapeMode == PApplet.CENTER) {
