@@ -384,20 +384,21 @@ public class InteractiveFrame extends GenericFrame {
     removeKeyBindings();
     setKeyBinding('n', "align");
     setKeyBinding('c', "center");
-    // translations
+    // 2D and 3D
     setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
     setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
     setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
     setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
-    setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.UP_KEY, "translateZPos");
-    setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.DOWN_KEY, "translateZNeg");
-    // rotations
-    setKeyBinding(BogusEvent.CTRL, KeyAgent.RIGHT_KEY, "rotateXPos");
-    setKeyBinding(BogusEvent.CTRL, KeyAgent.LEFT_KEY, "rotateXNeg");
-    setKeyBinding(BogusEvent.CTRL, KeyAgent.UP_KEY, "rotateYPos");
-    setKeyBinding(BogusEvent.CTRL, KeyAgent.DOWN_KEY, "rotateYNeg");
     setKeyBinding(BogusEvent.ALT, KeyAgent.UP_KEY, "rotateZPos");
     setKeyBinding(BogusEvent.ALT, KeyAgent.DOWN_KEY, "rotateZNeg");
+    if (is3D()) {
+      setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.UP_KEY, "translateZPos");
+      setKeyBinding((BogusEvent.SHIFT | BogusEvent.CTRL), KeyAgent.DOWN_KEY, "translateZNeg");
+      setKeyBinding(BogusEvent.CTRL, KeyAgent.RIGHT_KEY, "rotateXPos");
+      setKeyBinding(BogusEvent.CTRL, KeyAgent.LEFT_KEY, "rotateXNeg");
+      setKeyBinding(BogusEvent.CTRL, KeyAgent.UP_KEY, "rotateYPos");
+      setKeyBinding(BogusEvent.CTRL, KeyAgent.DOWN_KEY, "rotateYNeg");
+    }
   }
 
   // good for all dofs :P
