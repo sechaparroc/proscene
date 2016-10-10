@@ -3,7 +3,7 @@
 ## Foundation
 
 1. ~~Improve the keyboard, currently IFrame and Scene bindings are conflicting.~~
-2. Verify support for all the upcoming demos.
+2. ~~Verify support for all the upcoming demos.~~
 3. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
 4. ~~Improve iFrame reflective algorithms API docs.~~
 5. Test the new 'checkIfGrabsInput' performance.
@@ -20,6 +20,7 @@ Idea: 3-step process at the Profile:
 3. Support 3 and 6 DOFs.
 4. Implement the key agent.
 5. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
+6. Processing mouseX and mouseY are not reported correctly which makes a skecth defining several (off-screen) scenes not possible.
 
 ## JS
 
