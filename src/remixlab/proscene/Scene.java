@@ -1637,7 +1637,7 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #pApplet()} draw() loop.
    * <p>
    * This method is implementing by simply calling
-   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph()}.
+   * {@link remixlab.dandelion.core.AbstractScene#traverseTree()}.
    * 
    * @see #frames()
    * @see #pg()
@@ -1647,7 +1647,7 @@ public class Scene extends AbstractScene implements PConstants {
   /// *
   public void drawFrames() {
     targetPGraphics = pg();
-    traverseGraph();
+    traverseTree();
   }
 
   /**
@@ -1670,7 +1670,7 @@ public class Scene extends AbstractScene implements PConstants {
     bindMatrices(pgraphics);
     // 2. Draw all frames into pgraphics
     targetPGraphics = pgraphics;
-    traverseGraph();
+    traverseTree();
   }
 
   /**
