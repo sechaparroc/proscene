@@ -1440,7 +1440,7 @@ public class Scene extends AbstractScene implements PConstants {
       setVisualHints(json.getInt("visualHints"));
       if (is3D())
         camera().setType(json.getBoolean("ortho") ? Camera.Type.ORTHOGRAPHIC : Camera.Type.PERSPECTIVE);
-      eyeFrame().set(toFrame(json.getJSONObject("eye")));
+      eyeFrame().setWorldMatrix(toFrame(json.getJSONObject("eye")));
       // keyFrames
       JSONArray paths = json.getJSONArray("paths");
       for (int i = 0; i < paths.size(); i++) {
@@ -1451,7 +1451,7 @@ public class Scene extends AbstractScene implements PConstants {
         for (int j = 0; j < keyFrames.size(); j++) {
           InteractiveFrame keyFrame = new InteractiveFrame(this);
           pruneBranch(keyFrame);
-          keyFrame.set(toFrame(keyFrames.getJSONObject(j)));
+          keyFrame.setWorldMatrix(toFrame(keyFrames.getJSONObject(j)));
           keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
           keyFrame.setGrabsInputThreshold(AbstractScene.platform() == Platform.PROCESSING_ANDROID ? 50 : 20);
           if (pathsVisualHint())
