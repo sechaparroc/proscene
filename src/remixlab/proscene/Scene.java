@@ -242,7 +242,14 @@ public class Scene extends AbstractScene implements PConstants {
       this.setNonSeqTimers();
     // pApplet().frameRate(100);
 
-    // 7. Init should be called only once
+    // 7. Does this class declares proscenium
+    try {
+      prosceniumMissed = getClass().getMethod("proscenium").getDeclaringClass() == AbstractScene.class;
+    } catch (NoSuchMethodException | SecurityException e) {
+      prosceniumMissed = true;
+    }
+
+    // 8. Init should be called only once
     init();
   }
 
@@ -1198,18 +1205,12 @@ public class Scene extends AbstractScene implements PConstants {
   // */
 
   // 3. Drawing methods
-  
+
   private boolean prosceniumMissed;
-  private boolean pushMissed;
-  
-  @Override
-  public void proscenium() {
-    prosceniumMissed = true;
-  }
-  
+
   @Override
   public void preDraw() {
-    if(!prosceniumMissed)
+    if (!prosceniumMissed)
       super.preDraw();
     else {
       // 1. Avatar
@@ -1217,10 +1218,7 @@ public class Scene extends AbstractScene implements PConstants {
         eye().frame().setWorldMatrix(avatar().trackingEyeFrame());
       // 2. Eye
       bindMatrices();
-      if(!pushMissed) {
-        pushModelView();
-        pushMissed = true;
-      }
+      pushModelView();
       if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
         eye().updateBoundaryEquations();
         lastEqUpdate = frameCount;
@@ -1329,15 +1327,12 @@ public class Scene extends AbstractScene implements PConstants {
           + "endDraw() and they cannot be nested. Check your implementation!");
     postDraw();
   }
-  
+
   @Override
   public void postDraw() {
-    if(prosceniumMissed) {
+    if (prosceniumMissed) {
       // restore matrix
-      if(pushMissed) {
-        popModelView();
-        pushMissed = false;
-      }
+      popModelView();
       invokeGraphicsHandler();
       displayVisualHints();
     }
@@ -1346,8 +1341,11 @@ public class Scene extends AbstractScene implements PConstants {
     super.postDraw();
   }
 
-  //draw into picking buffer
-  protected void post() {
+  // TODO WARNING: hack: as drawing should never happen here
+  // but that's the only way to draw visual hints correctly
+  // into an off-screen scene which is shifted from the papplet origin
+  // pickingBuffer().beginDraw() (and endDraw()) make the problem appear
+  public void post() {
     if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
     pickingBuffer().beginDraw();
