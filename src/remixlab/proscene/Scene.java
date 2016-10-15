@@ -1198,6 +1198,35 @@ public class Scene extends AbstractScene implements PConstants {
   // */
 
   // 3. Drawing methods
+  
+  private boolean prosceniumMissed;
+  private boolean pushMissed;
+  
+  @Override
+  public void proscenium() {
+    prosceniumMissed = true;
+  }
+  
+  @Override
+  public void preDraw() {
+    if(!prosceniumMissed)
+      super.preDraw();
+    else {
+      // 1. Avatar
+      if (avatar() != null && (!eye().anyInterpolationStarted()))
+        eye().frame().setWorldMatrix(avatar().trackingEyeFrame());
+      // 2. Eye
+      bindMatrices();
+      if(!pushMissed) {
+        pushModelView();
+        pushMissed = true;
+      }
+      if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
+        eye().updateBoundaryEquations();
+        lastEqUpdate = frameCount;
+      }
+    }
+  }
 
   /**
    * Paint method which is called just before your {@code PApplet.draw()} method. Simply
@@ -1220,13 +1249,11 @@ public class Scene extends AbstractScene implements PConstants {
   public void pre() {
     if (isOffscreen())
       return;
-
     if ((width != pg().width) || (height != pg().height)) {
       width = pg().width;
       height = pg().height;
       eye().setScreenWidthAndHeight(width, height);
     }
-
     preDraw();
   }
 
@@ -1269,19 +1296,15 @@ public class Scene extends AbstractScene implements PConstants {
     if (!isOffscreen())
       throw new RuntimeException(
           "begin(/end)Draw() should be used only within offscreen scenes. Check your implementation!");
-
     if (beginOffScreenDrawingCalls != 0)
       throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
           + "endDraw() and they cannot be nested. Check your implementation!");
-
     beginOffScreenDrawingCalls++;
-
     if ((width != pg().width) || (height != pg().height)) {
       width = pg().width;
       height = pg().height;
       eye().setScreenWidthAndHeight(width, height);
     }
-
     preDraw();
   }
 
@@ -1300,29 +1323,31 @@ public class Scene extends AbstractScene implements PConstants {
     if (!isOffscreen())
       throw new RuntimeException(
           "(begin/)endDraw() should be used only within offscreen scenes. Check your implementation!");
-
     beginOffScreenDrawingCalls--;
-
     if (beginOffScreenDrawingCalls != 0)
       throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
           + "endDraw() and they cannot be nested. Check your implementation!");
-
     postDraw();
   }
-
+  
   @Override
   public void postDraw() {
-    super.postDraw();
+    if(prosceniumMissed) {
+      // restore matrix
+      if(pushMissed) {
+        popModelView();
+        pushMissed = false;
+      }
+      invokeGraphicsHandler();
+      displayVisualHints();
+    }
     if (!(this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0)))
       post();
+    super.postDraw();
   }
 
-  // TODO WARNING: hack: as drawing should never happen here
-  // but that's the only way to draw visual hints correctly
-  // into an off-screen scene which is shifted from the papplet origin
-  // pickingBuffer().beginDraw() (and endDraw()) make the problem appear
-  public void post() {
-    // draw into picking buffer
+  //draw into picking buffer
+  protected void post() {
     if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
     pickingBuffer().beginDraw();

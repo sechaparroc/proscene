@@ -19,10 +19,6 @@ void setup() {
   scene = new MyScene(this);
 }
 
-// Make sure to define the draw() method, even if it's empty.
-void draw() {
-}
-
 class MyScene extends Scene {
   // We need to call super(p) to instantiate the base class
   public MyScene(PApplet p) {

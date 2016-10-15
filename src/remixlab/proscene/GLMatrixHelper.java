@@ -167,8 +167,7 @@ class GLMatrixHelper extends MatrixHelper {
   @Override
   public void setModelView(Mat source) {
     if (gScene.is3D())
-      pggl().setMatrix(Scene.toPMatrix(source));// in P5 this caches
-    // projmodelview
+      pggl().setMatrix(Scene.toPMatrix(source));// in P5 this caches projmodelview
     else {
       pggl().modelview.set(Scene.toPMatrix(source));
       pggl().projmodelview.set(
