@@ -119,29 +119,26 @@ void boxCustomClick(InteractiveFrame frame) {
 }
 
 void draw() {
-  background(0);    
-  // 1. Apply the frame transformation before your drawing
-
-  // Save the current model view matrix
-  pushMatrix();
-  pushStyle();
+  background(0);
+  
+  // 1. Draw frames for which visual representations have been set
+  // after this methods returns us at the world coordinate system and hence
+  // there's no need to push/pop the modelview matrix to render the render frame1
+  //pushMatrix();
+  scene.drawFrames();
+  //popMatrix();
+  
+  // 2. Draw the remaining frame
   // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(Scene.toPMatrix(iFrame.matrix())); //is possible but inefficient
+  //applyMatrix(Scene.toPMatrix(frame1.matrix())); //is possible but inefficient
   frame1.applyTransformation();//very efficient
-  // Draw an axis using the Scene static function
+  // Draw the axes
   scene.drawAxes(20);
-
   if (frame1.grabsInput())
     fill(255, 0, 0);
   else 
     fill(0, 255, 255);
   scene.drawTorusSolenoid();
-
-  popStyle();
-  popMatrix();
-
-  // 2. Draw frames for which visual representations have been set
-  scene.drawFrames();
 }
 
 void keyPressed() {

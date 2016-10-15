@@ -4,6 +4,8 @@
  * 
  * This example illustrates how to use proscene through inheritance.
  * 
+ * Overriding proscenium() replaces the PApplets draw() function.
+ * 
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
