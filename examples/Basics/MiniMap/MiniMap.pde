@@ -70,16 +70,16 @@ void draw() {
   InteractiveFrame.sync(frame2, auxFrame2);
   InteractiveFrame.sync(frame3, auxFrame3);
   canvas.beginDraw();
-  scene.beginDraw();
   canvas.background(0);
+  scene.beginDraw();
   scene.drawFrames();
   scene.endDraw();
   canvas.endDraw();
   image(canvas, 0, 0);
   if (showMiniMap) {
     auxCanvas.beginDraw();
-    auxScene.beginDraw();
     auxCanvas.background(29, 153, 243);
+    auxScene.beginDraw();
     auxScene.pg().fill(255, 0, 255, 125);
     auxScene.drawFrames();
     auxScene.endDraw();

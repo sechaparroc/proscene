@@ -41,7 +41,7 @@ import java.nio.FloatBuffer;
  * specialization of the {@link remixlab.dandelion.core.AbstractScene}, providing an
  * interface between Dandelion and Processing.
  * <p>
- * <h3>Usage</h3> To use a Scene you have three choices:
+ * <h3>Usage</h3> To use a Scene you have two main choices:
  * <ol>
  * <li><b>Direct instantiation</b>. In this case you should instantiate your own Scene
  * object at the {@code PApplet.setup()} function. See the example <i>BasicUse</i>.
@@ -49,11 +49,6 @@ import java.nio.FloatBuffer;
  * should implement {@link #proscenium()} which defines the objects in your scene. Just
  * make sure to define the {@code PApplet.draw()} method, even if it's empty. See the
  * example <i>AlternativeUse</i>.
- * <li><b>External draw handler registration</b>. In addition, you can even declare an
- * external drawing method and then register it at the Scene with
- * {@link #addGraphicsHandler(Object, String)}. That method should return {@code void} and
- * have one single {@code Scene} parameter. This strategy may be useful when there are
- * multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
  * </ol>
  * <h3>Interactivity mechanisms</h3> ProScene provides powerful interactivity mechanisms
  * allowing a wide range of scene setups ranging from very simple to complex ones. For
@@ -96,12 +91,7 @@ import java.nio.FloatBuffer;
 public class Scene extends AbstractScene implements PConstants {
   // begin: GWT-incompatible
   // /*
-  // Reflection
-  // 1. Draw
-  protected Object drawHandlerObject;
-  // The method in drawHandlerObject to execute
-  protected Method drawHandlerMethod;
-  // 2. Animation
+  // Animation
   // The object to handle the animation
   protected Object animateHandlerObject;
   // The method in animateHandlerObject to execute
@@ -1016,83 +1006,6 @@ public class Scene extends AbstractScene implements PConstants {
       setSeqTimers();
   }
 
-  // DRAW METHOD REG
-
-  @Override
-  protected boolean invokeGraphicsHandler() {
-    // 3. Draw external registered method
-    if (drawHandlerObject != null) {
-      try {
-        drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this.pg() });
-        return true;
-      } catch (Exception e1) {
-        try {
-          drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
-          return true;
-        } catch (Exception e2) {
-          PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
-          e1.printStackTrace();
-          e2.printStackTrace();
-          return false;
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Attempt to add a 'draw' handler method to the Scene. The default event handler is a
-   * method that returns void and has one single Scene or PGraphics parameter.
-   * 
-   * @param obj
-   *          the object to handle the event
-   * @param methodName
-   *          the method to execute in the object handler class
-   * 
-   * @see #removeGraphicsHandler()
-   * @see #invokeGraphicsHandler()
-   */
-  public void addGraphicsHandler(Object obj, String methodName) {
-    try {
-      drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-      drawHandlerObject = obj;
-    } catch (Exception ex1) {
-      try {
-        drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
-        drawHandlerObject = obj;
-      } catch (Exception ex2) {
-        PApplet.println("Something went wrong when registering your " + methodName + " method");
-        ex1.printStackTrace();
-        ex2.printStackTrace();
-      }
-    }
-  }
-
-  /**
-   * Unregisters the 'draw' handler method (if any has previously been added to the
-   * Scene).
-   * 
-   * @see #addGraphicsHandler(Object, String)
-   * @see #invokeGraphicsHandler()
-   */
-  public void removeGraphicsHandler() {
-    drawHandlerMethod = null;
-    drawHandlerObject = null;
-  }
-
-  /**
-   * Returns {@code true} if the user has registered a 'draw' handler method to the Scene
-   * and {@code false} otherwise.
-   * 
-   * @see #addGraphicsHandler(Object, String)
-   * @see #invokeGraphicsHandler()
-   */
-  public boolean hasGraphicsHandler() {
-    if (drawHandlerMethod == null)
-      return false;
-    return true;
-  }
-
   // ANIMATION METHOD REG
 
   @Override
@@ -1333,7 +1246,6 @@ public class Scene extends AbstractScene implements PConstants {
     if (prosceniumMissed) {
       // restore matrix
       popModelView();
-      invokeGraphicsHandler();
       displayVisualHints();
     }
     if (!(this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0)))
