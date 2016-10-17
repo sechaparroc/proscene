@@ -122,7 +122,7 @@ void draw() {
   background(0);
   
   // 1. Draw frames for which visual representations have been set
-  // after this methods returns us at the world coordinate system and hence
+  // this methods returns at the world coordinate system and hence
   // there's no need to push/pop the modelview matrix to render the render frame1
   //pushMatrix();
   scene.drawFrames();

@@ -83,20 +83,15 @@ void auxiliarDrawing(Scene s) {
 
 void draw() {
   handleMouse();
-  canvas.beginDraw();
   scene.beginDraw();
   mainDrawing(scene);
   scene.endDraw();
-  canvas.endDraw();
-  image(canvas, 0, 0);
+  scene.display();
 
-  auxCanvas.beginDraw();
   auxScene.beginDraw();
   auxiliarDrawing(auxScene);
   auxScene.endDraw();
-  auxCanvas.endDraw();
-  // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.originCorner().x(), auxScene.originCorner().y());
+  auxScene.display();
 }
 
 void handleMouse() {

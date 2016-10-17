@@ -80,28 +80,20 @@ public void draw() {
   handleMouse();
   InteractiveFrame.sync(armScene.camera().frame(), armCam.frame(5));
   InteractiveFrame.sync(heliScene.camera().frame(), heliCam.frame(3));
-  canvas.beginDraw();
   mainScene.beginDraw();
   drawing(mainScene);
   mainScene.endDraw();
-  canvas.endDraw();
-  image(canvas, 0, 0);
+  mainScene.display();
 
-  armCanvas.beginDraw();
   armScene.beginDraw();
   drawing(armScene);
   armScene.endDraw();
-  armCanvas.endDraw();
-  // We retrieve the scene upper left coordinates defined above.
-  image(armCanvas, armScene.originCorner().x(), armScene.originCorner().y());
+  armScene.display();
 
-  heliCanvas.beginDraw();
   heliScene.beginDraw();
   drawing(heliScene);
   heliScene.endDraw();
-  heliCanvas.endDraw();
-  // We retrieve the scene upper left coordinates defined above.
-  image(heliCanvas, heliScene.originCorner().x(), heliScene.originCorner().y());
+  heliScene.display();
 }
 
 public void handleMouse() {

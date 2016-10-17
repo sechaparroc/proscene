@@ -1119,6 +1119,19 @@ public class Scene extends AbstractScene implements PConstants {
 
   private boolean prosceniumMissed;
 
+  /**
+   * Called before your main drawing and performs the following:
+   * <ol>
+   * <li>Handles the {@link #avatar()}</li>
+   * <li>Calls {@link #bindMatrices()}</li>
+   * <li>Calls {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if
+   * {@link #areBoundaryEquationsEnabled()}</li>
+   * <li>Calls {@link #proscenium()}</li>
+   * <li>Calls {@link #displayVisualHints()}.</li>
+   * </ol>
+   * 
+   * @see #postDraw()
+   */
   @Override
   public void preDraw() {
     // 1. Avatar
@@ -1151,14 +1164,17 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #isOffscreen()
    */
   public void pre() {
-    if (isOffscreen())
-      return;
     if ((width != pg().width) || (height != pg().height)) {
       width = pg().width;
       height = pg().height;
       eye().setScreenWidthAndHeight(width, height);
     }
-    preDraw();
+    if (!prosceniumMissed)
+      super.preDraw();
+    else {
+      preDraw();
+      pushModelView();
+    }
   }
 
   /**
@@ -1176,14 +1192,17 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #isOffscreen()
    */
   public void draw() {
-    if (isOffscreen())
-      return;
+    if (prosceniumMissed) {
+      popModelView();
+      displayVisualHints();
+    }
+    handlePickingBuffer();
     postDraw();
   }
 
   /**
-   * Only if the Scene {@link #isOffscreen()}. This method should be called just after the
-   * {@link #pg()} beginDraw() method. Simply calls {@link #preDraw()} .
+   * Only if the Scene {@link #isOffscreen()}. Calls {@code pg().beginDraw()} and then
+   * {@link #preDraw()} .
    * <p>
    * If {@link #pg()} is resized then (re)sets the scene {@link #width()} and
    * {@link #height()}, and calls
@@ -1195,6 +1214,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #pre()
    * @see #endDraw()
    * @see #isOffscreen()
+   * @see #pg()
    */
   public void beginDraw() {
     if (!isOffscreen())
@@ -1216,8 +1236,17 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Only if the Scene {@link #isOffscreen()}. This method should be called just before
-   * {@link #pg()} endDraw() method. Simply calls {@link #postDraw()}.
+   * Only if the Scene {@link #isOffscreen()}. Calls
+   * 
+   * <ol>
+   * <li>{@link #proscenium()}</li>
+   * <li>{@link #displayVisualHints()}</li>
+   * <li>{@code pg().endDraw()}</li>
+   * <li>{@link #handlePickingBuffer()}</li>
+   * <li>{@link #postDraw()}</li>
+   * </ol>
+   * 
+   * {@link #postDraw()}.
    * 
    * @see #draw()
    * @see #preDraw()
@@ -1225,6 +1254,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #beginDraw()
    * @see #pre()
    * @see #isOffscreen()
+   * @see #pg()
    */
   public void endDraw() {
     if (!isOffscreen())
@@ -1234,6 +1264,7 @@ public class Scene extends AbstractScene implements PConstants {
     if (beginOffScreenDrawingCalls != 0)
       throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
           + "endDraw() and they cannot be nested. Check your implementation!");
+    proscenium();
     popModelView();
     displayVisualHints();
     pg().endDraw();
@@ -1260,22 +1291,22 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code image(pg())}.
+   * Same as {@code display(pg())}.
    * 
-   * @see #image(PGraphics)
+   * @see #display(PGraphics)
    * @see #pg()
    */
-  public void image() {
-    image(pg());
+  public void display() {
+    display(pg());
   }
 
   /**
    * Same as {@code pApplet().image(pgraphics, originCorner().x(), originCorner().y())}.
    * 
-   * Displays the contents of the pgraphcics (typically {@link #pg()} or the
+   * Displays the contents of the pgraphics (typically {@link #pg()} or the
    * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
    */
-  public void image(PGraphics pgraphics) {
+  public void display(PGraphics pgraphics) {
     pApplet().image(pgraphics, originCorner().x(), originCorner().y());
   }
 
@@ -1582,6 +1613,10 @@ public class Scene extends AbstractScene implements PConstants {
    * <p>
    * This method is implementing by simply calling
    * {@link remixlab.dandelion.core.AbstractScene#traverseTree()}.
+   * <p>
+   * <b>Attention:</b> this method should be called after {@link #bindMatrices()} (i.e.,
+   * eye update which happens at {@link #preDraw()}) and before any other transformation
+   * of the modelview takes place.
    * 
    * @see #frames()
    * @see #pg()
@@ -1602,6 +1637,10 @@ public class Scene extends AbstractScene implements PConstants {
    * Note that {@code drawFrames(pickingBuffer())} (which enables 'picking' of the frames
    * using a <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
    * technique is called by {@link #postDraw()}.
+   * <p>
+   * <b>Attention:</b> this method should be called after {@link #bindMatrices(PGraphics)}
+   * (i.e., manual eye update) and before any other transformation of the modelview takes
+   * place.
    * 
    * @param pgraphics
    * 

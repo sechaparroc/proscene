@@ -26,7 +26,7 @@ int oY = h - oH;
 boolean showMiniMap  = true;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-String renderer = P2D;
+String renderer = P3D;
 
 void settings() {
   size(w, h, renderer);
@@ -69,23 +69,18 @@ void draw() {
   InteractiveFrame.sync(frame1, auxFrame1);
   InteractiveFrame.sync(frame2, auxFrame2);
   InteractiveFrame.sync(frame3, auxFrame3);
-  canvas.beginDraw();
-  canvas.background(0);
   scene.beginDraw();
+  canvas.background(0);
   scene.drawFrames();
   scene.endDraw();
-  canvas.endDraw();
-  image(canvas, 0, 0);
+  scene.display();
   if (showMiniMap) {
-    auxCanvas.beginDraw();
-    auxCanvas.background(29, 153, 243);
     auxScene.beginDraw();
+    auxCanvas.background(29, 153, 243);
     auxScene.pg().fill(255, 0, 255, 125);
     auxScene.drawFrames();
     auxScene.endDraw();
-    auxCanvas.endDraw();
-    // We retrieve the scene upper left coordinates defined above.
-    image(auxCanvas, auxScene.originCorner().x(), auxScene.originCorner().y());
+    auxScene.display();
   }
 }
 

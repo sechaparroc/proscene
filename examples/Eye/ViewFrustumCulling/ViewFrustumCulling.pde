@@ -52,15 +52,12 @@ void setup() {
 void draw() {
   background(0);
   handleMouse();
-  canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);
   root.drawIfAllChildrenAreVisible(scene.pg(), scene.camera());
   scene.endDraw();
-  canvas.endDraw();
-  image(canvas, 0, 0);
+  scene.display();
 
-  auxCanvas.beginDraw();
   auxScene.beginDraw();
   auxCanvas.background(0);
   root.drawIfAllChildrenAreVisible(auxScene.pg(), scene.camera());
@@ -70,9 +67,7 @@ void draw() {
   auxScene.drawEye(scene.eye());
   auxScene.pg().popStyle();
   auxScene.endDraw();
-  auxCanvas.endDraw();
-  // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.originCorner().x(), auxScene.originCorner().y());
+  auxScene.display();
 }
 
 void handleMouse() {

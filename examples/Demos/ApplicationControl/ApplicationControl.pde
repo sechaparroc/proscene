@@ -99,7 +99,6 @@ void updateEllipse(InteractiveFrame frame) {
 
 void draw() {
   handleAgents();
-  canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);
   canvas.fill(colour);
@@ -113,16 +112,13 @@ void draw() {
   canvas.box(r.halfWidth, r.halfHeight, (r.halfWidth + r.halfHeight) / 2);
   canvas.popMatrix();
   scene.endDraw();
-  canvas.endDraw();
-  image(canvas, scene.originCorner().x(), scene.originCorner().y());
+  scene.display();
   if (showControl) {
-    ctrlCanvas.beginDraw();
     ctrlScene.beginDraw();
     ctrlCanvas.background(125, 125, 125, 125);
     ctrlScene.drawFrames();
     ctrlScene.endDraw();
-    ctrlCanvas.endDraw();
-    image(ctrlCanvas, ctrlScene.originCorner().x(), ctrlScene.originCorner().y());
+    ctrlScene.display();
   }
 }
 

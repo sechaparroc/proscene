@@ -62,19 +62,15 @@ void setup() {
 
 void draw() {
   handleMouse();
-  canvas.beginDraw();
   scene.beginDraw();
   mainDrawing(scene.pg());
   scene.endDraw();
-  canvas.endDraw();
-  image(canvas, 0, 0);
+  scene.display();
 
-  auxCanvas.beginDraw();
   auxScene.beginDraw();
   auxiliarDrawing(auxScene.pg());
   auxScene.endDraw();
-  auxCanvas.endDraw();
-  image(auxCanvas, 0, h/2);
+  auxScene.display();
 }
 
 void mainDrawing(PGraphics pg) {
