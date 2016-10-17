@@ -207,9 +207,10 @@ public class Scene extends AbstractScene implements PConstants {
     // TODO DROID broke in Android
     // parent.registerMethod("keyEvent", keyboardAgent());
     // this.setDefaultKeyBindings();
-
-    pApplet().registerMethod("pre", this);
-    pApplet().registerMethod("draw", this);
+    if (!isOffscreen()) {
+      pApplet().registerMethod("pre", this);
+      pApplet().registerMethod("draw", this);
+    }
     // TODO DROID buggy in desktop, should be tested in Android
     if (platform() != Platform.PROCESSING_ANDROID)
       pApplet().registerMethod("dispose", this);
@@ -1120,19 +1121,14 @@ public class Scene extends AbstractScene implements PConstants {
 
   @Override
   public void preDraw() {
-    if (!prosceniumMissed)
-      super.preDraw();
-    else {
-      // 1. Avatar
-      if (avatar() != null && (!eye().anyInterpolationStarted()))
-        eye().frame().setWorldMatrix(avatar().trackingEyeFrame());
-      // 2. Eye
-      bindMatrices();
-      pushModelView();
-      if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
-        eye().updateBoundaryEquations();
-        lastEqUpdate = frameCount;
-      }
+    // 1. Avatar
+    if (avatar() != null && (!eye().anyInterpolationStarted()))
+      eye().frame().setWorldMatrix(avatar().trackingEyeFrame());
+    // 2. Eye
+    bindMatrices();
+    if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
+      eye().updateBoundaryEquations();
+      lastEqUpdate = frameCount;
     }
   }
 
@@ -1213,7 +1209,10 @@ public class Scene extends AbstractScene implements PConstants {
       height = pg().height;
       eye().setScreenWidthAndHeight(width, height);
     }
+    // open off-screen pgraphics for drawing:
+    pg().beginDraw();
     preDraw();
+    pushModelView();
   }
 
   /**
@@ -1235,21 +1234,19 @@ public class Scene extends AbstractScene implements PConstants {
     if (beginOffScreenDrawingCalls != 0)
       throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
           + "endDraw() and they cannot be nested. Check your implementation!");
+    popModelView();
+    displayVisualHints();
+    pg().endDraw();
+    handlePickingBuffer();
     postDraw();
   }
 
-  @Override
-  public void postDraw() {
-    if (prosceniumMissed) {
-      // restore matrix
-      popModelView();
-      displayVisualHints();
-    }
-    post();
-    super.postDraw();
-  }
+  /*
+   * @Override public void postDraw() { if (prosceniumMissed && !isOffscreen()) { //
+   * restore matrix popModelView(); displayVisualHints(); } post(); super.postDraw(); }
+   */
 
-  protected void post() {
+  protected void handlePickingBuffer() {
     if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
     pickingBuffer().beginDraw();
@@ -1260,6 +1257,26 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().endDraw();
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
+  }
+
+  /**
+   * Same as {@code image(pg())}.
+   * 
+   * @see #image(PGraphics)
+   * @see #pg()
+   */
+  public void image() {
+    image(pg());
+  }
+
+  /**
+   * Same as {@code pApplet().image(pgraphics, originCorner().x(), originCorner().y())}.
+   * 
+   * Displays the contents of the pgraphcics (typically {@link #pg()} or the
+   * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
+   */
+  public void image(PGraphics pgraphics) {
+    pApplet().image(pgraphics, originCorner().x(), originCorner().y());
   }
 
   // TODO: Future work should include the eye and scene profiles.
@@ -1598,26 +1615,6 @@ public class Scene extends AbstractScene implements PConstants {
     // 2. Draw all frames into pgraphics
     targetPGraphics = pgraphics;
     traverseTree();
-  }
-
-  /**
-   * Same as {@code image(pg())}.
-   * 
-   * @see #image(PGraphics)
-   * @see #pg()
-   */
-  public void image() {
-    image(pg());
-  }
-
-  /**
-   * Same as {@code pApplet().image(pgraphics, originCorner().x(), originCorner().y())}.
-   * 
-   * Displays the contents of the pgraphcics (typically {@link #pg()} or the
-   * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
-   */
-  public void image(PGraphics pgraphics) {
-    pApplet().image(pgraphics, originCorner().x(), originCorner().y());
   }
 
   /**
