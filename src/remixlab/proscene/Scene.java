@@ -214,9 +214,6 @@ public class Scene extends AbstractScene implements PConstants {
     if (platform() != Platform.PROCESSING_ANDROID)
       pApplet().registerMethod("dispose", this);
 
-    if (this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0))
-      pApplet().registerMethod("post", this);
-
     // 5. Eye
     setLeftHanded();
     width = pg.width;
@@ -1248,16 +1245,11 @@ public class Scene extends AbstractScene implements PConstants {
       popModelView();
       displayVisualHints();
     }
-    if (!(this.isOffscreen() && (upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0)))
-      post();
+    post();
     super.postDraw();
   }
 
-  // TODO WARNING: hack: as drawing should never happen here
-  // but that's the only way to draw visual hints correctly
-  // into an off-screen scene which is shifted from the papplet origin
-  // pickingBuffer().beginDraw() (and endDraw()) make the problem appear
-  public void post() {
+  protected void post() {
     if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
     pickingBuffer().beginDraw();
@@ -1606,6 +1598,26 @@ public class Scene extends AbstractScene implements PConstants {
     // 2. Draw all frames into pgraphics
     targetPGraphics = pgraphics;
     traverseTree();
+  }
+
+  /**
+   * Same as {@code image(pg())}.
+   * 
+   * @see #image(PGraphics)
+   * @see #pg()
+   */
+  public void image() {
+    image(pg());
+  }
+
+  /**
+   * Same as {@code pApplet().image(pgraphics, originCorner().x(), originCorner().y())}.
+   * 
+   * Displays the contents of the pgraphcics (typically {@link #pg()} or the
+   * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
+   */
+  public void image(PGraphics pgraphics) {
+    pApplet().image(pgraphics, originCorner().x(), originCorner().y());
   }
 
   /**
