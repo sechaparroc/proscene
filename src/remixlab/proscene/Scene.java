@@ -111,7 +111,7 @@ public class Scene extends AbstractScene implements PConstants {
   protected PGraphics mainPGgraphics;
 
   // iFrames
-  protected int frameCount;
+  protected int iFrameCount;
   // pb : picking buffer
   protected PGraphics pb;
   protected boolean pickingBufferEnabled;
@@ -1269,6 +1269,7 @@ public class Scene extends AbstractScene implements PConstants {
     displayVisualHints();
     pg().endDraw();
     handlePickingBuffer();
+    handleFocus();
     postDraw();
   }
 
@@ -1307,7 +1308,49 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
    */
   public void display(PGraphics pgraphics) {
+    lastDisplay = pApplet().frameCount;
     pApplet().image(pgraphics, originCorner().x(), originCorner().y());
+  }
+  
+  public static Scene lastScene;
+  
+  public long lastDisplay;
+  
+  public static long lastHandled;
+  
+  public boolean isDisplayed(boolean correct) {
+    return lastDisplay == pApplet().frameCount - (correct ? 1 : 0);
+  }
+  
+  public boolean hasMouseFocus(boolean corrected) {
+    return originCorner().x() < pApplet().mouseX && pApplet().mouseX < originCorner().x() + this.width()
+        && originCorner().y() < pApplet().mouseY && pApplet().mouseY < originCorner().y() + this.height()
+        && isDisplayed(corrected);
+  }
+  
+  public boolean hasFocus(boolean corrected) {
+    return hasMouseFocus(corrected);
+  }
+  
+  public void handleFocus() {
+    if(hasFocus(true) && available()) {
+      //lastHandled = frameCount;
+      enableMotionAgent();
+      enableKeyboardAgent();
+      lastScene = this;
+    }
+    else {
+      disableMotionAgent();
+      disableKeyboardAgent();
+    }
+  }
+  
+  public boolean available() {
+    if(lastScene != null)
+      if(lastScene != this)
+        if(lastScene.hasFocus(true))
+          return false;
+    return true;
   }
 
   // TODO: Future work should include the eye and scene profiles.

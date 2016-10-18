@@ -259,7 +259,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init() {
-    id = ++scene().frameCount;
+    id = ++scene().iFrameCount;
     // unlikely but theoretically possible
     if (id == 16777216)
       throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
@@ -275,7 +275,7 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init(GenericFrame referenceFrame) {
-    id = ++scene().frameCount;
+    id = ++scene().iFrameCount;
     // unlikely but theoretically possible
     if (id == 16777216)
       throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
