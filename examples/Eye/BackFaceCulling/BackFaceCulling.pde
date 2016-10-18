@@ -57,11 +57,9 @@ void setup() {
   auxScene.camera().setPosition(new Vec(125, 125, 125));
   auxScene.camera().lookAt(auxScene.center());
   colorMode(RGB, 1);
-  handleMouse();
 }
 
 void draw() {
-  handleMouse();
   scene.beginDraw();
   mainDrawing(scene.pg());
   scene.endDraw();
@@ -194,18 +192,4 @@ void keyPressed() {
     scene.flip();
   if (key == 'c')
     facebyface = !facebyface;
-}
-
-void handleMouse() {
-  if (mouseY < h/2) {
-    scene.enableMotionAgent();
-    scene.enableKeyboardAgent();
-    auxScene.disableMotionAgent();
-    auxScene.disableKeyboardAgent();
-  } else {
-    scene.disableMotionAgent();
-    scene.disableKeyboardAgent();
-    auxScene.enableMotionAgent();
-    auxScene.enableKeyboardAgent();
-  }
 }

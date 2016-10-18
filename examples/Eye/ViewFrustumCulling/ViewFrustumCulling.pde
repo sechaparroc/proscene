@@ -51,7 +51,6 @@ void setup() {
 
 void draw() {
   background(0);
-  handleMouse();
   scene.beginDraw();
   canvas.background(0);
   root.drawIfAllChildrenAreVisible(scene.pg(), scene.camera());
@@ -68,19 +67,4 @@ void draw() {
   auxScene.pg().popStyle();
   auxScene.endDraw();
   auxScene.display();
-}
-
-void handleMouse() {
-  if (mouseY < h/2) {
-    scene.enableMotionAgent();
-    scene.enableKeyboardAgent();
-    auxScene.disableMotionAgent();
-    auxScene.disableKeyboardAgent();
-  } 
-  else {
-    scene.disableMotionAgent();
-    scene.disableKeyboardAgent();
-    auxScene.enableMotionAgent();
-    auxScene.enableKeyboardAgent();
-  }
 }

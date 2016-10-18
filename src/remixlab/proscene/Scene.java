@@ -210,7 +210,8 @@ public class Scene extends AbstractScene implements PConstants {
     if (!isOffscreen()) {
       pApplet().registerMethod("pre", this);
       pApplet().registerMethod("draw", this);
-    }
+    } else
+      enableAutoFocus();
     // TODO DROID buggy in desktop, should be tested in Android
     if (platform() != Platform.PROCESSING_ANDROID)
       pApplet().registerMethod("dispose", this);
@@ -1269,7 +1270,8 @@ public class Scene extends AbstractScene implements PConstants {
     displayVisualHints();
     pg().endDraw();
     handlePickingBuffer();
-    handleFocus();
+    if (hasAutoFocus())
+      handleFocus();
     postDraw();
   }
 
@@ -1291,6 +1293,8 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().loadPixels();
   }
 
+  // -->
+
   /**
    * Same as {@code display(pg())}.
    * 
@@ -1308,50 +1312,72 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
    */
   public void display(PGraphics pgraphics) {
-    lastDisplay = pApplet().frameCount;
     pApplet().image(pgraphics, originCorner().x(), originCorner().y());
+    lastDisplay = pApplet().frameCount;
   }
-  
-  public static Scene lastScene;
-  
-  public long lastDisplay;
-  
-  public static long lastHandled;
-  
-  public boolean isDisplayed(boolean correct) {
-    return lastDisplay == pApplet().frameCount - (correct ? 1 : 0);
+
+  protected static Scene lastScene;
+  protected long lastDisplay;
+
+  protected boolean displayed() {
+    // works only if called before display() and after frameCount increments
+    // e.g., from endDraw
+    return lastDisplay == pApplet().frameCount - 1;
   }
-  
-  public boolean hasMouseFocus(boolean corrected) {
+
+  protected boolean hasMouseFocus() {
     return originCorner().x() < pApplet().mouseX && pApplet().mouseX < originCorner().x() + this.width()
         && originCorner().y() < pApplet().mouseY && pApplet().mouseY < originCorner().y() + this.height()
-        && isDisplayed(corrected);
+        && displayed();
   }
-  
-  public boolean hasFocus(boolean corrected) {
-    return hasMouseFocus(corrected);
+
+  protected boolean hasFocus() {
+    return hasMouseFocus();
   }
-  
-  public void handleFocus() {
-    if(hasFocus(true) && available()) {
-      //lastHandled = frameCount;
+
+  protected void handleFocus() {
+    // we first check if previous on top scene still has focus
+    boolean available = true;
+    if (lastScene != null)
+      if (lastScene != this)
+        if (lastScene.hasFocus())
+          available = false;
+    if (hasFocus() && available) {
       enableMotionAgent();
       enableKeyboardAgent();
       lastScene = this;
-    }
-    else {
+    } else {
       disableMotionAgent();
       disableKeyboardAgent();
     }
   }
-  
-  public boolean available() {
-    if(lastScene != null)
-      if(lastScene != this)
-        if(lastScene.hasFocus(true))
-          return false;
-    return true;
+
+  protected boolean autofocus;
+
+  public boolean hasAutoFocus() {
+    return autofocus;
   }
+
+  public void toggleAutoFocus() {
+    if (hasAutoFocus())
+      disableAutoFocus();
+    else
+      enableAutoFocus();
+  }
+
+  public void disableAutoFocus() {
+    enableAutoFocus(false);
+  }
+
+  public void enableAutoFocus() {
+    enableAutoFocus(true);
+  }
+
+  public void enableAutoFocus(boolean flag) {
+    autofocus = flag;
+  }
+
+  // <--
 
   // TODO: Future work should include the eye and scene profiles.
   // Probably related with iFrame.fromFrame

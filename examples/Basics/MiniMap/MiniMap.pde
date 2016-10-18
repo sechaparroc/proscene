@@ -60,11 +60,9 @@ void setup() {
   //iFrame.setHighlightingMode(InteractiveFrame.HighlightingMode.NONE);
   iFrame.setWorldMatrix(scene.eyeFrame());
   iFrame.setShape(scene.eyeFrame());
-  handleAgents();
 }
 
 void draw() {
-  handleAgents();
   InteractiveFrame.sync(scene.eyeFrame(), iFrame);
   InteractiveFrame.sync(frame1, auxFrame1);
   InteractiveFrame.sync(frame2, auxFrame2);
@@ -109,18 +107,5 @@ void eyeDrawing(PGraphics pg) {
     pg.rectMode(CENTER);
     pg.rect(0, 0, 200, 200);
     pg.popStyle();
-  }
-}
-
-void handleAgents() {
-  scene.enableMotionAgent();
-  auxScene.disableMotionAgent();
-  scene.enableKeyboardAgent();
-  auxScene.disableKeyboardAgent();
-  if ((oX < mouseX) && (oY < mouseY) && showMiniMap) {
-    scene.disableMotionAgent();
-    auxScene.enableMotionAgent();
-    scene.disableKeyboardAgent();
-    auxScene.enableKeyboardAgent();
   }
 }

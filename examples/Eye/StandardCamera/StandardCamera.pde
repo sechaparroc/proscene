@@ -82,7 +82,6 @@ void auxiliarDrawing(Scene s) {
 }
 
 void draw() {
-  handleMouse();
   scene.beginDraw();
   mainDrawing(scene);
   scene.endDraw();
@@ -92,21 +91,6 @@ void draw() {
   auxiliarDrawing(auxScene);
   auxScene.endDraw();
   auxScene.display();
-}
-
-void handleMouse() {
-  if (mouseY < h/2) {
-    scene.enableMotionAgent();
-    scene.enableKeyboardAgent();
-    auxScene.disableMotionAgent();
-    auxScene.disableKeyboardAgent();
-  } 
-  else {
-    scene.disableMotionAgent();
-    scene.disableKeyboardAgent();
-    auxScene.enableMotionAgent();
-    auxScene.enableKeyboardAgent();
-  }
 }
 
 void keyPressed() {

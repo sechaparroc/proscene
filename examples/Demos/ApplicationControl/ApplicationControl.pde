@@ -98,7 +98,6 @@ void updateEllipse(InteractiveFrame frame) {
 }
 
 void draw() {
-  handleAgents();
   scene.beginDraw();
   canvas.background(255);
   canvas.fill(colour);
@@ -119,19 +118,6 @@ void draw() {
     ctrlScene.drawFrames();
     ctrlScene.endDraw();
     ctrlScene.display();
-  }
-}
-
-void handleAgents() {
-  scene.enableMotionAgent();
-  ctrlScene.disableMotionAgent();
-  scene.enableKeyboardAgent();
-  ctrlScene.disableKeyboardAgent();
-  if ((oX < mouseX) && (oY < mouseY) && showControl) {
-    scene.disableMotionAgent();
-    ctrlScene.enableMotionAgent();
-    scene.disableKeyboardAgent();
-    ctrlScene.enableKeyboardAgent();
   }
 }
 

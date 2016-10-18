@@ -77,7 +77,6 @@ public void setup() {
 
 // off-screen rendering
 public void draw() {
-  handleMouse();
   InteractiveFrame.sync(armScene.camera().frame(), armCam.frame(5));
   InteractiveFrame.sync(heliScene.camera().frame(), heliCam.frame(3));
   mainScene.beginDraw();
@@ -94,33 +93,6 @@ public void draw() {
   drawing(heliScene);
   heliScene.endDraw();
   heliScene.display();
-}
-
-public void handleMouse() {
-  if (mouseY < canvas.height) {
-    mainScene.enableMotionAgent();
-    mainScene.enableKeyboardAgent();
-    armScene.disableMotionAgent();
-    armScene.disableKeyboardAgent();
-    heliScene.disableMotionAgent();
-    heliScene.disableKeyboardAgent();
-  } else {
-    if (mouseX < canvas.width / 2) {
-      mainScene.disableMotionAgent();
-      mainScene.disableKeyboardAgent();
-      armScene.enableMotionAgent();
-      armScene.enableKeyboardAgent();
-      heliScene.disableMotionAgent();
-      heliScene.disableKeyboardAgent();
-    } else {
-      mainScene.disableMotionAgent();
-      mainScene.disableKeyboardAgent();
-      armScene.disableMotionAgent();
-      armScene.disableKeyboardAgent();
-      heliScene.enableMotionAgent();
-      heliScene.enableKeyboardAgent();
-    }
-  }
 }
 
 // the actual drawing function, shared by the two scenes
