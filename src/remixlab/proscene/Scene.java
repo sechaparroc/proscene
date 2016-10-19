@@ -35,11 +35,12 @@ import java.nio.FloatBuffer;
 //*/
 
 /**
- * A 2D or 3D interactive Processing Scene with a {@link #profile()} instance which allows
- * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings
- * high-level customization (see all the <b>*Binding*()</b> methods). The Scene is a
- * specialization of the {@link remixlab.dandelion.core.AbstractScene}, providing an
- * interface between Dandelion and Processing.
+ * A 2D or 3D interactive, on-screen or off-screen, Processing Scene with a
+ * {@link #profile()} instance which allows {@link remixlab.bias.core.Shortcut} to
+ * {@link java.lang.reflect.Method} bindings high-level customization (see all the
+ * <b>*Binding*()</b> methods). The Scene is a specialization of the
+ * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion
+ * and Processing.
  * <p>
  * <h3>Usage</h3> To use a Scene you have two main choices:
  * <ol>
@@ -122,6 +123,9 @@ public class Scene extends AbstractScene implements PConstants {
   // E X C E P T I O N H A N D L I N G
   protected int beginOffScreenDrawingCalls;
 
+  // off-screen scenes:
+  protected boolean autofocus;
+
   // CONSTRUCTORS
 
   /**
@@ -162,7 +166,9 @@ public class Scene extends AbstractScene implements PConstants {
    * the off-screen Scene is expected to be displayed, e.g., for instance with a call to
    * Processing the {@code image(img, x, y)} function. If {@code pg == p.g}) (which
    * defines an on-screen Scene, see also {@link #isOffscreen()}), the values of x and y
-   * are meaningless (both are set to 0 to be taken as dummy values).
+   * are meaningless (both are set to 0 to be taken as dummy values). Render into an
+   * off-screen scene requires the drawing code to be enclose by {@link #beginDraw()} and
+   * {@link #endDraw()}. To display an off-screen scene call {@link #display()}.
    * 
    * @see remixlab.dandelion.core.AbstractScene#AbstractScene()
    * @see #Scene(PApplet)
@@ -1201,9 +1207,32 @@ public class Scene extends AbstractScene implements PConstants {
     postDraw();
   }
 
+  // Off-screen
+
   /**
-   * Only if the Scene {@link #isOffscreen()}. Calls {@code pg().beginDraw()} and then
-   * {@link #preDraw()} .
+   * Same as {@code showOnlyOffScreenWarning(method, true)}.
+   * 
+   * @see #showOnlyOffScreenWarning(String, boolean)
+   */
+  static public void showOnlyOffScreenWarning(String method) {
+    showOnlyOffScreenWarning(method, true);
+  }
+
+  /**
+   * Display a warning that the specified method is only available for off-screen scenes
+   * if {@code offscreen} is {@code true}, or (on-screen scenes if if {@code offscreen} is
+   * {@code false}).
+   */
+  static public void showOnlyOffScreenWarning(String method, boolean offscreen) {
+    if (offscreen)
+      showWarning(method + "() is only meaningful for offscreen scenes.");
+    else
+      showWarning(method + "() is only meaningful for onscreen scenes.");
+  }
+
+  /**
+   * Only if the Scene {@link #isOffscreen()}. Calls {@code pg().beginDraw()} (hence
+   * there's no need to explicitly call it) and then {@link #preDraw()} .
    * <p>
    * If {@link #pg()} is resized then (re)sets the scene {@link #width()} and
    * {@link #height()}, and calls
@@ -1242,7 +1271,7 @@ public class Scene extends AbstractScene implements PConstants {
    * <ol>
    * <li>{@link #proscenium()}</li>
    * <li>{@link #displayVisualHints()}</li>
-   * <li>{@code pg().endDraw()}</li>
+   * <li>{@code pg().endDraw()} and hence there's no need to explicitly call it</li>
    * <li>{@link #handlePickingBuffer()}</li>
    * <li>{@link #postDraw()}</li>
    * </ol>
@@ -1293,8 +1322,6 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().loadPixels();
   }
 
-  // -->
-
   /**
    * Same as {@code display(pg())}.
    * 
@@ -1319,30 +1346,54 @@ public class Scene extends AbstractScene implements PConstants {
   protected static Scene lastScene;
   protected long lastDisplay;
 
-  protected boolean displayed() {
-    // works only if called before display() and after frameCount increments
-    // e.g., from endDraw
-    return lastDisplay == pApplet().frameCount - 1;
-  }
-
+  /**
+   * Implementation of the "Focus follows mouse" policy. Used by {@link #hasFocus()}.
+   */
   protected boolean hasMouseFocus() {
     return originCorner().x() < pApplet().mouseX && pApplet().mouseX < originCorner().x() + this.width()
-        && originCorner().y() < pApplet().mouseY && pApplet().mouseY < originCorner().y() + this.height()
-        && displayed();
+        && originCorner().y() < pApplet().mouseY && pApplet().mouseY < originCorner().y() + this.height();
   }
 
+  /**
+   * Main condition evaluated by the {@link #handleFocus()} algorithm, which defaults to
+   * {@link #hasMouseFocus()}.
+   * <p>
+   * Override this method to define a focus policy different than "focus follows mouse".
+   */
   protected boolean hasFocus() {
     return hasMouseFocus();
   }
 
+  /**
+   * Macro used by {@link #handleFocus()}.
+   */
+  protected boolean displayed() {
+    return lastDisplay == pApplet().frameCount - 1;
+  }
+
+  /**
+   * Called by {@link #endDraw()} if {@link #hasAutoFocus()} is {@code true}.
+   */
   protected void handleFocus() {
-    // we first check if previous on top scene still has focus
+    // Handling focus of non-overlapping scenes is trivial.
+    // Suppose scn1 and scn2 overlap and also that scn2 is displayed on top of scn1, i.e.,
+    // scn2.display() is to be called after scn1.display() (which is the key observation).
+    // Then for a given frame either only scn1 hasFocus() (which is handled trivially);
+    // or, both,
+    // scn1 and scn2 hasFocus(), which means only scn2 should retain focus (while scn1
+    // lose it).
     boolean available = true;
     if (lastScene != null)
       if (lastScene != this)
-        if (lastScene.hasFocus())
-          available = false;
-    if (hasFocus() && available) {
+        // Note that lastScene.displayed() returns true only if the lastScene was assigned
+        // in the previous frame and false otherwise (particularly, if it was assigned in
+        // the current frame) which means both: 1. If scn1 gained focus on the current
+        // frame it will lose it when the routine is run on scn2 in the current frame;
+        // and, 2. If scn2 has gained focus in the previous frame, it will prevent scn1
+        // from having it back in the current frame.
+        if (lastScene.hasFocus() && lastScene.displayed())
+        available = false;
+    if (hasFocus() && displayed() && available) {
       enableMotionAgent();
       enableKeyboardAgent();
       lastScene = this;
@@ -1352,32 +1403,122 @@ public class Scene extends AbstractScene implements PConstants {
     }
   }
 
-  protected boolean autofocus;
-
+  /**
+   * When having multiple off-screen scenes displayed at once, one should decide which
+   * scene will grab input from both, the {@link #motionAgent()} and the
+   * {@link #keyboardAgent()}, so that code like this:
+   * 
+   * <pre>
+   * {@code
+   * scene1.beginDraw();
+   * drawScene1();
+   * scene.endDraw();
+   * scene.display();
+   * scene2.beginDraw();
+   * drawScene2();
+   * scene2.endDraw();
+   * scene2.display();
+   * }
+   * </pre>
+   * 
+   * will behave according to a given focus policy. This property is enabled by default
+   * and it implements a "focus follows mouse" policy, so that the scene under the cursor
+   * will grab input. If multiple scenes overlaps the scene on top will grab the input as
+   * expected.
+   * <p>
+   * To implement a different policy either:
+   * 
+   * <ol>
+   * <li>Override the {@link #hasFocus()} Scene object.</li>
+   * <li>Call {@link #disableAutoFocus()} and implement your own focus policy at the
+   * sketch space.</li>
+   * </ol>
+   * 
+   * <b>Note</b> that for this policy to work you should call {@link #display()} instead
+   * of the papplet image() function on the {@link #pg()}.
+   * 
+   * @see #beginDraw()
+   * @see #endDraw()
+   * @see #display()
+   * @see #enableAutoFocus()
+   * @see #disableAutoFocus()
+   * @see #toggleAutoFocus()
+   */
   public boolean hasAutoFocus() {
+    if (!isOffscreen())
+      showOnlyOffScreenWarning("hasAutoFocus");
     return autofocus;
   }
 
+  /**
+   * Toggles the off-screen scene auto-focus property.
+   * 
+   * @see #hasAutoFocus()
+   * @see #enableAutoFocus(boolean)
+   * @see #enableAutoFocus()
+   * @see #disableAutoFocus()
+   */
   public void toggleAutoFocus() {
+    if (!isOffscreen()) {
+      showOnlyOffScreenWarning("toggleAutoFocus");
+      return;
+    }
     if (hasAutoFocus())
       disableAutoFocus();
     else
       enableAutoFocus();
   }
 
+  /**
+   * Disables the off-screen scene auto-focus property.
+   * 
+   * @see #hasAutoFocus()
+   * @see #enableAutoFocus(boolean)
+   * @see #enableAutoFocus()
+   * @see #toggleAutoFocus()
+   */
   public void disableAutoFocus() {
+    if (!isOffscreen()) {
+      showOnlyOffScreenWarning("disableAutoFocus");
+      return;
+    }
     enableAutoFocus(false);
   }
 
+  /**
+   * Enables the off-screen scene auto-focus property.
+   * 
+   * @see #hasAutoFocus()
+   * @see #enableAutoFocus(boolean)
+   * @see #disableAutoFocus()
+   * @see #toggleAutoFocus()
+   */
   public void enableAutoFocus() {
+    if (!isOffscreen()) {
+      showOnlyOffScreenWarning("enableAutoFocus");
+      return;
+    }
     enableAutoFocus(true);
   }
 
+  /**
+   * Turns on or off the off-screen scene auto-focus property according to {@code flag}.
+   * <p>
+   * The {@link #hasAutoFocus()} property for off-screen scenes is {@code true} by
+   * default.
+   * 
+   * @see #hasAutoFocus()
+   * @see #enableAutoFocus()
+   * @see #disableAutoFocus()
+   * @see #toggleAutoFocus()
+   */
   public void enableAutoFocus(boolean flag) {
+    if (!isOffscreen()) {
+      showOnlyOffScreenWarning("hasAutoFocus");
+      return;
+    }
     autofocus = flag;
   }
-
-  // <--
 
   // TODO: Future work should include the eye and scene profiles.
   // Probably related with iFrame.fromFrame
