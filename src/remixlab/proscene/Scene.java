@@ -103,9 +103,9 @@ public class Scene extends AbstractScene implements PConstants {
   // end: GWT-incompatible
   // */
 
-  public static final String prettyVersion = "3.0.0-beta.7";
+  public static final String prettyVersion = "3.0.0-beta.8";
 
-  public static final String version = "29";
+  public static final String version = "30";
 
   // P R O C E S S I N G A P P L E T A N D O B J E C T S
   protected PApplet parent;
@@ -124,7 +124,12 @@ public class Scene extends AbstractScene implements PConstants {
   protected int beginOffScreenDrawingCalls;
 
   // off-screen scenes:
+  protected static Scene lastScene;
+  protected long lastDisplay;
   protected boolean autofocus;
+
+  // Miscellaneous
+  private boolean prosceniumMissed;
 
   // CONSTRUCTORS
 
@@ -1124,8 +1129,6 @@ public class Scene extends AbstractScene implements PConstants {
 
   // 3. Drawing methods
 
-  private boolean prosceniumMissed;
-
   /**
    * Called before your main drawing and performs the following:
    * <ol>
@@ -1134,8 +1137,16 @@ public class Scene extends AbstractScene implements PConstants {
    * <li>Calls {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if
    * {@link #areBoundaryEquationsEnabled()}</li>
    * <li>Calls {@link #proscenium()}</li>
-   * <li>Calls {@link #displayVisualHints()}.</li>
    * </ol>
+   * 
+   * <b>Note</b> that this method overloads
+   * {@link remixlab.dandelion.core.AbstractScene#preDraw()} where a call to
+   * {@link #displayVisualHints()} is done. Here, however, it needs to be bypassed for the
+   * PApplet.background() method not to hide the display of the {@link #visualHints()}
+   * (the exception being when {@link #proscenium()} has been overloaded, where the
+   * {@link remixlab.dandelion.core.AbstractScene#preDraw()} can safely be used). The
+   * {@link #displayVisualHints()} mostly happens then at the {@link #draw()} method, if
+   * the scene is on-screen, or at the {@link #endDraw()} if it is off-screen.
    * 
    * @see #postDraw()
    */
@@ -1155,13 +1166,16 @@ public class Scene extends AbstractScene implements PConstants {
   /**
    * Paint method which is called just before your {@code PApplet.draw()} method. Simply
    * calls {@link #preDraw()}. This method is registered at the PApplet and hence you
-   * don't need to call it.
-   * <p>
-   * If {@link #isOffscreen()} does nothing.
+   * don't need to call it. Only meaningful if the scene is on-screen (it the scene
+   * {@link #isOffscreen()} it even doesn't get registered at the PApplet.
    * <p>
    * If {@link #pg()} is resized then (re)sets the scene {@link #width()} and
    * {@link #height()}, and calls
    * {@link remixlab.dandelion.core.Eye#setScreenWidthAndHeight(int, int)}.
+   * <p>
+   * <b>Note </b> that if {@link #proscenium()} is overridden the
+   * {@link remixlab.dandelion.core.AbstractScene#preDraw()} (i.e., the one implemented in
+   * the AbstractScene) is the one that get's called.
    * 
    * @see #draw()
    * @see #preDraw()
@@ -1185,9 +1199,12 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Paint method which is called just after your {@code PApplet.draw()} method. Simply
-   * calls {@link #postDraw()}. This method is registered at the PApplet and hence you
-   * don't need to call it.
+   * Paint method which is called just after your {@code PApplet.draw()} method. Calls
+   * {@link #displayVisualHints()} (when no {@link #proscenium()} hasn't been overridden),
+   * draws the scene into the {@link #pickingBuffer()} and {@link #postDraw()}. This
+   * method is registered at the PApplet and hence you don't need to call it. Only
+   * meaningful if the scene is on-screen (it the scene {@link #isOffscreen()} it even
+   * doesn't get registered at the PApplet.
    * <p>
    * If {@link #isOffscreen()} does nothing.
    * 
@@ -1273,6 +1290,7 @@ public class Scene extends AbstractScene implements PConstants {
    * <li>{@link #displayVisualHints()}</li>
    * <li>{@code pg().endDraw()} and hence there's no need to explicitly call it</li>
    * <li>{@link #handlePickingBuffer()}</li>
+   * <li>{@link #handleFocus()} if {@link #hasAutoFocus()} is {@code true}</li>
    * <li>{@link #postDraw()}</li>
    * </ol>
    * 
@@ -1304,11 +1322,13 @@ public class Scene extends AbstractScene implements PConstants {
     postDraw();
   }
 
-  /*
-   * @Override public void postDraw() { if (prosceniumMissed && !isOffscreen()) { //
-   * restore matrix popModelView(); displayVisualHints(); } post(); super.postDraw(); }
+  /**
+   * Internal use. Draws the contents of the scene (its {@link #frames()}) into the
+   * {@link #pickingBuffer()} to perform picking on the scene {@link #frames()}.
+   * <p>
+   * Called by {@link #draw()} (on-screen scenes) and {@link #endDraw()} (off-screen
+   * scenes).
    */
-
   protected void handlePickingBuffer() {
     if (!this.isPickingBufferEnabled() || !unchachedBuffer)
       return;
@@ -1323,7 +1343,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code display(pg())}.
+   * Same as {@code display(pg())}. Only meaningful if the scene {@link #isOffscreen()}.
    * 
    * @see #display(PGraphics)
    * @see #pg()
@@ -1334,17 +1354,17 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Same as {@code pApplet().image(pgraphics, originCorner().x(), originCorner().y())}.
+   * Only meaningful if the scene {@link #isOffscreen()}.
    * 
    * Displays the contents of the pgraphics (typically {@link #pg()} or the
    * {@link #pickingBuffer()}) into the scene {@link #pApplet()}.
    */
   public void display(PGraphics pgraphics) {
+    if (!isOffscreen())
+      showOnlyOffScreenWarning("hasAutoFocus");
     pApplet().image(pgraphics, originCorner().x(), originCorner().y());
     lastDisplay = pApplet().frameCount;
   }
-
-  protected static Scene lastScene;
-  protected long lastDisplay;
 
   /**
    * Implementation of the "Focus follows mouse" policy. Used by {@link #hasFocus()}.
@@ -1378,10 +1398,9 @@ public class Scene extends AbstractScene implements PConstants {
     // Handling focus of non-overlapping scenes is trivial.
     // Suppose scn1 and scn2 overlap and also that scn2 is displayed on top of scn1, i.e.,
     // scn2.display() is to be called after scn1.display() (which is the key observation).
-    // Then for a given frame either only scn1 hasFocus() (which is handled trivially);
-    // or, both,
-    // scn1 and scn2 hasFocus(), which means only scn2 should retain focus (while scn1
-    // lose it).
+    // Then, for a given frame either only scn1 hasFocus() (which is handled trivially);
+    // or, both, scn1 and scn2 hasFocus(), which means only scn2 should retain focus
+    // (while scn1 lose it).
     boolean available = true;
     if (lastScene != null)
       if (lastScene != this)
