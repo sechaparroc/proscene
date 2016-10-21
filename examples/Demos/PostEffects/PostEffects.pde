@@ -100,12 +100,10 @@ public void draw() {
   PGraphics pg = graphics;
 
   // 1. Draw into main buffer
-  pg.beginDraw();
   scene.beginDraw();
   pg.background(0);
   scene.drawFrames();
   scene.endDraw();
-  pg.endDraw();
  
   drawGraphics = graphics;
   
@@ -176,7 +174,7 @@ public void draw() {
     fxaaGraphics.endDraw();    
     drawGraphics = fxaaGraphics;
   }
-  image(drawGraphics, 0, 0);
+  scene.display(drawGraphics);
   drawText();
 }
 

@@ -56,16 +56,11 @@ void setup() {
 }
 
 void draw() {
-  //same as: PGraphics pg = scene.pg();
-  PGraphics pg = srcPGraphics;
-
   // 1. Draw into main buffer
-  pg.beginDraw();
   scene.beginDraw();
-  pg.background(0);
+  scene.pg().background(0);
   scene.drawFrames();
   scene.endDraw();
-  pg.endDraw();
 
   // 2. Draw into depth buffer
   depthPGraphics.beginDraw();
@@ -75,19 +70,18 @@ void draw() {
 
   // 3. Draw destination buffer
   dofPGraphics.beginDraw();
-  //dofPGraphics.background(0);
   dofShader.set("focus", map(mouseX, 0, width, -0.5f, 1.5f));
   dofShader.set("tDepth", depthPGraphics);    
-  dofPGraphics.image(pg, 0, 0);
+  dofPGraphics.image(scene.pg(), 0, 0);
   dofPGraphics.endDraw();
 
   // display one of the 3 buffers
   if (mode==0)
-    image(pg, 0, 0);
+    scene.display();
   else if (mode==1)
-    image(depthPGraphics, 0, 0);
+    scene.display(depthPGraphics);
   else
-    image(dofPGraphics, 0, 0);
+    scene.display(dofPGraphics);
 }
 
 PShape boxShape() {

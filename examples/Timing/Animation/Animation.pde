@@ -28,10 +28,6 @@ void setup() {
   scene = new MyScene(this);
 }
 
-void draw() {
-  background(0);
-}
-
 void keyPressed() {
   if((key == 'x') || (key == 'X'))
     scene.setAnimationPeriod(scene.animationPeriod()-2);
@@ -62,6 +58,7 @@ class MyScene extends Scene {
 
   // Define here what is actually going to be drawn.
   public void proscenium() {
+    background(0);
     pushStyle();
     strokeWeight(3); // Default
     beginShape(POINTS);

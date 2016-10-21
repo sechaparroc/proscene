@@ -66,35 +66,31 @@ public void setup() {
 
 public void draw() {
   background(0);
-  PGraphics pg = srcGraphics;
-  pg.beginDraw();
   srcScene.beginDraw();
-  pg.background(0);
-  pg.lights();
+  srcScene.pg().background(0);
+  srcScene.pg().lights();
   srcScene.drawFrames();
   srcScene.endDraw();
-  pg.endDraw();
   
   xConvGraphics.beginDraw();
   xConvShader.set("readTex", srcScene.pg());
-  xConvGraphics.image(pg, 0, 0);
+  xConvGraphics.image(srcScene.pg(), 0, 0);
   xConvGraphics.endDraw();
     
   yConvGraphics.beginDraw();
   yConvShader.set("readTex", xConvGraphics);
-  yConvGraphics.image(pg, 0, 0);
+  yConvGraphics.image(srcScene.pg(), 0, 0);
   yConvGraphics.endDraw();    
     
   bloomGraphics.beginDraw();
   bloomShader.set("nuevoTex", yConvGraphics);
-  bloomGraphics.image(pg, 0, 0);
+  bloomGraphics.image(srcScene.pg(), 0, 0);
   bloomGraphics.endDraw();    
   
-  if (original) {
-    image(srcScene.pg(), 0, 0);
-  } else {     
-    image(bloomGraphics, 0, 0);
-  }
+  if (original)
+    srcScene.display();
+  else
+    srcScene.display(bloomGraphics);
 }
 
 float gauss(float x, float sigma) {
