@@ -29,28 +29,7 @@ public void setup() {
   scene.setKeyBinding('u', "togglePathsVisualHint");
   scene.setNonSeqTimers();
   scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING | Scene.PATHS);
-  //create a eye path and add some key frames:
-  //key frames can be added at runtime with keys [j..n]
-  scene.eye().setPosition(new Vec(80,0,0));
-  if(scene.is3D()) scene.eye().lookAt( scene.eye().sceneCenter() );
-  scene.eye().addKeyFrameToPath(1);
-
-  scene.eye().setPosition(new Vec(30,30,-80));
-  if(scene.is3D()) scene.eye().lookAt( scene.eye().sceneCenter() );
-  scene.eye().addKeyFrameToPath(1);
-
-  scene.eye().setPosition(new Vec(-30,-30,-80));
-  if(scene.is3D()) scene.eye().lookAt( scene.eye().sceneCenter() );
-  scene.eye().addKeyFrameToPath(1);
-
-  scene.eye().setPosition(new Vec(-80,0,0));
-  if(scene.is3D()) scene.eye().lookAt( scene.eye().sceneCenter() );
-  scene.eye().addKeyFrameToPath(1);
-
-  //re-position the eye:
-  scene.eye().setPosition(new Vec(0,0,1));
-  if(scene.is3D()) scene.eye().lookAt( scene.eye().sceneCenter() );
-  scene.showAll();
+  scene.loadConfig();
 }
 
 public void draw() {
