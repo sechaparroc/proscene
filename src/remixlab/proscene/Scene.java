@@ -127,6 +127,8 @@ public class Scene extends AbstractScene implements PConstants {
   protected static Scene lastScene;
   protected long lastDisplay;
   protected boolean autofocus;
+  // just to make it compatible with previous versions of proscene
+  protected static int offScreenScenes;
 
   // Miscellaneous
   private boolean prosceniumMissed;
@@ -221,8 +223,10 @@ public class Scene extends AbstractScene implements PConstants {
     if (!isOffscreen()) {
       pApplet().registerMethod("pre", this);
       pApplet().registerMethod("draw", this);
-    } else
+    } else {
+      offScreenScenes++;
       enableAutoFocus();
+    }
     // TODO DROID buggy in desktop, should be tested in Android
     if (platform() != Platform.PROCESSING_ANDROID)
       pApplet().registerMethod("dispose", this);
@@ -1395,6 +1399,8 @@ public class Scene extends AbstractScene implements PConstants {
    * Called by {@link #endDraw()} if {@link #hasAutoFocus()} is {@code true}.
    */
   protected void handleFocus() {
+    if (offScreenScenes < 2)
+      return;
     // Handling focus of non-overlapping scenes is trivial.
     // Suppose scn1 and scn2 overlap and also that scn2 is displayed on top of scn1, i.e.,
     // scn2.display() is to be called after scn1.display() (which is the key observation).
