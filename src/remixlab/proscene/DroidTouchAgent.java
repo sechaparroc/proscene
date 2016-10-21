@@ -128,14 +128,10 @@ public class DroidTouchAgent extends Agent {
         case DRAG_THREE_ID:// Drag
           newevent = new DOF2Event(oldevent, touchProcessor.getCx() - scene.originCorner().x(),
               touchProcessor.getCy() - scene.originCorner().y(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          if (debug)
-            PApplet.print("drag");
           break;
         case OPPOSABLE_THREE_ID:
           newevent = new DOF2Event(oldevent, x - scene.originCorner().x(), y - scene.originCorner().y(),
               MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          if (debug)
-            PApplet.print("opposable");
           break;
         case PINCH_TWO_ID:
           // TODO
@@ -144,8 +140,6 @@ public class DroidTouchAgent extends Agent {
           // Maybe it has to do with the handling of null events?
         case PINCH_THREE_ID: // Pinch
           newevent = new DOF1Event(oldevent, touchProcessor.getZ(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          if (debug)
-            PApplet.print("pinch");
           break;
         case TURN_TWO_ID:
         case TURN_THREE_ID:
@@ -155,8 +149,6 @@ public class DroidTouchAgent extends Agent {
           // if (inputGrabber() instanceof InteractiveFrame)
           // turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
           newevent = new DOF1Event(oldevent, touchProcessor.getR(), MotionEvent.NO_MODIFIER_MASK, gesture.id());
-          if (debug)
-            PApplet.print("turn");
           break;
         default:
           break;
