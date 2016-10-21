@@ -23,6 +23,8 @@ public class Lamp {
       frameArray[i] = new InteractiveFrame(scene, i>0 ? frameArray[i-1] : null);
       frame(i).setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_SHAPE);
       frame(i).setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+      if(customBindings)
+        setCustomBindings(frame(i));
     }
 
     // Initialize frames

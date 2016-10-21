@@ -18,10 +18,11 @@ Idea: 3-step process at the Profile:
 
 1. Comment all examples describing *which gestures are supported* (depict them) and how bindings work.
 2. Fix double tap.
-3. Support 3 and 6 DOFs.
-4. Implement the key agent.
-5. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
-6. Processing mouseX and mouseY are not reported correctly which makes a skecth defining several (off-screen) scenes not possible.
+3. Fix OPPOSABLE_THREE_ID gesture.
+4. Support 3 and 6 DOFs.
+5. Implement the key agent.
+6. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
+7. Processing mouseX and mouseY are not reported correctly which makes a skecth defining several (off-screen) scenes not possible.
 
 ## JS
 

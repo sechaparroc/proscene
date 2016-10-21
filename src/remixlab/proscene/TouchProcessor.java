@@ -215,7 +215,9 @@ class TouchProcessor {
       PinchEvent pinchEvent = handlePinch();
       TurnEvent TurnEvent = handleTurn();
       if (TurnEvent != null)
-        setR(getR() + (TurnEvent.angle * -500));
+        // TODO experimental, previous value was TurnEvent.angle * -500
+        // but it ended up being too sensible for my moto g4 touch screen
+        setR(getR() + (TurnEvent.angle * -100));
       if (pinchEvent != null)
         setZ(getZ() + pinchEvent.amount);
       if (dragEvent != null) {

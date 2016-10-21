@@ -33,6 +33,8 @@ public class Box {
     scene = scn;
     iFrame = new InteractiveFrame(scn);
     iFrame.setPickingPrecision(GenericFrame.PickingPrecision.ADAPTIVE);
+    if(customBindings)
+      setCustomBindings(iFrame);
     setSize();
     setColor();    
     setPosition();
