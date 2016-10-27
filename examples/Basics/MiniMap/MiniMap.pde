@@ -35,11 +35,11 @@ void settings() {
 void setup() {
   canvas = createGraphics(w, h, renderer);
   scene = new Scene(this, canvas);
-  frame1 = new InteractiveFrame(scene, this, "frameDrawing");
+  frame1 = new InteractiveFrame(scene, "frameDrawing");
   frame1.translate(30, 30);
-  frame2 = new InteractiveFrame(scene, frame1, this, "frameDrawing");
+  frame2 = new InteractiveFrame(scene, frame1, "frameDrawing");
   frame2.translate(40, 0);
-  frame3 = new InteractiveFrame(scene, frame2, this, "frameDrawing");
+  frame3 = new InteractiveFrame(scene, frame2, "frameDrawing");
   frame3.translate(40, 0);
 
   auxCanvas = createGraphics(oW, oH, renderer);

@@ -1454,7 +1454,7 @@ public class Scene extends AbstractScene implements PConstants {
    * To implement a different policy either:
    * 
    * <ol>
-   * <li>Override the {@link #hasFocus()} Scene object.</li>
+   * <li>Override the {@link #hasFocus()} Scene object; or,</li>
    * <li>Call {@link #disableAutoFocus()} and implement your own focus policy at the
    * sketch space.</li>
    * </ol>
