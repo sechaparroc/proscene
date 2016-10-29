@@ -130,9 +130,6 @@ public class Scene extends AbstractScene implements PConstants {
   // just to make it compatible with previous versions of proscene
   protected static int offScreenScenes;
 
-  // Miscellaneous
-  private boolean prosceniumMissed;
-
   // CONSTRUCTORS
 
   /**
@@ -246,14 +243,7 @@ public class Scene extends AbstractScene implements PConstants {
       this.setNonSeqTimers();
     // pApplet().frameRate(100);
 
-    // 7. Does this class declares proscenium
-    try {
-      prosceniumMissed = getClass().getMethod("proscenium").getDeclaringClass() == AbstractScene.class;
-    } catch (NoSuchMethodException | SecurityException e) {
-      prosceniumMissed = true;
-    }
-
-    // 8. Init should be called only once
+    // 7. Init should be called only once
     init();
   }
 
@@ -1146,9 +1136,7 @@ public class Scene extends AbstractScene implements PConstants {
    * <b>Note</b> that this method overloads
    * {@link remixlab.dandelion.core.AbstractScene#preDraw()} where a call to
    * {@link #displayVisualHints()} is done. Here, however, it needs to be bypassed for the
-   * PApplet.background() method not to hide the display of the {@link #visualHints()}
-   * (the exception being when {@link #proscenium()} has been overloaded, where the
-   * {@link remixlab.dandelion.core.AbstractScene#preDraw()} can safely be used). The
+   * PApplet.background() method not to hide the display of the {@link #visualHints()}. The
    * {@link #displayVisualHints()} mostly happens then at the {@link #draw()} method, if
    * the scene is on-screen, or at the {@link #endDraw()} if it is off-screen.
    * 
@@ -1177,9 +1165,6 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #height()}, and calls
    * {@link remixlab.dandelion.core.Eye#setScreenWidthAndHeight(int, int)}.
    * <p>
-   * <b>Note </b> that if {@link #proscenium()} is overridden the
-   * {@link remixlab.dandelion.core.AbstractScene#preDraw()} (i.e., the one implemented in
-   * the AbstractScene) is the one that get's called.
    * 
    * @see #draw()
    * @see #preDraw()
@@ -1194,21 +1179,16 @@ public class Scene extends AbstractScene implements PConstants {
       height = pg().height;
       eye().setScreenWidthAndHeight(width, height);
     }
-    if (!prosceniumMissed)
-      super.preDraw();
-    else {
-      preDraw();
-      pushModelView();
-    }
+    preDraw();
+    pushModelView();
   }
 
   /**
    * Paint method which is called just after your {@code PApplet.draw()} method. Calls
-   * {@link #displayVisualHints()} (when no {@link #proscenium()} hasn't been overridden),
-   * draws the scene into the {@link #pickingBuffer()} and {@link #postDraw()}. This
-   * method is registered at the PApplet and hence you don't need to call it. Only
-   * meaningful if the scene is on-screen (it the scene {@link #isOffscreen()} it even
-   * doesn't get registered at the PApplet.
+   * {@link #displayVisualHints()}, draws the scene into the {@link #pickingBuffer()}
+   * and {@link #postDraw()}. This method is registered at the PApplet and hence you
+   * don't need to call it. Only meaningful if the scene is on-screen (it the scene
+   * {@link #isOffscreen()} it even doesn't get registered at the PApplet.
    * <p>
    * If {@link #isOffscreen()} does nothing.
    * 
@@ -1220,10 +1200,8 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #isOffscreen()
    */
   public void draw() {
-    if (prosceniumMissed) {
-      popModelView();
-      displayVisualHints();
-    }
+    popModelView();
+    displayVisualHints();
     handlePickingBuffer();
     postDraw();
   }

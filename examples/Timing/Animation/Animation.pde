@@ -28,6 +28,10 @@ void setup() {
   scene = new MyScene(this);
 }
 
+// Make sure to define the draw() method, even if it's empty.
+void draw() {
+}
+
 void keyPressed() {
   if((key == 'x') || (key == 'X'))
     scene.setAnimationPeriod(scene.animationPeriod()-2);
