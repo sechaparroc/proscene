@@ -1185,10 +1185,11 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Paint method which is called just after your {@code PApplet.draw()} method. Calls
-   * {@link #displayVisualHints()}, draws the scene into the {@link #pickingBuffer()}
-   * and {@link #postDraw()}. This method is registered at the PApplet and hence you
-   * don't need to call it. Only meaningful if the scene is on-screen (it the scene
-   * {@link #isOffscreen()} it even doesn't get registered at the PApplet.
+   * {@link #proscenium()}, {@link #displayVisualHints()}, draws the scene into the
+   * {@link #pickingBuffer()} and {@link #postDraw()}. This method is registered at
+   * the PApplet and hence you don't need to call it. Only meaningful if the scene is
+   * on-screen (it the scene {@link #isOffscreen()} it even doesn't get registered at
+   * the PApplet.
    * <p>
    * If {@link #isOffscreen()} does nothing.
    * 
@@ -1200,6 +1201,7 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #isOffscreen()
    */
   public void draw() {
+    proscenium();
     popModelView();
     displayVisualHints();
     handlePickingBuffer();

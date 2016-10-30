@@ -28,8 +28,9 @@ void setup() {
   scene = new MyScene(this);
 }
 
-// Make sure to define the draw() method, even if it's empty.
+// Note that proscenium will be called at the end of draw
 void draw() {
+  background(0);
 }
 
 void keyPressed() {
@@ -62,7 +63,6 @@ class MyScene extends Scene {
 
   // Define here what is actually going to be drawn.
   public void proscenium() {
-    background(0);
     pushStyle();
     strokeWeight(3); // Default
     beginShape(POINTS);
