@@ -19,7 +19,7 @@ InteractiveFrame[] models;
 int mode = 2;
 
 void setup() {
-  size(700, 700, P3D);
+  size(900, 900, P3D);
   colorMode(HSB, 255);
   posns = new float[300];
   for (int i = 0; i<100; i++) {

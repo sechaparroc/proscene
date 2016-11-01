@@ -22,7 +22,7 @@ InteractiveFrame[] models;
 PFont font;
 
 public void setup() {
-  size(700, 700, P3D);
+  size(900, 900, P3D);
   font = loadFont("FreeSans-13.vlw");
   textFont(font);
   colorMode(HSB, 255);
@@ -34,9 +34,11 @@ public void setup() {
   }  
   graphics = createGraphics(width, height, P3D);  
   scene = new Scene(this, graphics);
+  scene.setAxesVisualHint(false);
+  scene.setGridVisualHint(false);
   models = new InteractiveFrame[100];
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveFrame(scene, boxShape());
+    models[i] = new InteractiveFrame(scene, shape());
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
   }
   scene.setRadius(1000);
@@ -58,11 +60,11 @@ public void setup() {
   pixelShader.set("xPixels", 100.0);
   pixelShader.set("yPixels", 100.0);
   
-  raysShader = loadShader("RaysFrag.glsl");
+  raysShader = loadShader("raysfrag.glsl");
   raysGraphics = createGraphics(width, height, P3D);
   raysGraphics.shader(raysShader);
   raysShader.set("lightPositionOnScreen", 0.5, 0.5);
-  raysShader.set("lightDirDOTviewDir", 0.3);
+  raysShader.set("lightDirDOTviewDir", 0.7);
   
   dofShader = loadShader("dof.glsl");  
   dofGraphics = createGraphics(width, height, P3D);
@@ -192,10 +194,15 @@ void drawText() {
   scene.endScreenDrawing();
 }
 
-PShape boxShape() {
-  PShape box = createShape(BOX, 60);
-  box.setFill(color(random(0,255), random(0,255), random(0,255)));
-  return box;
+PShape shape() {
+  PShape fig;
+  if (int(random(2))%2 == 0)
+    fig = createShape(BOX, 60);
+  else
+    fig = createShape(SPHERE, 30);
+  fig.setStroke(255);
+  fig.setFill(color(random(0,255), random(0,255), random(0,255)));
+  return fig;
 }
 
 void keyPressed() {

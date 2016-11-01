@@ -20,7 +20,7 @@ InteractiveFrame[] frames;
 int numCubes;
 
 public void setup() {
-  size(700, 700, P3D);
+  size(900, 900, P3D);
   colorMode(HSB, 255);
   numCubes = 100;
   posns = new float[numCubes * 3];
