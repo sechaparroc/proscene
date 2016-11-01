@@ -1136,9 +1136,9 @@ public class Scene extends AbstractScene implements PConstants {
    * <b>Note</b> that this method overloads
    * {@link remixlab.dandelion.core.AbstractScene#preDraw()} where a call to
    * {@link #displayVisualHints()} is done. Here, however, it needs to be bypassed for the
-   * PApplet.background() method not to hide the display of the {@link #visualHints()}. The
-   * {@link #displayVisualHints()} mostly happens then at the {@link #draw()} method, if
-   * the scene is on-screen, or at the {@link #endDraw()} if it is off-screen.
+   * PApplet.background() method not to hide the display of the {@link #visualHints()}.
+   * The {@link #displayVisualHints()} mostly happens then at the {@link #draw()} method,
+   * if the scene is on-screen, or at the {@link #endDraw()} if it is off-screen.
    * 
    * @see #postDraw()
    */
@@ -1186,10 +1186,10 @@ public class Scene extends AbstractScene implements PConstants {
   /**
    * Paint method which is called just after your {@code PApplet.draw()} method. Calls
    * {@link #proscenium()}, {@link #displayVisualHints()}, draws the scene into the
-   * {@link #pickingBuffer()} and {@link #postDraw()}. This method is registered at
-   * the PApplet and hence you don't need to call it. Only meaningful if the scene is
-   * on-screen (it the scene {@link #isOffscreen()} it even doesn't get registered at
-   * the PApplet.
+   * {@link #pickingBuffer()} and {@link #postDraw()}. This method is registered at the
+   * PApplet and hence you don't need to call it. Only meaningful if the scene is
+   * on-screen (it the scene {@link #isOffscreen()} it even doesn't get registered at the
+   * PApplet.
    * <p>
    * If {@link #isOffscreen()} does nothing.
    * 
@@ -1838,7 +1838,6 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #drawFrames(PGraphics)
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
    */
-  /// *
   public void drawFrames() {
     targetPGraphics = pg();
     traverseTree();
