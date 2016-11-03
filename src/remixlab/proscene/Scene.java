@@ -181,7 +181,6 @@ public class Scene extends AbstractScene implements PConstants {
   public Scene(PApplet p, PGraphics pg, int x, int y) {
     // 1. P5 objects
     parent = p;
-    // TODO decide me
     Profile.context = pApplet();
     mainPGgraphics = pg;
     offscreen = pg != p.g;
@@ -232,7 +231,7 @@ public class Scene extends AbstractScene implements PConstants {
     setLeftHanded();
     width = pg.width;
     height = pg.height;
-    // properly the eye which is a 3 step process:
+    // properly set the eye which is a 3 step process:
     eye = is3D() ? new Camera(this) : new Window(this);
     eye.setFrame(new InteractiveFrame(eye));
     setEye(eye());// calls showAll();
@@ -1345,7 +1344,7 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void display(PGraphics pgraphics) {
     if (!isOffscreen())
-      showOnlyOffScreenWarning("hasAutoFocus");
+      showOnlyOffScreenWarning("display");
     pApplet().image(pgraphics, originCorner().x(), originCorner().y());
     lastDisplay = pApplet().frameCount;
   }
@@ -1519,7 +1518,7 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public void enableAutoFocus(boolean flag) {
     if (!isOffscreen()) {
-      showOnlyOffScreenWarning("hasAutoFocus");
+      showOnlyOffScreenWarning("enableAutoFocus");
       return;
     }
     autofocus = flag;
@@ -1981,8 +1980,7 @@ public class Scene extends AbstractScene implements PConstants {
       throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
           + "endScreenDrawing() and they cannot be nested. Check your implementation!");
     startCoordCalls++;
-    p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in
-                                             // AbstractScene.bS
+    p.hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
     disableDepthTest(p);
     // if-else same as:
     // matrixHelper(p).beginScreenDrawing();

@@ -112,7 +112,7 @@ void setup() {
   scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
   iFrame.setMotionBinding(SN_ID, "translateRotateXYZ");
   // and the custom behavior to the right mouse button
-  iFrame.setMotionBinding(this, RIGHT, "customBehavior");
+  iFrame.setMotionBinding(RIGHT, "customBehavior");
 
   smooth();
 }
