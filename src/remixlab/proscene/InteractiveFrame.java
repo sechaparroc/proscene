@@ -38,7 +38,7 @@ import remixlab.util.HashCodeBuilder;
 import java.lang.reflect.Method;
 
 /**
- * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
+ * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link remixlab.bias.ext.Profile}
  * instance which allows {@link remixlab.bias.core.Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods). Refer to
@@ -115,7 +115,7 @@ public class InteractiveFrame extends GenericFrame {
 
  /**
   * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
-  * creates the frame {@link #profile()} and calls {@link #setDefaultMouseBindings()} and
+  * creates the frame {@link remixlab.bias.ext.Profile} and calls {@link #setDefaultMouseBindings()} and
   * {@link #setDefaultKeyBindings()}.
   *
   * @see #drawEye(PGraphics)
@@ -277,7 +277,7 @@ public class InteractiveFrame extends GenericFrame {
   fShape = new Shape(this);
   pShape = new Shape(this);
   highlight = HighlightingMode.FRONT_SHAPE;
-  setProfile(new Profile(this));
+  profile = new Profile(this);
   if (Scene.platform() == Platform.PROCESSING_DESKTOP)
    setDefaultMouseBindings();
   else
@@ -293,7 +293,7 @@ public class InteractiveFrame extends GenericFrame {
   fShape = new Shape(this);
   pShape = new Shape(this);
   highlight = HighlightingMode.FRONT_SHAPE;
-  setProfile(new Profile(this));
+  profile = new Profile(this);
   if (referenceFrame instanceof InteractiveFrame)
    this.profile.set(((InteractiveFrame) referenceFrame).profile);
   else {
@@ -307,7 +307,7 @@ public class InteractiveFrame extends GenericFrame {
 
  protected InteractiveFrame(InteractiveFrame otherFrame) {
   super(otherFrame);
-  setProfile(new Profile(this));
+  profile = new Profile(this);
   this.profile.set(otherFrame.profile);
   this.highlight = otherFrame.highlight;
   this.id = otherFrame.id;
@@ -342,7 +342,105 @@ public class InteractiveFrame extends GenericFrame {
   profile.handle(event);
  }
 
- // TODO low-level
+ // low-level
+
+ //TODO decide these two
+
+ /**
+  * Returns the frame {@link remixlab.bias.ext.Profile} instance.
+  */
+ /*
+ public Profile profile() {
+  return profile;
+ }
+ */
+
+ /**
+  * Sets the frame {@link remixlab.bias.ext.Profile} instance. Note that the
+  * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
+  *
+  * @see #setBindings(InteractiveFrame)
+  */
+ /*
+ public void setProfile(Profile p) {
+  if (p.grabber() == this)
+   profile = p;
+  else
+   System.out.println("Nothing done, profile grabber is different than this grabber");
+ }
+ */
+
+ /**
+  * Same as {@code profile.setBinding(shortcut, action)}.
+  *
+  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  */
+ public void setBinding(Shortcut shortcut, String action) {
+  profile.setBinding(shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.setBinding(object, shortcut, action)}.
+  *
+  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  */
+ public void setBinding(Object object, Shortcut shortcut, String action) {
+  profile.setBinding(object, shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.removeBinding(shortcut)}.
+  *
+  * @see remixlab.bias.ext.Profile##removeBinding(Shortcut)
+  */
+ public void removeBinding(Shortcut shortcut) {
+  profile.removeBinding(shortcut);
+ }
+
+ /**
+  * Same as {@code profile.removeBindings()}.
+  *
+  * @see remixlab.bias.ext.Profile#removeBindings()
+  */
+ public void removeBindings() {
+  profile.removeBindings();
+ }
+
+ /**
+  * Same as {@code profile.removeBindings(cls)}.
+  *
+  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  */
+ public void removeBindings(Class<? extends Shortcut> cls) {
+  profile.removeBindings(cls);
+ }
+
+ /**
+  * Same as {@code profile.info(cls)}.
+  *
+  * @see remixlab.bias.ext.Profile#info(Class)
+  */
+ public String info(Class<? extends Shortcut> cls) {
+  return profile.info(cls);
+ }
+
+ /**
+  * Same as {@code return profile.action(key)}.
+  *
+  * @see remixlab.bias.ext.Profile#action(Shortcut)
+  */
+ public String action(Shortcut key) {
+  return profile.action(key);
+ }
+
+ /**
+  * Same as {@code return profile.isActionBound(action)}.
+  *
+  * @see remixlab.bias.ext.Profile#isActionBound(String)
+  */
+ public boolean isActionBound(String action) {
+  return profile.isActionBound(action);
+ }
 
  // end low-level
 
@@ -662,33 +760,12 @@ public class InteractiveFrame extends GenericFrame {
  }
 
  /**
-  * Returns the frame {@link remixlab.bias.ext.Profile} instance.
-  */
- public Profile profile() {
-  return profile;
- }
-
- /**
-  * Sets the frame {@link remixlab.bias.ext.Profile} instance. Note that the
-  * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
-  *
-  * @see #setBindings(InteractiveFrame)
-  */
- public void setProfile(Profile p) {
-  if (p.grabber() == this)
-   profile = p;
-  else
-   System.out.println("Nothing done, profile grabber is different than this grabber");
- }
-
- /**
-  * Same as {@code profile.from(otherFrame.profile())}.
+  * Same as {@code profile.from(otherFrame.profile)}.
   *
   * @see remixlab.bias.ext.Profile#set(Profile)
-  * @see #setProfile(Profile)
   */
  public void setBindings(InteractiveFrame otherFrame) {
-  profile.set(otherFrame.profile());
+  profile.set(otherFrame.profile);
  }
 
  /**

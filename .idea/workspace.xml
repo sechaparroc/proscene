@@ -2,97 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0ee63eba-a7a4-4f67-9f63-5601668e5b8d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/data/rocket.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/p5_3x.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/proscene.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/style/proscene_code_style.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/data/rocket.mtl" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/data/rocket.obj" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/src/basics/BasicUse.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/src/frame/Box.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/src/frame/CajasOrientadas.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/src/frame/FrameInteraction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/src/frame/Sphere.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testing/testing.iml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.classpath" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.project" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TODO.md" afterPath="$PROJECT_DIR$/TODO.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/Demos/PostEffects/data/fxaa.glsl" afterPath="$PROJECT_DIR$/examples/Demos/PostEffects/data/fxaa.glsl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/build.properties" afterPath="$PROJECT_DIR$/resources/build.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/Agent.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/Agent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/BogusEvent.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/BogusEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/EventGrabberTuple.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/EventGrabberTuple.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/Grabber.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/Grabber.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/GrabberObject.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/GrabberObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/InputHandler.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/InputHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/core/Shortcut.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/core/Shortcut.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/ClickEvent.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/ClickEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/ClickShortcut.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/ClickShortcut.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/DOF1Event.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/DOF1Event.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/DOF2Event.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/DOF2Event.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/DOF3Event.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/DOF3Event.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/DOF6Event.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/DOF6Event.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/KeyboardEvent.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/KeyboardEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/KeyboardShortcut.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/KeyboardShortcut.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/MotionEvent.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/MotionEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/event/MotionShortcut.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/event/MotionShortcut.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/bias/ext/Profile.java" afterPath="$PROJECT_DIR$/src/remixlab/bias/ext/Profile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/AxisPlaneConstraint.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/AxisPlaneConstraint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/Constraint.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/Constraint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/EyeConstraint.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/EyeConstraint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/LocalConstraint.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/LocalConstraint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/WorldConstraint.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/constraint/WorldConstraint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/AbstractScene.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/AbstractScene.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/Camera.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/Camera.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/Eye.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/Eye.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/GenericFrame.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/GenericFrame.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/KeyFrameInterpolator.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/KeyFrameInterpolator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/MatrixHelper.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/MatrixHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/MatrixStackHelper.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/MatrixStackHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/Trackable.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/Trackable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/core/Window.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/core/Window.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Frame.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Frame.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Linkable.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Linkable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Mat.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Mat.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Point.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Point.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Quat.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Quat.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rect.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rect.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rot.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rotation.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Rotation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Vec.java" afterPath="$PROJECT_DIR$/src/remixlab/dandelion/geom/Vec.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/Animator.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/Animator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/AnimatorObject.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/AnimatorObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/SeqTimer.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/SeqTimer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/Taskable.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/Taskable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/Timer.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/Timer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/TimingHandler.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/TimingHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/fpstiming/TimingTask.java" afterPath="$PROJECT_DIR$/src/remixlab/fpstiming/TimingTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/DroidKeyAgent.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/DroidKeyAgent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/DroidTouchAgent.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/DroidTouchAgent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/GLMatrixHelper.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/GLMatrixHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/InteractiveFrame.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/InteractiveFrame.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/Java2DMatrixHelper.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/Java2DMatrixHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/KeyAgent.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/KeyAgent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/MouseAgent.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/MouseAgent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/NonSeqTimer.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/NonSeqTimer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/Scene.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/Scene.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/Shape.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/Shape.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/proscene/TouchProcessor.java" afterPath="$PROJECT_DIR$/src/remixlab/proscene/TouchProcessor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/Copyable.java" afterPath="$PROJECT_DIR$/src/remixlab/util/Copyable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/DoubleUtil.java" afterPath="$PROJECT_DIR$/src/remixlab/util/DoubleUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/EqualsBuilder.java" afterPath="$PROJECT_DIR$/src/remixlab/util/EqualsBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/FloatUtil.java" afterPath="$PROJECT_DIR$/src/remixlab/util/FloatUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/HashCodeBuilder.java" afterPath="$PROJECT_DIR$/src/remixlab/util/HashCodeBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/remixlab/util/Util.java" afterPath="$PROJECT_DIR$/src/remixlab/util/Util.java" />
     </list>
     <ignored path="proscene.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -116,11 +27,13 @@
       <file leaf-file-name="Scene.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/remixlab/proscene/Scene.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="1539" column="13" selection-start-line="1539" selection-start-column="13" selection-end-line="1539" selection-end-column="13" />
+            <state relative-caret-position="36">
+              <caret line="3434" column="1" selection-start-line="3434" selection-start-column="1" selection-end-line="3434" selection-end-column="24" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="imports" expanded="true" />
+                <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+                <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
               </folding>
             </state>
           </provider>
@@ -129,22 +42,25 @@
       <file leaf-file-name="InteractiveFrame.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/remixlab/proscene/InteractiveFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="352" column="23" selection-start-line="352" selection-start-column="23" selection-end-line="352" selection-end-column="23" />
+            <state relative-caret-position="-1476">
+              <caret line="346" column="24" selection-start-line="346" selection-start-column="24" selection-end-line="346" selection-end-column="24" />
               <folding>
-                <element signature="e#21672#21673#0" expanded="true" />
-                <element signature="e#21693#21694#0" expanded="true" />
+                <element signature="e#0#45982#0" expanded="true" />
+                <element signature="e#23810#23811#0" expanded="true" />
+                <element signature="e#23860#23861#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Profile.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/remixlab/bias/ext/Profile.java">
+      <file leaf-file-name="FrameInteraction.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testing/src/frame/FrameInteraction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="71" column="29" selection-start-line="71" selection-start-column="29" selection-end-line="71" selection-end-column="29" />
-              <folding />
+            <state relative-caret-position="252">
+              <caret line="37" column="42" selection-start-line="37" selection-start-column="42" selection-end-line="37" selection-end-column="42" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -170,12 +86,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/resources/build.properties" />
-        <option value="$PROJECT_DIR$/src/remixlab/proscene/Scene.java" />
         <option value="$PROJECT_DIR$/testing/src/basics/BasicUse.java" />
         <option value="$PROJECT_DIR$/testing/src/frame/Box.java" />
         <option value="$PROJECT_DIR$/testing/src/frame/Sphere.java" />
         <option value="$PROJECT_DIR$/testing/src/frame/CajasOrientadas.java" />
         <option value="$PROJECT_DIR$/testing/src/frame/FrameInteraction.java" />
+        <option value="$PROJECT_DIR$/src/remixlab/proscene/Scene.java" />
         <option value="$PROJECT_DIR$/src/remixlab/proscene/InteractiveFrame.java" />
       </list>
     </option>
@@ -293,8 +209,18 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="basics" />
+              <option name="myItemId" value="proscene" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proscene" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -649,12 +575,21 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="3200" height="1732" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -757,6 +692,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -766,8 +703,9 @@
         <state relative-caret-position="26640">
           <caret line="740" column="2" selection-start-line="740" selection-start-column="2" selection-end-line="740" selection-end-column="2" />
           <folding>
-            <element signature="e#21672#21673#0" expanded="true" />
-            <element signature="e#21693#21694#0" expanded="true" />
+            <element signature="e#0#45982#0" expanded="true" />
+            <element signature="e#23810#23811#0" expanded="true" />
+            <element signature="e#23860#23861#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -777,7 +715,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -797,6 +735,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -806,8 +746,9 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#21672#21673#0" expanded="true" />
-            <element signature="e#21693#21694#0" expanded="true" />
+            <element signature="e#0#45982#0" expanded="true" />
+            <element signature="e#23810#23811#0" expanded="true" />
+            <element signature="e#23860#23861#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -819,6 +760,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -830,6 +773,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -841,6 +786,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -859,6 +806,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -870,6 +819,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -895,6 +846,8 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -948,48 +901,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/remixlab/bias/ext/Profile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="71" column="29" selection-start-line="71" selection-start-column="29" selection-end-line="71" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testing/src/frame/FrameInteraction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#401#402#0" expanded="true" />
-            <element signature="e#433#434#0" expanded="true" />
-            <element signature="e#3201#3202#0" expanded="true" />
-            <element signature="e#3233#3234#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/testing/src/frame/Sphere.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#574#575#0" expanded="true" />
-            <element signature="e#591#592#0" expanded="true" />
-            <element signature="e#1063#1064#0" expanded="true" />
-            <element signature="e#1078#1079#0" expanded="true" />
-            <element signature="e#1199#1200#0" expanded="true" />
-            <element signature="e#1214#1215#0" expanded="true" />
-            <element signature="e#1241#1242#0" expanded="true" />
-            <element signature="e#1333#1334#0" expanded="true" />
-            <element signature="e#1367#1368#0" expanded="true" />
-            <element signature="e#1381#1382#0" expanded="true" />
-            <element signature="e#1418#1419#0" expanded="true" />
-            <element signature="e#1448#1449#0" expanded="true" />
-            <element signature="e#1477#1478#0" expanded="true" />
-            <element signature="e#1508#1509#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#574#575#0" expanded="false" />
+            <element signature="e#591#592#0" expanded="false" />
+            <element signature="e#1063#1064#0" expanded="false" />
+            <element signature="e#1078#1079#0" expanded="false" />
+            <element signature="e#1199#1200#0" expanded="false" />
+            <element signature="e#1214#1215#0" expanded="false" />
+            <element signature="e#1241#1242#0" expanded="false" />
+            <element signature="e#1333#1334#0" expanded="false" />
+            <element signature="e#1367#1368#0" expanded="false" />
+            <element signature="e#1381#1382#0" expanded="false" />
+            <element signature="e#1418#1419#0" expanded="false" />
+            <element signature="e#1448#1449#0" expanded="false" />
+            <element signature="e#1477#1478#0" expanded="false" />
+            <element signature="e#1508#1509#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -999,19 +930,19 @@
         <state relative-caret-position="2124">
           <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#661#662#0" expanded="true" />
-            <element signature="e#679#680#0" expanded="true" />
-            <element signature="e#1688#1689#0" expanded="true" />
-            <element signature="e#1703#1704#0" expanded="true" />
-            <element signature="e#1892#1893#0" expanded="true" />
-            <element signature="e#1906#1907#0" expanded="true" />
-            <element signature="e#1935#1936#0" expanded="true" />
-            <element signature="e#1966#1967#0" expanded="true" />
-            <element signature="e#2212#2213#0" expanded="true" />
-            <element signature="e#2242#2243#0" expanded="true" />
-            <element signature="e#2275#2276#0" expanded="true" />
-            <element signature="e#2315#2316#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#661#662#0" expanded="false" />
+            <element signature="e#679#680#0" expanded="false" />
+            <element signature="e#1688#1689#0" expanded="false" />
+            <element signature="e#1703#1704#0" expanded="false" />
+            <element signature="e#1892#1893#0" expanded="false" />
+            <element signature="e#1906#1907#0" expanded="false" />
+            <element signature="e#1935#1936#0" expanded="false" />
+            <element signature="e#1966#1967#0" expanded="false" />
+            <element signature="e#2212#2213#0" expanded="false" />
+            <element signature="e#2242#2243#0" expanded="false" />
+            <element signature="e#2275#2276#0" expanded="false" />
+            <element signature="e#2315#2316#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1033,6 +964,24 @@
         <state relative-caret-position="545">
           <caret line="48" column="2" selection-start-line="46" selection-start-column="1" selection-end-line="48" selection-end-column="2" />
           <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/remixlab/bias/ext/Profile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="42" column="13" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/src/frame/FrameInteraction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="37" column="42" selection-start-line="37" selection-start-column="42" selection-end-line="37" selection-end-column="42" />
+          <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1040,22 +989,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/remixlab/proscene/Scene.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="1539" column="13" selection-start-line="1539" selection-start-column="13" selection-end-line="1539" selection-end-column="13" />
+        <state relative-caret-position="36">
+          <caret line="3434" column="1" selection-start-line="3434" selection-start-column="1" selection-end-line="3434" selection-end-column="24" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+            <marker date="1479239482199" expanded="true" signature="107707:107712" ph=" { " />
+            <marker date="1479239482199" expanded="false" signature="107727:107730" ph=" }" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/remixlab/proscene/InteractiveFrame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="352" column="23" selection-start-line="352" selection-start-column="23" selection-end-line="352" selection-end-column="23" />
+        <state relative-caret-position="-1476">
+          <caret line="346" column="24" selection-start-line="346" selection-start-column="24" selection-end-line="346" selection-end-column="24" />
           <folding>
-            <element signature="e#21672#21673#0" expanded="true" />
-            <element signature="e#21693#21694#0" expanded="true" />
+            <element signature="e#0#45982#0" expanded="true" />
+            <element signature="e#23810#23811#0" expanded="true" />
+            <element signature="e#23860#23861#0" expanded="true" />
           </folding>
         </state>
       </provider>

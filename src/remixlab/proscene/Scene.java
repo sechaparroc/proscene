@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 
 /**
  * A 2D or 3D interactive, on-screen or off-screen, Processing Scene with a
- * {@link #profile()} instance which allows {@link remixlab.bias.core.Shortcut} to
+ * {@link remixlab.bias.ext.Profile} instance which allows {@link remixlab.bias.core.Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods). The Scene is a specialization of the
  * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion
@@ -208,7 +208,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   // 4. Create agents and register P5 methods
-  setProfile(new Profile(this));
+  profile = new Profile(this);
   initVKeys(platform() == Platform.PROCESSING_ANDROID ? android.view.KeyEvent.class : KeyEvent.class);
   if (platform() == Platform.PROCESSING_ANDROID) {
    defMotionAgent = new DroidTouchAgent(this);
@@ -888,7 +888,7 @@ public class Scene extends AbstractScene implements PConstants {
 
  @Override public String info() {
   String result = new String();
-  String info = profile().info();
+  String info = profile.info();
   if (!info.isEmpty()) {
    result = "1. Scene\n";
    result += info;
@@ -3209,24 +3209,6 @@ public class Scene extends AbstractScene implements PConstants {
   profile.handle(event);
  }
 
- /**
-  * Same as {@code return profile.action(key)}.
-  *
-  * @see remixlab.bias.ext.Profile#action(Shortcut)
-  */
- public String action(Shortcut key) {
-  return profile.action(key);
- }
-
- /**
-  * Same as {@code return profile.isActionBound(action)}.
-  *
-  * @see remixlab.bias.ext.Profile#isActionBound(String)
-  */
- public boolean isActionBound(String action) {
-  return profile.isActionBound(action);
- }
-
  // Key
 
  /**
@@ -3386,13 +3368,13 @@ public class Scene extends AbstractScene implements PConstants {
  }
 
  /**
-  * Same as {@code profile.from(otherScene.profile())}.
+  * Same as {@code profile.from(otherScene.profile)}.
   *
   * @see remixlab.bias.ext.Profile#set(Profile)
   * @see #setProfile(Profile)
   */
  public void setBindings(Scene otherScene) {
-  profile.set(otherScene.profile());
+  profile.set(otherScene.profile);
  }
 
  /**
@@ -3448,12 +3430,18 @@ public class Scene extends AbstractScene implements PConstants {
   setKeyBinding('3', "playPath3");
  }
 
+ // low-level
+
+ //TODO decide these two
+
  /**
   * Returns the frame {@link remixlab.bias.ext.Profile} instance.
   */
+ /*
  public Profile profile() {
   return profile;
  }
+ */
 
  /**
   * Sets the scene {@link remixlab.bias.ext.Profile} instance. Note that the
@@ -3461,10 +3449,84 @@ public class Scene extends AbstractScene implements PConstants {
   *
   * @see #setBindings(Scene)
   */
+ /*
  public void setProfile(Profile p) {
   if (p.grabber() == this)
    profile = p;
   else
    System.out.println("Nothing done, profile grabber is different than this scene");
+ }
+ */
+
+ /**
+  * Same as {@code profile.setBinding(shortcut, action)}.
+  *
+  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  */
+ public void setBinding(Shortcut shortcut, String action) {
+  profile.setBinding(shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.setBinding(object, shortcut, action)}.
+  *
+  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  */
+ public void setBinding(Object object, Shortcut shortcut, String action) {
+  profile.setBinding(object, shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.removeBinding(shortcut)}.
+  *
+  * @see remixlab.bias.ext.Profile##removeBinding(Shortcut)
+  */
+ public void removeBinding(Shortcut shortcut) {
+  profile.removeBinding(shortcut);
+ }
+
+ /**
+  * Same as {@code profile.removeBindings()}.
+  *
+  * @see remixlab.bias.ext.Profile#removeBindings()
+  */
+ public void removeBindings() {
+  profile.removeBindings();
+ }
+
+ /**
+  * Same as {@code profile.removeBindings(cls)}.
+  *
+  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  */
+ public void removeBindings(Class<? extends Shortcut> cls) {
+  profile.removeBindings(cls);
+ }
+
+ /**
+  * Same as {@code profile.info(cls)}.
+  *
+  * @see remixlab.bias.ext.Profile#info(Class)
+  */
+ public String info(Class<? extends Shortcut> cls) {
+  return profile.info(cls);
+ }
+
+ /**
+  * Same as {@code return profile.action(key)}.
+  *
+  * @see remixlab.bias.ext.Profile#action(Shortcut)
+  */
+ public String action(Shortcut key) {
+  return profile.action(key);
+ }
+
+ /**
+  * Same as {@code return profile.isActionBound(action)}.
+  *
+  * @see remixlab.bias.ext.Profile#isActionBound(String)
+  */
+ public boolean isActionBound(String action) {
+  return profile.isActionBound(action);
  }
 }
