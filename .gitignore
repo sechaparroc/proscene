@@ -1,5 +1,3 @@
-.classpath
 distribution
-/bin
-resources/build.properties
-resources/build.xml
+/out
+data/config.json
