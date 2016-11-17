@@ -3212,114 +3212,113 @@ public class Scene extends AbstractScene implements PConstants {
  // Key
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(vkey), methodName)}.
+  * Same as {@code setBinding(new KeyboardShortcut(vkey), methodName)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setKeyBinding(int vkey, String methodName) {
-  profile.setBinding(new KeyboardShortcut(vkey), methodName);
+  setBinding(new KeyboardShortcut(vkey), methodName);
  }
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(key), methodName)}.
+  * Same as {@code setBinding(new KeyboardShortcut(key), methodName)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setKeyBinding(char key, String methodName) {
-  profile.setBinding(new KeyboardShortcut(key), methodName);
+  setBinding(new KeyboardShortcut(key), methodName);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new KeyboardShortcut(vkey), methodName)}.
+  * Same as {@code setBinding(object, new KeyboardShortcut(vkey), methodName)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, int vkey, String methodName) {
-  profile.setBinding(object, new KeyboardShortcut(vkey), methodName);
+  setBinding(object, new KeyboardShortcut(vkey), methodName);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new KeyboardShortcut(key), methodName)}.
+  * Same as {@code setBinding(object, new KeyboardShortcut(key), methodName)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, char key, String methodName) {
-  profile.setBinding(object, new KeyboardShortcut(key), methodName);
+  setBinding(object, new KeyboardShortcut(key), methodName);
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(vkey))}.
+  * Same as {@code return hasBinding(new KeyboardShortcut(vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(int vkey) {
-  return profile.hasBinding(new KeyboardShortcut(vkey));
+  return hasBinding(new KeyboardShortcut(vkey));
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(key))}.
+  * Same as {@code return hasBinding(new KeyboardShortcut(key))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(char key) {
-  return profile.hasBinding(new KeyboardShortcut(key));
+  return hasBinding(new KeyboardShortcut(key));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new KeyboardShortcut(vkey))}.
+  * Same as {@code removeBinding(new KeyboardShortcut(vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(int vkey) {
-  profile.removeBinding(new KeyboardShortcut(vkey));
+  removeBinding(new KeyboardShortcut(vkey));
  }
 
  /**
-  * Same as {@code }.
+  * Same as {@code removeBinding(new KeyboardShortcut(key))}.
   *
-  * @see remixlab.bias.ext.Profile
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(char key) {
-  profile.removeBinding(new KeyboardShortcut(key));
+  removeBinding(new KeyboardShortcut(key));
  }
 
  //
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(mask, vkey), methodName)}.
+  * Same as {@code setBinding(new KeyboardShortcut(mask, vkey), methodName)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setKeyBinding(int mask, int vkey, String methodName) {
-  profile.setBinding(new KeyboardShortcut(mask, vkey), methodName);
+  setBinding(new KeyboardShortcut(mask, vkey), methodName);
  }
 
  /**
-  * Same as
-  * {@code profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName)} .
+  * Same as {@code setBinding(object, new KeyboardShortcut(mask, vkey), methodName)} .
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
-  profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+  setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(mask, vkey))} .
+  * Same as {@code return hasBinding(new KeyboardShortcut(mask, vkey))} .
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(int mask, int vkey) {
-  return profile.hasBinding(new KeyboardShortcut(mask, vkey));
+  return hasBinding(new KeyboardShortcut(mask, vkey));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new KeyboardShortcut(mask, vkey))}.
+  * Same as {@code removeBinding(new KeyboardShortcut(mask, vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(int mask, int vkey) {
-  profile.removeBinding(new KeyboardShortcut(mask, vkey));
+  removeBinding(new KeyboardShortcut(mask, vkey));
  }
 
  /**
@@ -3359,22 +3358,12 @@ public class Scene extends AbstractScene implements PConstants {
  }
 
  /**
-  * Same as {@code profile.removeBindings(KeyboardShortcut.class)}.
+  * Same as {@code removeBindings(KeyboardShortcut.class)}.
   *
-  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  * @see #removeBindings(Class)
   */
  public void removeKeyBindings() {
-  profile.removeBindings(KeyboardShortcut.class);
- }
-
- /**
-  * Same as {@code profile.from(otherScene.profile)}.
-  *
-  * @see remixlab.bias.ext.Profile#set(Profile)
-  * @see #setProfile(Profile)
-  */
- public void setBindings(Scene otherScene) {
-  profile.set(otherScene.profile);
+  removeBindings(KeyboardShortcut.class);
  }
 
  /**
@@ -3432,32 +3421,6 @@ public class Scene extends AbstractScene implements PConstants {
 
  // low-level
 
- //TODO decide these two
-
- /**
-  * Returns the frame {@link remixlab.bias.ext.Profile} instance.
-  */
- /*
- public Profile profile() {
-  return profile;
- }
- */
-
- /**
-  * Sets the scene {@link remixlab.bias.ext.Profile} instance. Note that the
-  * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
-  *
-  * @see #setBindings(Scene)
-  */
- /*
- public void setProfile(Profile p) {
-  if (p.grabber() == this)
-   profile = p;
-  else
-   System.out.println("Nothing done, profile grabber is different than this scene");
- }
- */
-
  /**
   * Same as {@code profile.setBinding(shortcut, action)}.
   *
@@ -3474,6 +3437,24 @@ public class Scene extends AbstractScene implements PConstants {
   */
  public void setBinding(Object object, Shortcut shortcut, String action) {
   profile.setBinding(object, shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.set(otherScene.profile)}.
+  *
+  * @see remixlab.bias.ext.Profile#set(Profile)
+  */
+ public void setBindings(Scene otherScene) {
+  profile.set(otherScene.profile);
+ }
+
+ /**
+  * Same as {@code return profile.hasBinding(shortcut)}.
+  *
+  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  */
+ public boolean hasBinding(Shortcut shortcut) {
+  return profile.hasBinding(shortcut);
  }
 
  /**
@@ -3529,4 +3510,6 @@ public class Scene extends AbstractScene implements PConstants {
  public boolean isActionBound(String action) {
   return profile.isActionBound(action);
  }
+
+ // end low-level
 }

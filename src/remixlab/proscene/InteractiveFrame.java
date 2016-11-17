@@ -344,32 +344,6 @@ public class InteractiveFrame extends GenericFrame {
 
  // low-level
 
- //TODO decide these two
-
- /**
-  * Returns the frame {@link remixlab.bias.ext.Profile} instance.
-  */
- /*
- public Profile profile() {
-  return profile;
- }
- */
-
- /**
-  * Sets the frame {@link remixlab.bias.ext.Profile} instance. Note that the
-  * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
-  *
-  * @see #setBindings(InteractiveFrame)
-  */
- /*
- public void setProfile(Profile p) {
-  if (p.grabber() == this)
-   profile = p;
-  else
-   System.out.println("Nothing done, profile grabber is different than this grabber");
- }
- */
-
  /**
   * Same as {@code profile.setBinding(shortcut, action)}.
   *
@@ -386,6 +360,24 @@ public class InteractiveFrame extends GenericFrame {
   */
  public void setBinding(Object object, Shortcut shortcut, String action) {
   profile.setBinding(object, shortcut, action);
+ }
+
+ /**
+  * Same as {@code profile.set(otherFrame.profile)}.
+  *
+  * @see remixlab.bias.ext.Profile#set(Profile)
+  */
+ public void setBindings(InteractiveFrame otherFrame) {
+  profile.set(otherFrame.profile);
+ }
+
+ /**
+  * Same as {@code return profile.hasBinding(shortcut)}.
+  *
+  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  */
+ public boolean hasBinding(Shortcut shortcut) {
+  return profile.hasBinding(shortcut);
  }
 
  /**
@@ -422,6 +414,13 @@ public class InteractiveFrame extends GenericFrame {
   */
  public String info(Class<? extends Shortcut> cls) {
   return profile.info(cls);
+ }
+
+ /**
+  * Returns a description of all the bindings this frame holds.
+  */
+ public String info() {
+  return profile.info();
  }
 
  /**
@@ -492,160 +491,159 @@ public class InteractiveFrame extends GenericFrame {
  // good for all dofs :P
 
  /**
-  * Same as {@code profile.setBinding(new MotionShortcut(id), action)}.
+  * Same as {@code setBinding(new MotionShortcut(id), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setMotionBinding(int id, String action) {
-  profile.setBinding(new MotionShortcut(id), action);
+  setBinding(new MotionShortcut(id), action);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new MotionShortcut(id), action)}.
+  * Same as {@code setBinding(object, new MotionShortcut(id), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setMotionBinding(Object object, int id, String action) {
-  profile.setBinding(object, new MotionShortcut(id), action);
+  setBinding(object, new MotionShortcut(id), action);
  }
 
  /**
   * Remove all motion bindings. Same as
-  * {@code profile.removeBindings(MotionShortcut.class)}.
+  * {@code removeBindings(MotionShortcut.class)}.
   *
-  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  * @see #removeBindings(Class)
   */
  public void removeMotionBindings() {
-  profile.removeBindings(MotionShortcut.class);
+  removeBindings(MotionShortcut.class);
  }
 
  /**
-  * Same as {@code profile.hasBinding(new MotionShortcut(id))}.
+  * Same as {@code hasBinding(new MotionShortcut(id))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasMotionBinding(int id) {
-  return profile.hasBinding(new MotionShortcut(id));
+  return hasBinding(new MotionShortcut(id));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new MotionShortcut(id))}.
+  * Same as {@code removeBinding(new MotionShortcut(id))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  * @see #removeBinding(Shortcut)
   */
  public void removeMotionBinding(int id) {
-  profile.removeBinding(new MotionShortcut(id));
+  removeBinding(new MotionShortcut(id));
  }
 
  // Key
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(vkey), action)}.
+  * Same as {@code setBinding(new KeyboardShortcut(vkey), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setKeyBinding(int vkey, String action) {
-  profile.setBinding(new KeyboardShortcut(vkey), action);
+  setBinding(new KeyboardShortcut(vkey), action);
  }
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(key), action)}.
+  * Same as {@code setBinding(new KeyboardShortcut(key), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(char key, String action) {
-  profile.setBinding(new KeyboardShortcut(key), action);
+  setBinding(new KeyboardShortcut(key), action);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new KeyboardShortcut(vkey), action)}.
+  * Same as {@code setBinding(object, new KeyboardShortcut(vkey), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, int vkey, String action) {
-  profile.setBinding(object, new KeyboardShortcut(vkey), action);
+  setBinding(object, new KeyboardShortcut(vkey), action);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new KeyboardShortcut(key), action)}.
+  * Same as {@code setBinding(object, new KeyboardShortcut(key), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, char key, String action) {
-  profile.setBinding(object, new KeyboardShortcut(key), action);
+  setBinding(object, new KeyboardShortcut(key), action);
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(vkey))}.
+  * Same as {@code return hasBinding(new KeyboardShortcut(vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(int vkey) {
-  return profile.hasBinding(new KeyboardShortcut(vkey));
+  return hasBinding(new KeyboardShortcut(vkey));
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(key))}.
+  * Same as {@code return hasBinding(new KeyboardShortcut(key))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(char key) {
-  return profile.hasBinding(new KeyboardShortcut(key));
+  return hasBinding(new KeyboardShortcut(key));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new KeyboardShortcut(vkey))}.
+  * Same as {@code removeBinding(new KeyboardShortcut(vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(int vkey) {
-  profile.removeBinding(new KeyboardShortcut(vkey));
+  removeBinding(new KeyboardShortcut(vkey));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new KeyboardShortcut(key))}.
+  * Same as {@code removeBinding(new KeyboardShortcut(key))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(char key) {
-  profile.removeBinding(new KeyboardShortcut(key));
+  removeBinding(new KeyboardShortcut(key));
  }
 
  /**
-  * Same as {@code profile.setBinding(new KeyboardShortcut(mask, vkey), action)}.
+  * Same as {@code setBinding(new KeyboardShortcut(mask, vkey), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setKeyBinding(int mask, int vkey, String action) {
-  profile.setBinding(new KeyboardShortcut(mask, vkey), action);
+  setBinding(new KeyboardShortcut(mask, vkey), action);
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new KeyboardShortcut(mask, vkey), action)}
-  * .
+  * Same as {@code setBinding(object, new KeyboardShortcut(mask, vkey), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+  * @see #setBinding(Object, Shortcut, String)
   */
  public void setKeyBinding(Object object, int mask, int vkey, String action) {
-  profile.setBinding(object, new KeyboardShortcut(mask, vkey), action);
+  setBinding(object, new KeyboardShortcut(mask, vkey), action);
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new KeyboardShortcut(mask, vkey))}.
+  * Same as {@code return hasBinding(new KeyboardShortcut(mask, vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasKeyBinding(int mask, int vkey) {
-  return profile.hasBinding(new KeyboardShortcut(mask, vkey));
+  return hasBinding(new KeyboardShortcut(mask, vkey));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new KeyboardShortcut(mask, vkey))}.
+  * Same as {@code removeBinding(new KeyboardShortcut(mask, vkey))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeKeyBinding(int mask, int vkey) {
-  profile.removeBinding(new KeyboardShortcut(mask, vkey));
+  removeBinding(new KeyboardShortcut(mask, vkey));
  }
 
  /**
@@ -686,95 +684,76 @@ public class InteractiveFrame extends GenericFrame {
 
  /**
   * Remove all key bindings. Same as
-  * {@code profile.removeBindings(KeyboardShortcut.class)}.
+  * {@code removeBindings(KeyboardShortcut.class)}.
   *
-  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  * @see #removeBindings(Class)
   */
  public void removeKeyBindings() {
-  profile.removeBindings(KeyboardShortcut.class);
+  removeBindings(KeyboardShortcut.class);
  }
 
  // click
 
  /**
-  * Same as {@code profile.setBinding(new ClickShortcut(id, count), action)}.
+  * Same as {@code setBinding(new ClickShortcut(id, count), action)}.
   *
-  * @see remixlab.bias.ext.Profile
+  * @see #setBinding(Shortcut, String)
   */
  public void setClickBinding(int id, int count, String action) {
   if (count > 0 && count < 4)
-   profile.setBinding(new ClickShortcut(id, count), action);
+   setBinding(new ClickShortcut(id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
 
  /**
-  * Same as {@code profile.setBinding(object, new ClickShortcut(id, count), action)}.
+  * Same as {@code setBinding(object, new ClickShortcut(id, count), action)}.
   *
-  * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+  * @see #setBinding(Shortcut, String)
   */
  public void setClickBinding(Object object, int id, int count, String action) {
   if (count > 0 && count < 4)
-   profile.setBinding(object, new ClickShortcut(id, count), action);
+   setBinding(object, new ClickShortcut(id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
 
  /**
-  * Same as {@code return profile.hasBinding(new ClickShortcut(id, count))}.
+  * Same as {@code return hasBinding(new ClickShortcut(id, count))}.
   *
-  * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+  * @see #hasBinding(Shortcut)
   */
  public boolean hasClickBinding(int id, int count) {
-  return profile.hasBinding(new ClickShortcut(id, count));
+  return hasBinding(new ClickShortcut(id, count));
  }
 
  /**
-  * Same as {@code profile.removeBinding(new ClickShortcut(id, count))}.
+  * Same as {@code removeBinding(new ClickShortcut(id, count))}.
   *
-  * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+  * @see #removeBinding(Shortcut)
   */
  public void removeClickBinding(int id, int count) {
-  profile.removeBinding(new ClickShortcut(id, count));
+  removeBinding(new ClickShortcut(id, count));
  }
 
  /**
-  * Same as
-  * {@code for (int i = 1; i < 4; i++) profile.removeBinding(new ClickShortcut(id, i))}.
+  * Same as {@code for (int i = 1; i < 4; i++) removeBinding(new ClickShortcut(id, i))}.
   *
-  * @param id
+  * @see #removeBinding(Shortcut)
   */
  public void removeClickBinding(int id) {
   for (int i = 1; i < 4; i++)
-   profile.removeBinding(new ClickShortcut(id, i));
+   removeBinding(new ClickShortcut(id, i));
  }
 
  /**
-  * Remove all click bindings. Same as
-  * {@code profile.removeBindings(ClickShortcut.class)}.
+  * Remove all click bindings. Same as {@code removeBindings(ClickShortcut.class)}.
   *
-  * @see remixlab.bias.ext.Profile#removeBindings(Class)
+  * @see #removeBindings(Class)
   */
  public void removeClickBindings() {
-  profile.removeBindings(ClickShortcut.class);
+  removeBindings(ClickShortcut.class);
  }
-
- /**
-  * Same as {@code profile.from(otherFrame.profile)}.
-  *
-  * @see remixlab.bias.ext.Profile#set(Profile)
-  */
- public void setBindings(InteractiveFrame otherFrame) {
-  profile.set(otherFrame.profile);
- }
-
- /**
-  * Returns a description of all the bindings this frame holds.
-  */
- public String info() {
-  return profile.info();
- }
-
  /**
   * Calls {@link #setWorldMatrix(Frame)}, {@link #setBindings(InteractiveFrame)}, and
   * {@link #setShape(InteractiveFrame)} on the other frame instance.
@@ -1108,6 +1087,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setFrontShape(PShape)
   * @see #setPickingShape(PShape)
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setShape(PShape ps) {
   setFrontShape(ps);
@@ -1126,6 +1106,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #resetFrontShape()
   * @see #setPickingShape(PShape)
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setFrontShape(PShape ps) {
   fShape.set(ps);
@@ -1143,6 +1124,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetPickingShape()
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setPickingShape(PShape ps) {
   pShape.set(ps);
@@ -1159,6 +1141,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setFrontShape(InteractiveFrame)
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setShape(InteractiveFrame otherFrame) {
   setFrontShape(otherFrame);
@@ -1176,6 +1159,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #resetFrontShape()
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setFrontShape(InteractiveFrame otherFrame) {
   fShape.set(otherFrame.fShape);
@@ -1193,6 +1177,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetPickingShape()
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void setPickingShape(InteractiveFrame otherFrame) {
   pShape.set(otherFrame.pShape);
@@ -1209,6 +1194,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #resetFrontShape()
   * @see #resetPickingShape()
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void resetShape() {
   resetFrontShape();
@@ -1225,6 +1211,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setFrontShape(InteractiveFrame)
   * @see #resetPickingShape()
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void resetFrontShape() {
   fShape.reset();
@@ -1240,10 +1227,62 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setPickingShape(String)
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetShape()
+  * @see #isShapeReset()
   */
  public void resetPickingShape() {
   pShape.reset();
   updatePickingBufferCache();
+ }
+
+ /**
+  * Same as {@code return isFrontShapeReset() && isPickingShapeReset();}.
+  *
+  * @see #resetShape()
+  * @see #resetFrontShape()
+  * @see #setPickingShape(PShape)
+  * @see #setPickingShape(Object, String)
+  * @see #setPickingShape(String)
+  * @see #setPickingShape(InteractiveFrame)
+  * @see #resetShape()
+  * @see #isFrontShapeReset()
+  * @see #isPickingShapeReset()
+  */
+ public boolean isShapeReset() {
+  return isFrontShapeReset() && isPickingShapeReset();
+ }
+
+ /**
+  * Returns {@code true} if the front-shape has not been set (or has been reset) and {@code false} otherwise.
+  *
+  * @see #resetShape()
+  * @see #resetFrontShape()
+  * @see #setPickingShape(PShape)
+  * @see #setPickingShape(Object, String)
+  * @see #setPickingShape(String)
+  * @see #setPickingShape(InteractiveFrame)
+  * @see #resetShape()
+  * @see #isShapeReset()
+  * @see #isPickingShapeReset()
+  */
+ public boolean isFrontShapeReset() {
+  return fShape.isReset();
+ }
+
+ /**
+  * Returns {@code true} if the picking-shape has not been set (or has been reset) and {@code false} otherwise.
+  *
+  * @see #resetShape()
+  * @see #resetFrontShape()
+  * @see #setPickingShape(PShape)
+  * @see #setPickingShape(Object, String)
+  * @see #setPickingShape(String)
+  * @see #setPickingShape(InteractiveFrame)
+  * @see #resetShape()
+  * @see #isShapeReset()
+  * @see #isFrontShapeReset() 
+  */
+ public boolean isPickingShapeReset() {
+  return pShape.isReset();
  }
 
  /**
