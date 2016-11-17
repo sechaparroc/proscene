@@ -1234,6 +1234,8 @@ public class InteractiveFrame extends GenericFrame {
   updatePickingBufferCache();
  }
 
+ // TODO decide whether to include isReset
+
  /**
   * Same as {@code return isFrontShapeReset() && isPickingShapeReset();}.
   *
@@ -1279,11 +1281,13 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setPickingShape(InteractiveFrame)
   * @see #resetShape()
   * @see #isShapeReset()
-  * @see #isFrontShapeReset() 
+  * @see #isFrontShapeReset()
   */
  public boolean isPickingShapeReset() {
   return pShape.isReset();
  }
+
+ // end decide
 
  /**
   * Same as {@code setFrontShape(methodName); setPickingShape(methodName);}.
