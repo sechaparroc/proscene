@@ -157,10 +157,10 @@ public class MouseAgent extends Agent {
 
  /**
   * Internal use. Other Agents should follow a similar pattern: 1. Register some motion
-  * ids within the Profile; and, 2. Define the default bindings on the frame parameter.
+  * ids within the MotionShortcut; and, 2. Define the default bindings on the frame parameter.
   *
-  * @see remixlab.bias.ext.Profile#registerMotionID(int)
-  * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
+  * @see remixlab.bias.event.MotionShortcut#registerID(int, String)
+  * @see remixlab.bias.event.MotionShortcut#registerID(int, int, String)
   */
  protected void setDefaultBindings(InteractiveFrame frame) {
   frame.removeMotionBindings();
