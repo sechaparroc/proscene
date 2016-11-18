@@ -10,6 +10,7 @@
 
 package remixlab.proscene;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.*;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -3420,6 +3421,38 @@ public class Scene extends AbstractScene implements PConstants {
  }
 
  // low-level
+
+ /**
+  * Convenience function that simply returns {@code p5MouseIDModifiersFix(B_NOMODIFIER_MASK, button)}.
+  *
+  * @see #p5MouseIDModifiersFix(int, int)
+  */
+ public int p5MouseIDModifiersFix(int id) {
+  return p5MouseIDModifiersFix(BogusEvent.NO_MODIFIER_MASK, id);
+ }
+
+ /**
+  * Hack to fix <a href="https://github.com/processing/processing/issues/1693">Processing MouseEvent.getModifiers()
+  * issue</a>
+  *
+  * @param m
+  *          original Processing modifiers mask
+  * @param id
+  *          original Processing button
+  * @return fixed mask
+  */
+ public int p5MouseIDModifiersFix(int m, int id) {
+  int mask = m;
+  // ALT
+  if (id == PApplet.CENTER)
+   mask = (BogusEvent.ALT | m);
+   // META
+  else if (id == PApplet.RIGHT)
+   mask = (BogusEvent.META | m);
+  // original was:
+  // return mask;
+  return pg() instanceof PGraphicsJava2D ? mask : m;
+ }
 
  /**
   * Same as {@code profile.setBinding(shortcut, action)}.

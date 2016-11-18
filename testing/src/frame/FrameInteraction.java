@@ -34,7 +34,7 @@ public class FrameInteraction extends PApplet {
   // Thanks to the Processing Foundation for providing the rocket shape
   frame2 = new InteractiveFrame(scene, loadShape("testing/data/rocket.obj"));
   frame2.scale(0.2f);
-  frame2.setMotionBinding(LEFT, "translate");
+  frame2.setMotionBinding((Event.SHIFT | Event.CTRL), LEFT, "translate");
   frame2.setMotionBinding(RIGHT, "scale");
   frame2.setKeyBinding('u', "translateXPos");
   frame2.setKeyBinding(UP, "translateZPos");

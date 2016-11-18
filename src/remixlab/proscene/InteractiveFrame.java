@@ -15,7 +15,6 @@
 
 package remixlab.proscene;
 
-import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
@@ -490,46 +489,14 @@ public class InteractiveFrame extends GenericFrame {
  }
 
  // good for all dofs :P
-
- /**
-  * Convenience function that simply returns {@code p5MouseIDModifiersFix(B_NOMODIFIER_MASK, button)}.
-  *
-  * @see #p5MouseIDModifiersFix(int, int)
-  */
- protected int p5MouseIDModifiersFix(int id) {
-  return p5MouseIDModifiersFix(BogusEvent.NO_MODIFIER_MASK, id);
- }
-
- /**
-  * Hack to fix <a href="https://github.com/processing/processing/issues/1693">Processing MouseEvent.getModifiers()
-  * issue</a>
-  *
-  * @param m
-  *          original Processing modifiers mask
-  * @param id
-  *          original Processing button
-  * @return fixed mask
-  */
- protected int p5MouseIDModifiersFix(int m, int id) {
-  int mask = m;
-  // ALT
-  if (id == PApplet.CENTER)
-   mask = (BogusEvent.ALT | m);
-   // META
-  else if (id == PApplet.RIGHT)
-   mask = (BogusEvent.META | m);
-  // original was:
-  // return mask;
-  return scene().pg() instanceof PGraphicsJava2D ? mask : m;
- }
-
+ 
  /**
   * Same as {@code setBinding(new MotionShortcut(id), action)}.
   *
   * @see #setBinding(Shortcut, String)
   */
  public void setMotionBinding(int id, String action) {
-  setBinding(new MotionShortcut(p5MouseIDModifiersFix(id), id), action);
+  setBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(id), id), action);
  }
 
  /**
@@ -538,7 +505,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setBinding(Shortcut, String)
   */
  public void setMotionBinding(int m, int id, String action) {
-  setBinding(new MotionShortcut(p5MouseIDModifiersFix(m, id), id), action);
+  setBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(m, id), id), action);
  }
 
  /**
@@ -547,7 +514,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setBinding(Object, Shortcut, String)
   */
  public void setMotionBinding(Object object, int id, String action) {
-  setBinding(object, new MotionShortcut(p5MouseIDModifiersFix(id), id), action);
+  setBinding(object, new MotionShortcut(scene().p5MouseIDModifiersFix(id), id), action);
  }
 
  /**
@@ -556,7 +523,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #setBinding(Object, Shortcut, String)
   */
  public void setMotionBinding(Object object, int m, int id, String action) {
-  setBinding(object, new MotionShortcut(p5MouseIDModifiersFix(m, id), id), action);
+  setBinding(object, new MotionShortcut(scene().p5MouseIDModifiersFix(m, id), id), action);
  }
 
  /**
@@ -574,7 +541,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #hasBinding(Shortcut)
   */
  public boolean hasMotionBinding(int id) {
-  return hasBinding(new MotionShortcut(p5MouseIDModifiersFix(id), id));
+  return hasBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(id), id));
  }
 
  /**
@@ -583,7 +550,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #hasBinding(Shortcut)
   */
  public boolean hasMotionBinding(int m, int id) {
-  return hasBinding(new MotionShortcut(p5MouseIDModifiersFix(m, id), id));
+  return hasBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(m, id), id));
  }
 
  /**
@@ -592,7 +559,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #removeBinding(Shortcut)
   */
  public void removeMotionBinding(int id) {
-  removeBinding(new MotionShortcut(p5MouseIDModifiersFix(id), id));
+  removeBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(id), id));
  }
 
  /**
@@ -601,7 +568,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #removeBinding(Shortcut)
   */
  public void removeMotionBinding(int m, int id) {
-  removeBinding(new MotionShortcut(p5MouseIDModifiersFix(m, id), id));
+  removeBinding(new MotionShortcut(scene().p5MouseIDModifiersFix(m, id), id));
  }
 
  // Key
@@ -769,7 +736,7 @@ public class InteractiveFrame extends GenericFrame {
   */
  public void setClickBinding(int id, int count, String action) {
   if (count > 0 && count < 4)
-   setBinding(new ClickShortcut(p5MouseIDModifiersFix(id), id, count), action);
+   setBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(id), id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
@@ -781,7 +748,7 @@ public class InteractiveFrame extends GenericFrame {
   */
  public void setClickBinding(int m, int id, int count, String action) {
   if (count > 0 && count < 4)
-   setBinding(new ClickShortcut(p5MouseIDModifiersFix(m, id), id, count), action);
+   setBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(m, id), id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
@@ -793,7 +760,7 @@ public class InteractiveFrame extends GenericFrame {
   */
  public void setClickBinding(Object object, int id, int count, String action) {
   if (count > 0 && count < 4)
-   setBinding(object, new ClickShortcut(p5MouseIDModifiersFix(id), id, count), action);
+   setBinding(object, new ClickShortcut(scene().p5MouseIDModifiersFix(id), id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
@@ -805,7 +772,7 @@ public class InteractiveFrame extends GenericFrame {
   */
  public void setClickBinding(Object object, int m, int id, int count, String action) {
   if (count > 0 && count < 4)
-   setBinding(object, new ClickShortcut(p5MouseIDModifiersFix(m, id), id, count), action);
+   setBinding(object, new ClickShortcut(scene().p5MouseIDModifiersFix(m, id), id, count), action);
   else
    System.out.println("Warning no click binding set! Count should be between 1 and 3");
  }
@@ -816,7 +783,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #hasBinding(Shortcut)
   */
  public boolean hasClickBinding(int id, int count) {
-  return hasBinding(new ClickShortcut(p5MouseIDModifiersFix(id), id, count));
+  return hasBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(id), id, count));
  }
 
  /**
@@ -825,7 +792,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #hasBinding(Shortcut)
   */
  public boolean hasClickBinding(int m, int id, int count) {
-  return hasBinding(new ClickShortcut(p5MouseIDModifiersFix(m, id), id, count));
+  return hasBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(m, id), id, count));
  }
 
  /**
@@ -834,7 +801,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #removeBinding(Shortcut)
   */
  public void removeClickBinding(int id, int count) {
-  removeBinding(new ClickShortcut(p5MouseIDModifiersFix(id), id, count));
+  removeBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(id), id, count));
  }
 
  /**
@@ -843,7 +810,7 @@ public class InteractiveFrame extends GenericFrame {
   * @see #removeBinding(Shortcut)
   */
  public void removeClickBinding(int m, int id, int count) {
-  removeBinding(new ClickShortcut(p5MouseIDModifiersFix(m, id), id, count));
+  removeBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(m, id), id, count));
  }
 
  /**
@@ -854,7 +821,7 @@ public class InteractiveFrame extends GenericFrame {
  @Deprecated
  public void removeClickBinding(int id) {
   for (int i = 1; i < 4; i++)
-   removeBinding(new ClickShortcut(p5MouseIDModifiersFix(id), id, i));
+   removeBinding(new ClickShortcut(scene().p5MouseIDModifiersFix(id), id, i));
  }
 
  /**
