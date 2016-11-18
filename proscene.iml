@@ -11,11 +11,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$USER_HOME$/software/devel/libs/android" />
+          <root url="file://$USER_HOME$/.lib/android" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/software/devel/libs/android" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/.lib/android" recursive="false" />
       </library>
     </orderEntry>
   </component>
