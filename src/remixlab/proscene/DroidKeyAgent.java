@@ -20,34 +20,34 @@ import remixlab.bias.event.KeyboardEvent;
  * {@link remixlab.bias.core.Agent}.
  */
 public class DroidKeyAgent extends Agent {
- protected Scene scene;
- protected KeyboardEvent currentEvent;
+  protected Scene scene;
+  protected KeyboardEvent currentEvent;
 
- public DroidKeyAgent(Scene scn) {
-  super(scn.inputHandler());
-  scene = scn;
-  addGrabber(scene);
- }
-
- /**
-  * Processing keyEvent method to be registered at the PApplet's instance.
-  */
- public void keyEvent(processing.event.KeyEvent e) {
-  if (e.getAction() == processing.event.KeyEvent.PRESS) {
-   if (e.getKeyCode() == android.view.KeyEvent.KEYCODE_VOLUME_UP) {
-    Object context = scene.pApplet().getSurface();
-    InputMethodManager imm = (InputMethodManager) ((Context) context).getSystemService(Context.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(0, 0);
-   } else {
-    currentEvent = new KeyboardEvent(e.getKey());
-    updateTrackedGrabber(currentEvent);
-    handle(currentEvent);
-   }
+  public DroidKeyAgent(Scene scn) {
+    super(scn.inputHandler());
+    scene = scn;
+    addGrabber(scene);
   }
- }
 
- // TODO pending
- public static int keyCode(char key) {
-  return key;
- }
+  /**
+   * Processing keyEvent method to be registered at the PApplet's instance.
+   */
+  public void keyEvent(processing.event.KeyEvent e) {
+    if (e.getAction() == processing.event.KeyEvent.PRESS) {
+      if (e.getKeyCode() == android.view.KeyEvent.KEYCODE_VOLUME_UP) {
+        Object context = scene.pApplet().getSurface();
+        InputMethodManager imm = (InputMethodManager) ((Context) context).getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, 0);
+      } else {
+        currentEvent = new KeyboardEvent(e.getKey());
+        updateTrackedGrabber(currentEvent);
+        handle(currentEvent);
+      }
+    }
+  }
+
+  // TODO pending
+  public static int keyCode(char key) {
+    return key;
+  }
 }
