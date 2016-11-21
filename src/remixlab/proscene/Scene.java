@@ -2295,58 +2295,58 @@ public class Scene extends AbstractScene implements PConstants {
     if (is2D()) {
       // The X
       pg.stroke(200, 0, 0);
-      vertex(charShift + charWidth, -charHeight);
-      vertex(charShift - charWidth, charHeight);
-      vertex(charShift - charWidth, -charHeight);
-      vertex(charShift + charWidth, charHeight);
+      pg.vertex(charShift + charWidth, -charHeight);
+      pg.vertex(charShift - charWidth, charHeight);
+      pg.vertex(charShift - charWidth, -charHeight);
+      pg.vertex(charShift + charWidth, charHeight);
 
       // The Y
       charShift *= 1.02;
       pg.stroke(0, 200, 0);
-      vertex(charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
-      vertex(0.0f, charShift + 0.0f);
-      vertex(-charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
-      vertex(0.0f, charShift + 0.0f);
-      vertex(0.0f, charShift + 0.0f);
-      vertex(0.0f, charShift + -(isRightHanded() ? charHeight : -charHeight));
+      pg.vertex(charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
+      pg.vertex(0.0f, charShift + 0.0f);
+      pg.vertex(-charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
+      pg.vertex(0.0f, charShift + 0.0f);
+      pg.vertex(0.0f, charShift + 0.0f);
+      pg.vertex(0.0f, charShift + -(isRightHanded() ? charHeight : -charHeight));
     } else {
       // The X
       pg.stroke(200, 0, 0);
-      vertex(charShift, charWidth, -charHeight);
-      vertex(charShift, -charWidth, charHeight);
-      vertex(charShift, -charWidth, -charHeight);
-      vertex(charShift, charWidth, charHeight);
+      pg.vertex(charShift, charWidth, -charHeight);
+      pg.vertex(charShift, -charWidth, charHeight);
+      pg.vertex(charShift, -charWidth, -charHeight);
+      pg.vertex(charShift, charWidth, charHeight);
       // The Y
       pg.stroke(0, 200, 0);
-      vertex(charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
-      vertex(0.0f, charShift, 0.0f);
-      vertex(-charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
-      vertex(0.0f, charShift, 0.0f);
-      vertex(0.0f, charShift, 0.0f);
-      vertex(0.0f, charShift, -(isLeftHanded() ? charHeight : -charHeight));
+      pg.vertex(charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
+      pg.vertex(0.0f, charShift, 0.0f);
+      pg.vertex(-charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
+      pg.vertex(0.0f, charShift, 0.0f);
+      pg.vertex(0.0f, charShift, 0.0f);
+      pg.vertex(0.0f, charShift, -(isLeftHanded() ? charHeight : -charHeight));
       // The Z
       pg.stroke(0, 100, 200);
-      vertex(-charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
-      vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
-      vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
-      vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
-      vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
-      vertex(charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
+      pg.vertex(-charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+      pg.vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+      pg.vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+      pg.vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
+      pg.vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
+      pg.vertex(charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
     }
     pg.endShape();
     pg.popStyle();
 
     // X Axis
     pg.stroke(200, 0, 0);
-    line(0, 0, 0, length, 0, 0);
+    pg.line(0, 0, 0, length, 0, 0);
     // Y Axis
     pg.stroke(0, 200, 0);
-    line(0, 0, 0, 0, length, 0);
+    pg.line(0, 0, 0, 0, length, 0);
 
     // Z Axis
     if (is3D()) {
       pg.stroke(0, 100, 200);
-      line(0, 0, 0, 0, 0, length);
+      pg.line(0, 0, 0, 0, 0, length);
     }
     pg.popStyle();
   }
