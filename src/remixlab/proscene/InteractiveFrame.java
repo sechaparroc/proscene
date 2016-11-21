@@ -359,11 +359,12 @@ public class InteractiveFrame extends GenericFrame {
    * @return shortcut fixed
    */
   protected Shortcut p5Java2DModifiersFix(Shortcut shortcut) {
-    if ((shortcut instanceof MotionShortcut || shortcut instanceof ClickShortcut) && scene().pg() instanceof PGraphicsJava2D && (shortcut.id() == PApplet.CENTER || shortcut.id() == PApplet.RIGHT))
-      if (shortcut instanceof MotionShortcut)
-        shortcut = new MotionShortcut(shortcut.id() == PApplet.CENTER ? (BogusEvent.ALT | shortcut.modifiers()) : (BogusEvent.META | shortcut.modifiers()), shortcut.id());
-      else
-        shortcut = new ClickShortcut(shortcut.id() == PApplet.CENTER ? (BogusEvent.ALT | shortcut.modifiers()) : (BogusEvent.META | shortcut.modifiers()), shortcut.id(), ((ClickShortcut) shortcut).clickCount());
+    if (Scene.platform() == Platform.PROCESSING_DESKTOP)
+      if ((shortcut instanceof MotionShortcut || shortcut instanceof ClickShortcut) && scene().pg() instanceof PGraphicsJava2D && (shortcut.id() == PApplet.CENTER || shortcut.id() == PApplet.RIGHT))
+        if (shortcut instanceof MotionShortcut)
+          shortcut = new MotionShortcut(shortcut.id() == PApplet.CENTER ? (BogusEvent.ALT | shortcut.modifiers()) : (BogusEvent.META | shortcut.modifiers()), shortcut.id());
+        else
+          shortcut = new ClickShortcut(shortcut.id() == PApplet.CENTER ? (BogusEvent.ALT | shortcut.modifiers()) : (BogusEvent.META | shortcut.modifiers()), shortcut.id(), ((ClickShortcut) shortcut).clickCount());
     return shortcut;
   }
 
