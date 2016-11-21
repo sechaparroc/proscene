@@ -1161,8 +1161,19 @@ public class InteractiveFrame extends GenericFrame {
             fShape.draw(pg);
             break;
         }
-      } else
+      } else { // pg == pickingBuffer
+        if(fShape.isRetained())
+          pg.shapeMode(scene().pg().shapeMode);
+        /*
+        // workaround but only works if modes don't change more than once within the graphics procedure
+        // best practice would be to set rect and ellipse mode within the graphics procedure
+        else {
+          pg.rectMode(scene().pg().rectMode);
+          pg.ellipseMode(scene().pg().ellipseMode);
+        }
+        //*/
         pShape.draw(pg);
+      }
       pg.popMatrix();
     }
     pg.popStyle();

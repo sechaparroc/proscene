@@ -177,7 +177,7 @@ class Shape {
       try {
         if (iFrame.isEyeFrame()) {
           System.out.println(
-              "Warning: not shape set! Check the existance of one of the following method prototypes: " + prototypes(object,
+              "Warning: not shape set! Check the existence of one of the following method prototypes: " + prototypes(object,
                   methodName));
           return false;
         }
@@ -185,7 +185,7 @@ class Shape {
         success = true;
       } catch (Exception e2) {
         System.out.println(
-            "Warning: not shape set! Check the existance of one of the following method prototypes: " + prototypes(object,
+            "Warning: not shape set! Check the existence of one of the following method prototypes: " + prototypes(object,
                 methodName));
       }
     }
@@ -239,7 +239,7 @@ class Shape {
               success = true;
             } catch (Exception e5) {
               System.out.println(
-                  "Warning: not shape set! Check the existance of one of the following method prototypes: " + prototypes(
+                  "Warning: not shape set! Check the existence of one of the following method prototypes: " + prototypes(
                       iFrame.scene().pApplet(), methodName) + ", " + prototypes(iFrame, methodName) + ", " + prototypes(
                       iFrame.scene(), methodName)
                       + ". Or, if your shape lies within a different object, use setShape(Object object, String methodName) instead.");

@@ -134,6 +134,12 @@ public class FrameInteraction extends PApplet {
         scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
         scene.eyeFrame().removeMotionBinding(LEFT);
       }
+    if(key == 'u') {
+      if(scene.pg().shapeMode == CORNER)
+        scene.pg().shapeMode(CENTER);
+      else
+        scene.pg().shapeMode(CORNER);
+    }
     // set the default grabber at both the scene.motionAgent() and the scene.keyAgent()
     if (key == 'v') {
       scene.inputHandler().setDefaultGrabber(frame1);

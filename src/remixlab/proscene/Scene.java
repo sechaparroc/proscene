@@ -2338,10 +2338,16 @@ public class Scene extends AbstractScene implements PConstants {
 
     // X Axis
     pg.stroke(200, 0, 0);
-    pg.line(0, 0, 0, length, 0, 0);
+    if (is2D())
+      pg.line(0, 0, length, 0);
+    else
+      pg.line(0, 0, 0, length, 0, 0);
     // Y Axis
     pg.stroke(0, 200, 0);
-    pg.line(0, 0, 0, 0, length, 0);
+    if (is2D())
+      pg.line(0, 0, 0, length);
+    else
+      pg.line(0, 0, 0, 0, length, 0);
 
     // Z Axis
     if (is3D()) {

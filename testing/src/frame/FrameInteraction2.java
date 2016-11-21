@@ -1,6 +1,7 @@
 package frame;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.event.Event;
 import remixlab.bias.event.MotionShortcut;
 import remixlab.proscene.InteractiveFrame;
@@ -13,12 +14,13 @@ import remixlab.proscene.Scene;
 public class FrameInteraction2 extends PApplet {
   Scene scene;
   InteractiveFrame frame1, frame2;
+  boolean corner = true;
 
   //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-  String renderer = JAVA2D;
+  String renderer = P2D;
 
   public void settings() {
-    size(1024, 768, renderer);
+    size(600, 600, renderer);
   }
 
   public void setup() {
@@ -33,7 +35,7 @@ public class FrameInteraction2 extends PApplet {
     frame1.translate(50, 50);
 
     //frame 3
-    frame2 = new InteractiveFrame(scene, frame1, "drawTorusSolenoid");
+    frame2 = new InteractiveFrame(scene, frame1, "drawRect");
     frame2.translate(-100, -50);
     frame2.setKeyBinding(LEFT, "rotateYPos");
     frame2.setMotionBinding((Event.SHIFT | Event.CTRL), LEFT, "translate");
@@ -42,6 +44,17 @@ public class FrameInteraction2 extends PApplet {
 
     println(frame2.action(new MotionShortcut((Event.SHIFT | Event.CTRL), LEFT)));
     println(frame2.action(new MotionShortcut((Event.SHIFT | Event.CTRL), RIGHT)));
+  }
+
+  public void drawRect(PGraphics pg) {
+    pg.color(0,255,255);
+    ///*
+    if(corner)
+      pg.rectMode(CENTER);
+    else
+      pg.shapeMode(CORNER);
+      //*/
+    pg.rect(20,20,40,40);
   }
 
   public void draw() {
@@ -60,12 +73,24 @@ public class FrameInteraction2 extends PApplet {
         scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
         scene.eyeFrame().removeMotionBinding(LEFT);
       }
+    if(key == 'u') {
+      if(corner)
+        corner = false;
+      else
+        corner = true;
+    }
+    if(key == 'v') {
+      if(g.rectMode == CORNER)
+        rectMode(CENTER);
+      else
+        rectMode(CORNER);
+    }
     // set the default grabber at both the scene.motionAgent() and the scene.keyAgent()
-    if (key == 'v') {
+    if (key == 'x') {
       scene.inputHandler().setDefaultGrabber(frame1);
       println(frame1.info());
     }
-    if (key == 'x') {
+    if (key == 'y') {
       scene.inputHandler().setDefaultGrabber(frame2);
       println(frame2.info());
     }
