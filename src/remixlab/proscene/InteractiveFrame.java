@@ -1162,7 +1162,7 @@ public class InteractiveFrame extends GenericFrame {
             break;
         }
       } else { // pg == pickingBuffer
-        if(fShape.isRetained())
+        if (fShape.isRetained())
           pg.shapeMode(scene().pg().shapeMode);
         /*
         // workaround but only works if modes don't change more than once within the graphics procedure
