@@ -1002,6 +1002,32 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Same as {@code return super.checkIfGrabsInput(event)}.
+   * <p>
+   * To use it, create a custom InteractiveFrame class, implement a
+   * {@code checkIfGrabsInput(CustomEvent)} method and override the
+   * {@link #checkIfGrabsInput(BogusEvent)} as follows:
+   * <pre>
+   * {@code
+   * @Override
+   * public boolean checkIfGrabsInput(BogusEvent event) {
+   *   if(event instanceof CustomEvent)
+   *     return checkIfGrabsInput(event);
+   *   else
+   *     return superPickingCondition(event);
+   * }
+   * }
+   * </pre>
+   *
+   * @see remixlab.dandelion.core.GenericFrame#checkIfGrabsInput(BogusEvent)
+   * @see #fxPickingCondition(BogusEvent)
+   * @see #checkIfGrabsInput(BogusEvent)
+   */
+  protected boolean superPickingCondition(BogusEvent event) {
+    return super.checkIfGrabsInput(event);
+  }
+
+  /**
    * Checks for the existence of the
    * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
    * {@link #scene()} {@link remixlab.proscene.Scene#pApplet()} and it doesn't find it
@@ -1009,14 +1035,13 @@ public class InteractiveFrame extends GenericFrame {
    * <p>
    * Allows to register a {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}
    * on custom {@code BogusEvent} types without the need to derive from this class.
+   * <b>Note</b> that {@link #superPickingCondition(BogusEvent)} allows to overwrite the
+   * the custom-event picking condition using inheritance.
+   *
+   * @see #superPickingCondition(BogusEvent)
+   * @see #checkIfGrabsInput(BogusEvent)
    */
-  @Override
-  public boolean checkIfGrabsInput(BogusEvent event) {
-    // TODO: Performance boost, but will not allow to be reflective on events derived from
-    // default ones
-    // if(event instanceof KeyboardEvent || event instanceof ClickEvent || event
-    // instanceof MotionEvent)
-    // return super.checkIfGrabsInput(event);
+  protected boolean fxPickingCondition(BogusEvent event) {
     Method mth = null;
     Object obj = scene().pApplet();
     boolean frameParam = false;
@@ -1053,6 +1078,28 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
+   * Checks for the existence of the
+   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link #scene()} {@link remixlab.proscene.Scene#pApplet()} and it doesn't find it
+   * there, looks for it at this instance.
+   * <p>
+   * Allows to register a {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}
+   * on custom {@code BogusEvent} types without the need to derive from this class.
+   * <p>
+   * <b>Note 1: </b> This method is the same as {@code return fxPickingCondition(event)}.
+   * <p>
+   * <b>Note 2: </b> Use {@link #superPickingCondition(BogusEvent)} if you prefer to use
+   * inheritance to override the frame picking condition on a custom-event.
+   *
+   * @see #fxPickingCondition(BogusEvent)
+   * @see #superPickingCondition(BogusEvent)
+   */
+  @Override
+  public boolean checkIfGrabsInput(BogusEvent event) {
+    return fxPickingCondition(event);
+  }
+
+  /**
    * An interactive-frame may be picked using
    * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a
    * color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method
@@ -1066,7 +1113,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   @Override
-  public final boolean checkIfGrabsInput(float x, float y) {
+  protected final boolean checkIfGrabsInput(float x, float y) {
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("checkIfGrabsInput", false);
       return false;
