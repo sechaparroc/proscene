@@ -1,8 +1,10 @@
 package basics;
 
 import processing.core.PApplet;
+import remixlab.bias.event.ClickShortcut;
 import remixlab.dandelion.core.Camera;
 import remixlab.dandelion.geom.Vec;
+import remixlab.proscene.MouseAgent;
 import remixlab.proscene.Scene;
 
 /**
@@ -21,6 +23,11 @@ public class BasicUse extends PApplet {
     scene = new Scene(this);
     scene.enableBoundaryEquations();
     scene.loadConfig();
+    /*
+    scene.mouseAgent().addGrabber(scene);
+    scene.mouseAgent().setDefaultGrabber(scene);
+    scene.setBinding(new ClickShortcut(LEFT, 2), "sceneCustomClick");
+    */
   }
 
   public void keyPressed() {
@@ -42,6 +49,10 @@ public class BasicUse extends PApplet {
     else
       fill(0, 255, 0);
     sphere(40);
+  }
+
+  public void sceneCustomClick(Scene scn) {
+    scn.setAxesVisualHint(!scn.axesVisualHint());
   }
 
   public static void main(String args[]) {

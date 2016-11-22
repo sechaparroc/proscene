@@ -262,8 +262,46 @@ public class Scene extends AbstractScene implements PConstants {
     return (InteractiveFrame) eye.frame();
   }
 
+  /**
+   * Checks for the existence of the
+   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link #pApplet()} and it doesn't find it there, looks for it at this instance.
+   * <p>
+   * Allows to register a {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}
+   * on custom {@code BogusEvent} types without the need to derive from this class.
+   */
   @Override
-  protected boolean checkIfGrabsInput(KeyboardEvent event) {
+  public boolean checkIfGrabsInput(BogusEvent event) {
+    Method mth = null;
+    Object obj = pApplet();
+    boolean sceneParam = false;
+    // 1. Retrieving
+    try {
+      mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[]{Scene.class, event.getClass()});
+      sceneParam = true;
+    } catch (Exception e1) {
+      obj = this;
+      try {
+        mth = obj.getClass().getMethod("checkIfGrabsInput", new Class<?>[]{event.getClass()});
+      } catch (Exception e2) {
+        PApplet.println("Error: no picking condition for " + event.getClass().getName());
+      }
+    }
+    // 2. Invocation
+    try {
+      if (sceneParam)
+        return (boolean) mth.invoke(obj, new Object[]{this, event});
+      else
+        return (boolean) mth.invoke(obj, new Object[]{event});
+    } catch (Exception e) {
+      PApplet.println("Error: no picking condition found");
+      e.printStackTrace();
+    }
+    return false;
+  }
+
+  @Override
+  public boolean checkIfGrabsInput(KeyboardEvent event) {
     return profile.hasBinding(event.shortcut());
   }
 

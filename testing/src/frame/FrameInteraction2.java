@@ -47,14 +47,14 @@ public class FrameInteraction2 extends PApplet {
   }
 
   public void drawRect(PGraphics pg) {
-    pg.color(0,255,255);
+    pg.color(0, 255, 255);
     ///*
-    if(corner)
+    if (corner)
       pg.rectMode(CENTER);
     else
       pg.shapeMode(CORNER);
-      //*/
-    pg.rect(20,20,40,40);
+    //*/
+    pg.rect(20, 20, 40, 40);
   }
 
   public void draw() {
@@ -73,14 +73,14 @@ public class FrameInteraction2 extends PApplet {
         scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
         scene.eyeFrame().removeMotionBinding(LEFT);
       }
-    if(key == 'u') {
-      if(corner)
+    if (key == 'u') {
+      if (corner)
         corner = false;
       else
         corner = true;
     }
-    if(key == 'v') {
-      if(g.rectMode == CORNER)
+    if (key == 'v') {
+      if (g.rectMode == CORNER)
         rectMode(CENTER);
       else
         rectMode(CORNER);

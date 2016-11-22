@@ -5,6 +5,7 @@ import processing.core.PGraphics;
 import processing.event.Event;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.DOF2Event;
+import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.MotionEvent;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.MouseAgent;
@@ -21,7 +22,7 @@ public class FrameInteraction extends PApplet {
   String renderer = P3D;
 
   public void settings() {
-    size(800, 800, renderer);
+    size(700, 700, renderer);
   }
 
   public void setup() {
@@ -125,6 +126,11 @@ public class FrameInteraction extends PApplet {
     scene.drawTorusSolenoid();
   }
 
+  public boolean checkIfGrabsInput(Scene frame, KeyboardEvent event) {
+    println("scene picking condition called!");
+    return scene.checkIfGrabsInput(event);
+  }
+
   public boolean checkIfGrabsInput(InteractiveFrame frame, CustomEvent event) {
     //println("proof-of-concept picking condition called!");
     return false;
@@ -146,8 +152,8 @@ public class FrameInteraction extends PApplet {
         scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
         scene.eyeFrame().removeMotionBinding(LEFT);
       }
-    if(key == 'u') {
-      if(scene.pg().shapeMode == CORNER)
+    if (key == 'u') {
+      if (scene.pg().shapeMode == CORNER)
         scene.pg().shapeMode(CENTER);
       else
         scene.pg().shapeMode(CORNER);
