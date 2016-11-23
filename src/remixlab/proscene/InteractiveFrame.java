@@ -407,7 +407,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.removeBinding(shortcut)}.
    *
-   * @see remixlab.bias.ext.Profile##removeBinding(Shortcut)
+   * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));

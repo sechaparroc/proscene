@@ -113,7 +113,7 @@ public class Scene extends AbstractScene implements PConstants {
   // end: GWT-incompatible
   // */
 
-  public static final String prettyVersion = "3.0.0-beta.10";
+  public static final String prettyVersion = "3.0.0";
 
   public static final String version = "32";
 
@@ -3571,7 +3571,7 @@ public class Scene extends AbstractScene implements PConstants {
   /**
    * Same as {@code profile.removeBinding(shortcut)}.
    *
-   * @see remixlab.bias.ext.Profile##removeBinding(Shortcut)
+   * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));
