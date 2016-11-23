@@ -1342,8 +1342,6 @@ public class InteractiveFrame extends GenericFrame {
     updatePickingBufferCache();
   }
 
-  // TODO decide whether to include isReset
-
   /**
    * Same as {@code return isFrontShapeReset() && isPickingShapeReset();}.
    *
@@ -1407,6 +1405,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(String)
    * @see #setPickingShape(String)
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setShape(String methodName) {
     setFrontShape(methodName);
@@ -1423,6 +1422,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setFrontShape(Object, String)
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setShape(Object obj, String methodName) {
     setFrontShape(obj, methodName);
@@ -1451,6 +1451,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetFrontShape()
    * @see #setPickingShape(Object, String)
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setFrontShape(Object object, String methodName) {
     if (pShape.mth != null)
@@ -1485,6 +1486,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #resetPickingShape()
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setPickingShape(Object object, String methodName) {
     if (fShape.mth != null)
@@ -1529,6 +1531,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #resetFrontShape()
    * @see #setPickingShape(String)
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setFrontShape(String methodName) {
     if (pShape.mth != null)
@@ -1573,6 +1576,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #setPickingShape(InteractiveFrame)
    * @see #resetPickingShape()
    * @see #resetShape()
+   * @see #isShapeReset()
    */
   public void setPickingShape(String methodName) {
     if (fShape.mth != null)

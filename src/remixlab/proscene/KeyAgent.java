@@ -117,7 +117,7 @@ public class KeyAgent extends Agent {
     // release ? "released: " + printEvent(currentEvent) : "ooops! ");
   }
 
-  // TODO debug
+  // debug
 
   // protected String printEvent(KeyboardEvent event) {
   // return " mod: " + KeyboardEvent.modifiersText(event.modifiers()) + " vkey: " +
