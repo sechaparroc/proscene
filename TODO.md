@@ -1,16 +1,14 @@
-# Next: release 32 (3.0.0)
+# Next release: 32 (3.0.0)
 
 ## Foundation
 
 The following three issues were tested under Windows and Linux with similar results. They need testing under MAC.
 
-1. Test [ModifiersFix]().
-2. FX2D renderer is buggy under Windows and Linux. It needs testing also under mac.
+1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
+2. FX2D renderer is buggy.
 3. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
-    1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) .
-    2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) doesn't show anyhting.
-
-7. Serialize scene profiles and iFrame shapes and profiles.
+    1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) gives a blank screen.
+    2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) doesn't do anyhting.
 
 ## Android
 
@@ -37,3 +35,9 @@ The following three issues were tested under Windows and Linux with similar resu
 2. [Platonic](http://blog.jpcarrascal.com/2016/04/platonic-solids-in-processing/) [solids](https://github.com/jpcarrascal/ProcessingPlatonicSolids).
 3. A BIAS custom touch agent to handle (absolute? which sounds good for an student workshop) DOF2 events.
 4. A BIAS custom touch agent to handle custom events.
+
+# Future releases
+
+## Foundation
+
+1. Serialize scene profiles and iFrame shapes and profiles.
