@@ -19,8 +19,8 @@ public class ModifiersFix extends PApplet {
   Scene scene;
   InteractiveFrame frame1;
 
-  //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-  String renderer = P2D;
+  //Choose JAVA2D, FX2D or P2D for a 2D scene, or P3D for a 3D one
+  String renderer = JAVA2D;
 
   public void settings() {
     size(700, 700, renderer);
