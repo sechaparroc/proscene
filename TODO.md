@@ -5,7 +5,7 @@
 The following three issues were tested under Windows and Linux with similar results. They need testing under MAC.
 
 1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
-2. FX2D renderer is buggy (can also be tested with the previous [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java). example).
+2. FX2D renderer is buggy (can also be tested with the previous [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java) example).
 3. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
     1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) gives a blank screen, even after removing the sampler2D define in the shader and using a uniform instead, as suggested by @codeanticode.
     2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) displays the scene but doesn't apply the effect.
