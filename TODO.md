@@ -1,29 +1,29 @@
-# Next: release 29 (Beta.7 or 3.0.0 ?)
+# Next: release 32 (3.0.0)
 
 ## Foundation
 
-0. Find a fix for #9.
-1. ~~Improve the keyboard, currently IFrame and Scene bindings are conflicting.~~
-2. ~~Verify support for all the upcoming demos.~~
-3. ~~Improve the whole reflective messaging system (no need to print the exception stack ever since that's for debugging). ClickShortcuts not reporting binding errors.~~
-4. ~~Improve iFrame reflective algorithms API docs.~~
-5. Test the new 'checkIfGrabsInput' performance.
-6. ~~Make [interactiveFrame.info()](https://github.com/remixlab/proscene/blob/master/src/remixlab/proscene/InteractiveFrame.java) more generic by making it _event_ agnostic.~~
-Idea: 3-step process at the Profile:
-* ~~(Profile): Order the output of info() according to the Shortcut type~~
-* ~~(Profile): Add the titles according to the Shortcut type~~
-* ~~(Scene): Parse the result. Q: Perhaps also at the Profile?~~
+The following three issues were tested under Windows and Linux with similar results. They need testing under MAC.
+
+1. Test [ModifiersFix]().
+2. FX2D renderer is buggy under Windows and Linux. It needs testing also under mac.
+3. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
+    1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) .
+    2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) doesn't show anyhting.
+
 7. Serialize scene profiles and iFrame shapes and profiles.
 
 ## Android
 
-1. ~~Comment all examples describing *which gestures are supported* (depict them) and how bindings work.~~
+1. Upload a figure depicting the gestures.
 2. Fix double tap.
 3. Fix OPPOSABLE_THREE_ID gesture.
 4. Support 3 and 6 DOFs.
 5. Implement the key agent.
-6. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
-7. Processing mouseX and mouseY are not reported correctly which makes a skecth defining several (off-screen) scenes not possible.
+6. Upstream:
+    1. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
+    2. The library data resources folder is not loaded, see this [issue](https://github.com/processing/processing-android/issues/247).
+    3. Processing mouseX and mouseY are not reported correctly which makes a sketch defining several (off-screen) scenes not possible, see this [issue](https://github.com/processing/processing-android/issues/260).
+    4. Processing obj PShape textures are not loaded, see this [issue](https://github.com/processing/processing-android/issues/249).
 
 ## JS
 

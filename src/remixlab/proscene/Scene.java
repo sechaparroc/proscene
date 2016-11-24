@@ -263,12 +263,44 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
+   * Same as {@code return super.checkIfGrabsInput(event)}.
+   * <p>
+   * To use it, create a custom InteractiveFrame class, implement a
+   * {@code checkIfGrabsInput(CustomEvent)} method and override the
+   * {@link #checkIfGrabsInput(BogusEvent)} as follows:
+   * <pre>
+   * {@code
+   * @Override
+   * public boolean checkIfGrabsInput(BogusEvent event) {
+   *   if(event instanceof CustomEvent)
+   *     return checkIfGrabsInput(event);
+   *   else
+   *     return supercheckIfGrabsInput(event);
+   * }
+   * }
+   * </pre>
+   *
+   * @see remixlab.dandelion.core.GenericFrame#checkIfGrabsInput(BogusEvent)
+   * @see #checkIfGrabsInput(BogusEvent)
+   */
+  protected boolean supercheckIfGrabsInput(BogusEvent event) {
+    return super.checkIfGrabsInput(event);
+  }
+
+  /**
    * Checks for the existence of the
    * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
-   * {@link #pApplet()} and it doesn't find it there, looks for it at this instance.
+   * {@link #pApplet()}, having
+   * {@code public boolean checkIfGrabsInput(Scene, CustomEvent)} as method
+   * prototype. If it doesn't find it there, looks for the condition at this instance,
+   * with a similar method prototype, but without the Scene parameter.
+   * You don't need to call this. Automatically called by agents handling this scene.
    * <p>
-   * Allows to register a {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}
-   * on custom {@code BogusEvent} types without the need to derive from this class.
+   * <b>Note: </b> Call {@link #supercheckIfGrabsInput(BogusEvent)} at your scene
+   * derived class, if you prefer to use inheritance to override the scene picking
+   * condition on a custom-event.
+   *
+   * @see #supercheckIfGrabsInput(BogusEvent)
    */
   @Override
   public boolean checkIfGrabsInput(BogusEvent event) {
@@ -1832,14 +1864,14 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Returns the collection of interactive frames the scene handles.
+   * Returns the collection of interactive frames the scene handles, including eye-frames.
    * <p>
    * Note that iterating through the scene frames is not as efficient as simply calling
    * {@link #drawFrames()}.
    */
   public ArrayList<InteractiveFrame> frames() {
     ArrayList<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
-    for (GenericFrame frame : frames(false))
+    for (GenericFrame frame : frames(true))
       if (frame instanceof InteractiveFrame)
         iFrames.add((InteractiveFrame) frame);
     return iFrames;

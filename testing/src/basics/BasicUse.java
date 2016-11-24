@@ -1,10 +1,8 @@
 package basics;
 
 import processing.core.PApplet;
-import remixlab.bias.event.ClickShortcut;
 import remixlab.dandelion.core.Camera;
 import remixlab.dandelion.geom.Vec;
-import remixlab.proscene.MouseAgent;
 import remixlab.proscene.Scene;
 
 /**
