@@ -7,21 +7,25 @@ The following three issues were tested under Windows and Linux with similar resu
 1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
 2. FX2D renderer is buggy.
 3. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
-    1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) gives a blank screen.
-    2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) doesn't do anyhting.
+    1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) gives a blank screen, even after removing the sampler2D define in the shader and using a uniform instead, as suggested by @codeanticode.
+    2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) displays the scene but doesn't apply the effect.
 
 ## Android
+
+### Upstream (Processing Android related)
+
+1. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
+2. The library data resources folder is not loaded, see this [issue](https://github.com/processing/processing-android/issues/247).
+3. Processing mouseX and mouseY are not reported correctly which makes a sketch defining several (off-screen) scenes not possible, see this [issue](https://github.com/processing/processing-android/issues/260).
+4. Processing obj PShape textures are not loaded, see this [issue](https://github.com/processing/processing-android/issues/249).
+
+### Downstream (Proscene-android)
 
 1. Upload a figure depicting the gestures.
 2. Fix double tap.
 3. Fix OPPOSABLE_THREE_ID gesture.
 4. Support 3 and 6 DOFs.
 5. Implement the key agent.
-6. Upstream:
-    1. Register Motion and Key Events when they get support upstream, see this [issue](https://github.com/processing/processing-android/issues/246).
-    2. The library data resources folder is not loaded, see this [issue](https://github.com/processing/processing-android/issues/247).
-    3. Processing mouseX and mouseY are not reported correctly which makes a sketch defining several (off-screen) scenes not possible, see this [issue](https://github.com/processing/processing-android/issues/260).
-    4. Processing obj PShape textures are not loaded, see this [issue](https://github.com/processing/processing-android/issues/249).
 
 ## JS
 
