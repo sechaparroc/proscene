@@ -2,7 +2,7 @@
 
 ## Foundation
 
-The following three issues were tested under Windows and Linux with similar results. They need testing under MAC.
+The following three issues were tested with Processing-3.2.3 under Windows and Linux and they give similar results. They need testing under MAC.
 
 1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
 2. FX2D renderer is buggy (can also be tested with the previous [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java) example).
