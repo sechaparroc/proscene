@@ -3566,8 +3566,13 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Same as {@code profile.setBinding(shortcut, action)}.
+   * <p>
+   * Low-level profile handling routine. Call this method to set a binding for a custom bogus event, like this:
+   * {@code scene.setBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+   * @see remixlab.bias.core.BogusEvent
+   * @see remixlab.bias.core.Shortcut
    */
   public void setBinding(Shortcut shortcut, String action) {
     profile.setBinding(p5Java2DModifiersFix(shortcut), action);
@@ -3575,26 +3580,37 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Same as {@code profile.setBinding(object, shortcut, action)}.
+   * <p>
+   * Low-level profile handling routine. Call this method to set a binding for a custom bogus event, like this:
+   * {@code scene.setBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+   * @see remixlab.bias.core.BogusEvent
+   * @see remixlab.bias.core.Shortcut
    */
   public void setBinding(Object object, Shortcut shortcut, String action) {
     profile.setBinding(object, p5Java2DModifiersFix(shortcut), action);
   }
 
   /**
-   * Same as {@code profile.set(otherFrame.profile)}.
+   * Same as {@code profile.set(otherScene.profile)}.
    *
    * @see remixlab.bias.ext.Profile#set(Profile)
    */
-  public void setBindings(InteractiveFrame otherFrame) {
-    profile.set(otherFrame.profile);
+  public void setBindings(Scene otherScene) {
+    profile.set(otherScene.profile);
   }
 
   /**
    * Same as {@code return profile.hasBinding(shortcut)}.
+   * <p>
+   * <p>
+   * Low-level profile handling routine. Call this method to query for a binding from a custom bogus event, like this:
+   * {@code scene.hasBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+   * @see remixlab.bias.core.BogusEvent
+   * @see remixlab.bias.core.Shortcut
    */
   public boolean hasBinding(Shortcut shortcut) {
     return profile.hasBinding(p5Java2DModifiersFix(shortcut));
@@ -3602,8 +3618,13 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Same as {@code profile.removeBinding(shortcut)}.
+   * <p>
+   * Low-level profile handling routine. Call this method to remove a binding for a custom bogus event, like this:
+   * {@code scene.removeBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+   * @see remixlab.bias.core.BogusEvent
+   * @see remixlab.bias.core.Shortcut
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));

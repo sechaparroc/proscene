@@ -1,15 +1,18 @@
 package frame;
 
-import processing.core.*;
-import processing.event.*;
-import remixlab.proscene.*;
-// this one is need to make the p5Java2DModifiersFix in the doc work
+import processing.core.PApplet;
+import processing.event.Event;
 import remixlab.bias.core.Shortcut;
+import remixlab.proscene.InteractiveFrame;
+import remixlab.proscene.MouseAgent;
+import remixlab.proscene.Scene;
+
+// this one is need to make the p5Java2DModifiersFix in the doc work
 
 /**
  * Idea is to test the modifiers key issue found in the JAVA2D renderer
  * (https://github.com/processing/processing/issues/3828).
- *
+ * <p>
  * I found the use of modifier keys + the mouse pretty universal within
  * desktop VR apps. I think they thus must be supported in Proscene.
  *
