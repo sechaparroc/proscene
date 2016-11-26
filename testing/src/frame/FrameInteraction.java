@@ -4,8 +4,6 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.Event;
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.DOF2Event;
-import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.MotionEvent;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.MouseAgent;
@@ -80,6 +78,8 @@ public class FrameInteraction extends PApplet {
     // the one that is the default grabber takes higher precedence
     frame4.setKeyBinding('u', "translateXPos");
     frame4.setKeyBinding(Event.SHIFT, 'u', "translateXNeg");
+
+    //scene.eyeFrame().removeMotionBindings();
   }
 
   public void boxDrawing(PGraphics pg) {
@@ -126,6 +126,7 @@ public class FrameInteraction extends PApplet {
     scene.drawTorusSolenoid();
   }
 
+  /*
   public boolean checkIfGrabsInput(Scene frame, KeyboardEvent event) {
     println("scene picking condition called!");
     return scene.checkIfGrabsInput(event);
@@ -140,6 +141,7 @@ public class FrameInteraction extends PApplet {
     //println("custom picking condition called!");
     return frame.checkIfGrabsInput(event);
   }
+  */
 
   public void keyPressed() {
     if (key == ' ')
