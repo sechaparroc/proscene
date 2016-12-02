@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="gwt" name="GWT">
+      <configuration>
+        <setting name="compilerMaxHeapSize" value="1024" />
+        <setting name="gwtScriptOutputStyle" value="DETAILED" />
+        <setting name="gwtSdkUrl" value="file://$USER_HOME$/.lib/gwt" />
+        <packaging>
+          <module name="remixlab.Util" enabled="false" />
+        </packaging>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -16,6 +28,20 @@
         <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$USER_HOME$/.lib/android" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="gwt-user" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/.lib/gwt-deps" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/.lib/gwt-deps" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/.lib/gwt-deps" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/.lib/gwt-deps" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>
