@@ -132,9 +132,9 @@ ${line}
 		<!-- copy the jar file to processing's sketchbook libraries folder -->
 		<delete dir="${sketchbook.location}/${folder}/${project.name}" />
   	  	<mkdir dir="${sketchbook.location}/${folder}/${project.name}" />
-  		<copy todir="${sketchbook.location}/${folder}/${project.name}">
-  			<fileset dir="${project.tmp}/${project.name}"/>
-  		</copy> 
+		<copy todir="${sketchbook.location}/${folder}/${project.name}">
+			<fileset dir="${project.tmp}/${project.name}" excludes="**/*.gwt.xml"/>
+		</copy>
 	</target>
 	
 	
@@ -170,7 +170,7 @@ ${line}
   			</fileset>
 	  	</copy>
   		<copy todir="${project.tmp}/${project.name}/src">
-  			<fileset dir="${project.src}"/>
+  			<fileset dir="${project.src}" excludes="**/*.gwt.xml"/>
 	  	</copy>
 	  	<copy todir="${project.tmp}/${project.name}/${folder}">
   			<fileset dir="${project.lib}" excludes="README" />
