@@ -16,6 +16,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="proscene" />
     <orderEntry type="library" name="gwt-user" level="project" />
     <orderEntry type="module-library">
       <library>
@@ -30,6 +31,5 @@
         <jarDirectory url="file://$USER_HOME$/.lib/gwt-deps" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="proscene" />
   </component>
 </module>

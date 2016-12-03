@@ -117,7 +117,7 @@ public class P5Scene extends AbstractScene {
   }-*/;
 
   @Override
-  protected native boolean checkIfGrabsInput(KeyboardEvent event) /*-{
+  public native boolean checkIfGrabsInput(KeyboardEvent event) /*-{
       //  console.log( "checkIfGrabsInput JSNI ");
 
       var handler = this.@main.client.P5Scene::getHandler(Ljava/lang/String;)("checkIfGrabsInput");

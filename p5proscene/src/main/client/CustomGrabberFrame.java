@@ -34,8 +34,6 @@ public class CustomGrabberFrame extends GenericFrame {
 
   @Override
   public void performInteraction(MotionEvent event) {
-
-
     switch (event.shortcut().id()) {
       //it's also possible to use Processing constants such as:
       //case LEFT:
@@ -69,8 +67,6 @@ public class CustomGrabberFrame extends GenericFrame {
 
   @Override
   public void performInteraction(KeyboardEvent event) {
-    if (bypassKey(event))
-      return;
     if (event.isShiftDown()) {
       //also possible here is to use Processing keys: UP
       if (event.id() == P5KeyAgent.UP_KEY)
