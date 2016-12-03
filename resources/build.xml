@@ -133,7 +133,7 @@ ${line}
 		<delete dir="${sketchbook.location}/${folder}/${project.name}" />
   	  	<mkdir dir="${sketchbook.location}/${folder}/${project.name}" />
 		<copy todir="${sketchbook.location}/${folder}/${project.name}">
-			<fileset dir="${project.tmp}/${project.name}" excludes="**/*.gwt.xml"/>
+			<fileset dir="${project.tmp}/${project.name}"/>
 		</copy>
 	</target>
 	
