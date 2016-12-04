@@ -2,12 +2,9 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN" "http://gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module>
     <inherits name="com.google.gwt.user.User" />
-    <source path="util"/>
-    <source path="fpstiming"/>
-    <source path="bias" >
-        <exclude name="**/ext/**" />
-    </source>
-    <source path="dandelion"/>
+    <source path="constraint"/>
+    <source path="core"/>
+    <source path="geom"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>
 </module>
