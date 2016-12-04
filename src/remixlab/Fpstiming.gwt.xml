@@ -3,4 +3,6 @@
 <module>
     <inherits name="com.google.gwt.user.User" />
     <source path="fpstiming"/>
+    <inherits name='org.timepedia.exporter.Exporter'/>
+    <set-property name="export" value="yes"/>
 </module>
