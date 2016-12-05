@@ -1106,7 +1106,7 @@ public class InteractiveFrame extends GenericFrame {
    * @see #isEyeFrame()
    */
   @Override
-  protected final boolean checkIfGrabsInput(float x, float y) {
+  public final boolean checkIfGrabsInput(float x, float y) {
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("checkIfGrabsInput", false);
       return false;

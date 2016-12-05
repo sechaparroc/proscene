@@ -113,7 +113,7 @@ public class Scene extends AbstractScene implements PConstants {
   // end: GWT-incompatible
   // */
 
-  public static final String prettyVersion = "3.0.0";
+  public static final String prettyVersion = "3.0.0-rc.1";
 
   public static final String version = "32";
 
