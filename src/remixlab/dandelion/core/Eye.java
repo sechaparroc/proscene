@@ -202,6 +202,8 @@ public abstract class Eye implements Copyable {
   public Vec pupVec;
   protected TimingTask timerFx;
 
+  public Eye() {}
+
   public Eye(AbstractScene scn) {
     gScene = scn;
 

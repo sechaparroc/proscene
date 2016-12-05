@@ -79,6 +79,8 @@ public class Camera extends Eye implements Copyable {
   // screen orientation of the vertical axis when the mouse button is pressed.
   public boolean cadRotationIsReversed;
 
+  public Camera() {}
+
   /**
    * Main constructor.
    * <p>

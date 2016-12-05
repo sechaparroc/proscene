@@ -30,6 +30,15 @@ public class KeyboardEvent extends BogusEvent {
   protected final char key;
 
   /**
+   * Constructs a n absolute MotionEvent with an "empty"
+   * {@link remixlab.bias.event.KeyboardShortcut}.
+   */
+  public KeyboardEvent() {
+    super();
+    key = '\0';
+  }
+
+  /**
    * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
    * {@link remixlab.bias.event.KeyboardShortcut}.
    */
