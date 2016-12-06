@@ -2,7 +2,12 @@
  * Mouse Modifiers
  * by Jean Pierre Charalambos.
  *
- * Temporal example (will not be part of the final release)
+ * Temporal example (will not be part of the final release).
+ *
+ * Idea is to test the modifiers key issue found in the JAVA2D renderer
+ * (https://github.com/processing/processing/issues/3828). I found the use
+ * of modifier keys + the mouse pretty universal within desktop VR apps.
+ * I think they thus must be supported in Proscene.
  *
  * Please test if the mouse bindings work in the same way for all renderers
  * (specially JAVA2D which has an "issue":
@@ -15,14 +20,11 @@ import remixlab.proscene.*;
 Scene scene;
 InteractiveFrame frame;
 
-//Choose JAVA2D, FX2D or P2D for a 2D scene, or P3D for a 3D one
+//Choose JAVA2D or P2D for a 2D scene, or P3D for a 3D one
 String renderer = JAVA2D;
 
-public void settings() {
+void setup() {
   size(700, 700, renderer);
-}
-
-public void setup() {
   scene = new Scene(this);
   scene.setPickingVisualHint(true);
   scene.setGridVisualHint(false);
