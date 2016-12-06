@@ -12,7 +12,7 @@
  * Please test if the mouse bindings work in the same way for all renderers
  * (specially JAVA2D which has an "issue":
  * https://github.com/processing/processing/issues/3828) under MacOS and report
- * back at the forum.
+ * back at the forum or PM me.
  */
 
 import remixlab.proscene.*;
