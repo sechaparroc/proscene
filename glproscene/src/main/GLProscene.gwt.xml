@@ -13,5 +13,6 @@
     <inherits name="remixlab.Dandelion"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>
+    <source path='client'/>
     <source path='public'/>
 </module>
