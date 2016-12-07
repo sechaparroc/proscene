@@ -30,14 +30,12 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$USER_HOME$/.lib/gwt-deps" />
+          <root url="jar://$USER_HOME$/.lib/gwtexporter-2.5.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$USER_HOME$/.lib/gwt-deps" />
+          <root url="jar://$USER_HOME$/.lib/gwtexporter-2.5.0-SNAPSHOT.jar!/" />
         </SOURCES>
-        <jarDirectory url="file://$USER_HOME$/.lib/gwt-deps" recursive="false" />
-        <jarDirectory url="file://$USER_HOME$/.lib/gwt-deps" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="proscene" />

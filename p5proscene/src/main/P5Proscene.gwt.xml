@@ -9,12 +9,9 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.clean.Clean'/>
     <!-- Specify the app entry point class. -->
-    <entry-point class='main.client.GLProscene'/>
+    <entry-point class='main.client.P5Proscene'/>
     <inherits name="remixlab.Dandelion"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>
-    <inherits name="com.gwtent.reflection.Reflection"/>
-    <source path='client'/>
-    <source path="eventjs"/>
-    <source path='p5js'/>
+    <source path='public'/>
 </module>

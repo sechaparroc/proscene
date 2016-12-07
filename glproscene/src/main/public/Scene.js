@@ -1,0 +1,3 @@
+/*
+Implement a pure js scene compatible with WebGL
+*/
