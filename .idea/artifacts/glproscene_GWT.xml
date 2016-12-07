@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="glproscene:GWT">
+    <output-path>$PROJECT_DIR$/out/artifacts/glproscene_GWT</output-path>
+    <root id="root">
+      <element id="gwt-compiler-output" facet="glproscene/gwt/GWT" />
+    </root>
+  </artifact>
+</component>
