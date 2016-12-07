@@ -9,7 +9,7 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.clean.Clean'/>
     <!-- Specify the app entry point class. -->
-    <entry-point class='main.client.P5Proscene'/>
+    <entry-point class='main.client.GLProscene'/>
     <inherits name="remixlab.Dandelion"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>

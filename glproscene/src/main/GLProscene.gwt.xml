@@ -5,11 +5,11 @@
 -->
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN"
         "http://gwtproject.org/doctype/2.8.0/gwt-module.dtd">
-<module rename-to='p5proscene'>
+<module rename-to='glproscene'>
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.clean.Clean'/>
     <!-- Specify the app entry point class. -->
-    <entry-point class='main.client.P5Proscene'/>
+    <entry-point class='main.client.GLProscene'/>
     <inherits name="remixlab.Dandelion"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>

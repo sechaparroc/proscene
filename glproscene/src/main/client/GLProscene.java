@@ -17,7 +17,7 @@ import com.google.gwt.core.client.EntryPoint;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class P5Proscene implements EntryPoint {
+public class GLProscene implements EntryPoint {
   @Override
   public void onModuleLoad() {
     ExporterUtil.exportAll();
