@@ -13,8 +13,5 @@
     <inherits name="remixlab.Dandelion"/>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>
-    <inherits name="com.gwtent.reflection.Reflection"/>
-    <source path='client'/>
-    <source path="eventjs"/>
-    <source path='p5js'/>
+    <source path='public'/>
 </module>
