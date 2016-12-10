@@ -2,8 +2,7 @@
 Here a Boid encapsulates all the required behavior to render and modify the
 movement of a Fish
 */
-
-class Boid {
+class Boid{
   PShape s;
   InteractiveFrame frame;
   Quat quat;

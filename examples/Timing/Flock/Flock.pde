@@ -18,9 +18,7 @@
  * 
  * Boids under the mouse will be colored blue. If you click on a boid it will be
  * selected as the avatar, useful for the THIRD_PERSON proscene camera mode.
- * 
- * Click the space bar to switch between the different camera modes: ARCBALL,
- * WALKTHROUGH, and THIRD_PERSON.
+ * Click the space bar to switch between the different camera modes.
  *
  * Press 'm' to toggle (start/stop) animation.
  * Press '+' to decrease the animation period (animation speeds up).
