@@ -44,21 +44,21 @@ public class Bloom extends PApplet {
       frames[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
     }
 
-    xConvShader = loadShader("testing/data/shaders/bloom/convfrag.glsl","testing/data/shaders/bloom/convvert.glsl");
+    xConvShader = loadShader("testing/data/bloom/convfrag.glsl","testing/data/bloom/convvert.glsl");
     xConvShader.set("imageIncrement", 0.002953125f, 0.0f);
     xConvShader.set("kernel", kernel);
     xConvShader.set("resolution", width, height);
     xConvGraphics = createGraphics(width, height, P3D);
     xConvGraphics.shader(xConvShader);
 
-    yConvShader = loadShader("testing/data/shaders/bloom/convfrag.glsl","testing/data/shaders/bloom/convvert.glsl");
+    yConvShader = loadShader("testing/data/bloom/convfrag.glsl","testing/data/bloom/convvert.glsl");
     yConvShader.set("imageIncrement", 0.0f, 0.002953125f);
     yConvShader.set("kernel", kernel);
     yConvShader.set("resolution", width, height);
     yConvGraphics = createGraphics(width, height, P3D);
     yConvGraphics.shader(yConvShader);
 
-    bloomShader = loadShader("testing/data/shaders/bloom/bloom.glsl");
+    bloomShader = loadShader("testing/data/bloom/bloom.glsl");
     bloomGraphics = createGraphics(width, height, P3D);
     bloomGraphics.shader(bloomShader);
 
