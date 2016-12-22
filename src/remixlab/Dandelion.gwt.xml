@@ -5,6 +5,7 @@
     <inherits name="com.google.gwt.user.User"/>
     <source path="">
         <exclude name="**/ext/**"/>
+        <exclude name="**/proscene/**"/>
     </source>
     <inherits name='org.timepedia.exporter.Exporter'/>
     <set-property name="export" value="yes"/>
