@@ -859,17 +859,6 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code for (int i = 1; i < 4; i++) removeBinding(new ClickShortcut(id, i))}.
-   *
-   * @deprecated use {@link #removeClickBinding(int, int)}.
-   */
-  @Deprecated
-  public void removeClickBinding(int id) {
-    for (int i = 1; i < 4; i++)
-      removeBinding(new ClickShortcut(id, i));
-  }
-
-  /**
    * Remove all click bindings. Same as {@code removeBindings(ClickShortcut.class)}.
    *
    * @see #removeBindings(Class)
@@ -888,15 +877,6 @@ public class InteractiveFrame extends GenericFrame {
   public void set(InteractiveFrame otherFrame) {
     setWorldMatrix(otherFrame);
     setBindings(otherFrame);
-    setShape(otherFrame);
-  }
-
-  /**
-   * @deprecated use {@link #set(Frame)}.
-   */
-  @Deprecated
-  public void fromFrame(InteractiveFrame otherFrame) {
-    super.fromFrame(otherFrame);
     setShape(otherFrame);
   }
 
@@ -1643,29 +1623,5 @@ public class InteractiveFrame extends GenericFrame {
       }
     if (pShape.set(methodName))
       updatePickingBufferCache();
-  }
-
-  /**
-   * @deprecated use {@link #setShape(Object, String)}.
-   */
-  @Deprecated
-  public void addGraphicsHandler(Object obj, String methodName) {
-    setShape(obj, methodName);
-  }
-
-  /**
-   * @deprecated use {@link #resetShape()}.
-   */
-  @Deprecated
-  public void removeGraphicsHandler() {
-    resetShape();
-  }
-
-  /**
-   * @deprecated keep pshape and method references at application space.
-   */
-  @Deprecated
-  public PShape shape() {
-    return fShape.shp;
   }
 }
