@@ -12,6 +12,7 @@ package remixlab.proscene;
 
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.Profile;
 import remixlab.bias.event.KeyboardEvent;
 
 /**
@@ -56,7 +57,7 @@ public class KeyAgent extends Agent {
    * Processing keyEvent method to be registered at the PApplet's instance.
    * <p>
    * Current implementation requires grabber objects to have a
-   * {@link remixlab.bias.ext.Profile} and to implement
+   * {@link Profile} and to implement
    * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on a
    * {@code KeyboardEvent} as follows:
    * <p>
