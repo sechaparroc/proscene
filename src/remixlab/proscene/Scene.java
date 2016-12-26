@@ -18,13 +18,11 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShader;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.*;
 import remixlab.bias.event.ClickShortcut;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.KeyboardShortcut;
 import remixlab.bias.event.MotionShortcut;
-import remixlab.bias.core.Profile;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -46,7 +44,7 @@ import java.util.regex.Pattern;
 
 /**
  * A 2D or 3D interactive, on-screen or off-screen, Processing Scene with a
- * {@link Profile} instance which allows {@link remixlab.bias.core.Shortcut} to
+ * {@link Profile} instance which allows {@link Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods). The Scene is a specialization of the
  * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion
@@ -94,7 +92,7 @@ import java.util.regex.Pattern;
  * {@link remixlab.proscene.InteractiveFrame} is a high level
  * {@link remixlab.dandelion.geom.Frame} PSshape wrapper (a coordinate system related to a
  * PShape or an arbitrary graphics procedure) which may be manipulated by any
- * {@link remixlab.bias.core.Agent}) and for which the scene implements a
+ * {@link Agent}) and for which the scene implements a
  * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a color
  * buffer technique for easy and precise object selection (see {@link #pickingBuffer()}
  * and {@link #drawFrames(PGraphics)}).
@@ -289,7 +287,7 @@ public class Scene extends AbstractScene implements PConstants {
 
   /**
    * Checks for the existence of the
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)} condition at the
    * {@link #pApplet()}, having
    * {@code public boolean checkIfGrabsInput(Scene, CustomEvent)} as method
    * prototype. If it doesn't find it there, looks for the condition at this instance,
@@ -3571,8 +3569,8 @@ public class Scene extends AbstractScene implements PConstants {
    * {@code scene.setBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see Profile#setBinding(Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Shortcut shortcut, String action) {
     profile.setBinding(p5Java2DModifiersFix(shortcut), action);
@@ -3585,8 +3583,8 @@ public class Scene extends AbstractScene implements PConstants {
    * {@code scene.setBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see Profile#setBinding(Object, Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Object object, Shortcut shortcut, String action) {
     profile.setBinding(object, p5Java2DModifiersFix(shortcut), action);
@@ -3609,8 +3607,8 @@ public class Scene extends AbstractScene implements PConstants {
    * {@code scene.hasBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see Profile#hasBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public boolean hasBinding(Shortcut shortcut) {
     return profile.hasBinding(p5Java2DModifiersFix(shortcut));
@@ -3623,8 +3621,8 @@ public class Scene extends AbstractScene implements PConstants {
    * {@code scene.removeBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see Profile#removeBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));

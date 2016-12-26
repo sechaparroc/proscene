@@ -11,15 +11,15 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.bias.core.Agent;
+import remixlab.bias.Agent;
 import remixlab.bias.event.*;
 import remixlab.proscene.TouchProcessor.Gestures;
 
 /**
  * Proscene Android touch-agent. A Processing fully fledged touch
- * {@link remixlab.bias.core.Agent}.
+ * {@link Agent}.
  *
- * @see remixlab.bias.core.Agent
+ * @see Agent
  * @see remixlab.proscene.KeyAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.MouseAgent

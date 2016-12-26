@@ -1,6 +1,6 @@
 package custom;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 
 /**
  * Created by pierre on 11/24/16.

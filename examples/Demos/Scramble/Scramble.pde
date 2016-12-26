@@ -12,7 +12,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
-import remixlab.bias.core.*;
+import remixlab.bias.*;
 import remixlab.bias.event.*;
 
 Scene scene;
