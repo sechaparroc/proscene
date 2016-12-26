@@ -89,7 +89,6 @@ InteractiveFrame[] setupVegetation(Animation[] t_shape) {
   InteractiveFrame[] iFrames = new InteractiveFrame[20];
   for (int i = 0; i < iFrames.length; i++) {
     iFrames[i] = new InteractiveFrame(scene);
-    //iFrames[i].setGrabsInputThreshold(scene.radius()/4, true);
     iFrames[i].scale(6);
   }  
   int x_c = 150; 
