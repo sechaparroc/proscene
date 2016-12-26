@@ -18,6 +18,7 @@ public class Box {
   public Box(Scene scn, InteractiveFrame iF) {
     scene = scn;
     iFrame = iF;
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     //iFrame.setGrabsInputThreshold(25);
     setSize();
     setColor();
@@ -26,6 +27,7 @@ public class Box {
   public Box(Scene scn) {
     scene = scn;
     iFrame = new InteractiveFrame(scn);
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     //iFrame.setGrabsInputThreshold(25);
     setSize();
     setColor();
@@ -68,7 +70,7 @@ public class Box {
     w = scene.pApplet().random(10, 40);
     h = scene.pApplet().random(10, 40);
     d = scene.pApplet().random(10, 40);
-    iFrame.setGrabsInputThreshold(PApplet.max(w, h, d), true);
+    iFrame.setGrabsInputThreshold(PApplet.max(w, h, d));
 
   }
 

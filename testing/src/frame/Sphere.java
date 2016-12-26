@@ -19,6 +19,7 @@ public class Sphere {
     scene = scn;
     parent = scn.pApplet();
     iFrame = iF;
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     setRadius(10);
   }
 
@@ -26,6 +27,7 @@ public class Sphere {
     scene = scn;
     parent = scn.pApplet();
     iFrame = new InteractiveFrame(scn);
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     setRadius(10);
   }
 
@@ -57,7 +59,7 @@ public class Sphere {
 
   public void setRadius(float myR) {
     r = myR;
-    iFrame.setGrabsInputThreshold(2 * r, true);
+    iFrame.setGrabsInputThreshold(2 * r);
   }
 
   public int getColor() {
