@@ -1,6 +1,6 @@
 /**************************************************************************************
  * ProScene (version 3.0.0)
- * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  *
  * All rights reserved. Library that eases the creation of interactive scenes
@@ -10,14 +10,16 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.Agent;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Grabber;
+import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
 
 /**
- * Proscene key-agent. A Processing fully fledged key {@link remixlab.bias.core.Agent}.
+ * Proscene key-agent. A Processing fully fledged key {@link Agent}.
  *
- * @see remixlab.bias.core.Agent
+ * @see Agent
  * @see remixlab.proscene.MouseAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
@@ -56,8 +58,8 @@ public class KeyAgent extends Agent {
    * Processing keyEvent method to be registered at the PApplet's instance.
    * <p>
    * Current implementation requires grabber objects to have a
-   * {@link remixlab.bias.ext.Profile} and to implement
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on a
+   * {@link Profile} and to implement
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)} on a
    * {@code KeyboardEvent} as follows:
    * <p>
    * <pre>

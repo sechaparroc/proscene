@@ -1,6 +1,6 @@
 /**************************************************************************************
  * ProScene (version 3.0.0)
- * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
  * @author Victor Manuel Forero, Jean Pierre Charalambos, http://otrolado.info/
  *
  * All rights reserved. Library that eases the creation of interactive scenes
@@ -12,12 +12,12 @@ package remixlab.proscene;
 
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
-import remixlab.bias.core.Agent;
+import remixlab.bias.Agent;
 import remixlab.bias.event.KeyboardEvent;
 
 /**
  * Proscene Android key-agent. A Processing fully fledged Android-key
- * {@link remixlab.bias.core.Agent}.
+ * {@link Agent}.
  */
 public class DroidKeyAgent extends Agent {
   protected Scene scene;

@@ -1,6 +1,6 @@
 /**************************************************************************************
  * bias_tree
- * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  *
  * All rights reserved. Library that eases the creation of interactive
@@ -10,12 +10,12 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * Base class of all DOF_n_Events: {@link remixlab.bias.core.BogusEvent}s defined from
+ * Base class of all DOF_n_Events: {@link BogusEvent}s defined from
  * DOFs (degrees-of-freedom).
  * <p>
  * A MotionEvent encapsulates a {@link remixlab.bias.event.MotionShortcut}. MotionEvents

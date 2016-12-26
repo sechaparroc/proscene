@@ -29,7 +29,7 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.bias.core.*;
+import remixlab.bias.*;
 import remixlab.bias.event.*;
 
 Scene scene;

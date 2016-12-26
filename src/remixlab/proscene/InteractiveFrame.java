@@ -1,6 +1,6 @@
 /**************************************************************************************
  * ProScene (version 3.0.0)
- * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  *
  * All rights reserved. Library that eases the creation of interactive scenes
@@ -20,13 +20,14 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PVector;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Grabber;
+import remixlab.bias.Profile;
+import remixlab.bias.Shortcut;
 import remixlab.bias.event.ClickShortcut;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.KeyboardShortcut;
 import remixlab.bias.event.MotionShortcut;
-import remixlab.bias.ext.Profile;
 import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.core.Eye;
@@ -39,12 +40,12 @@ import remixlab.util.HashCodeBuilder;
 import java.lang.reflect.Method;
 
 /**
- * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link remixlab.bias.ext.Profile}
- * instance which allows {@link remixlab.bias.core.Shortcut} to
+ * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link Profile}
+ * instance which allows {@link Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods). Refer to
- * {@link remixlab.bias.ext.Profile#setBinding(Shortcut, String)} and
- * {@link remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)} for the type of
+ * {@link Profile#setBinding(Shortcut, String)} and
+ * {@link Profile#setBinding(Object, Shortcut, String)} for the type of
  * actions and method signatures that may be bound.
  * <p>
  * Visual representations (PShapes or arbitrary graphics procedures) may be related to an
@@ -118,7 +119,7 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Calls {@code super(eye)}, add the {@link #drawEye(PGraphics)} graphics handler,
-   * creates the frame {@link remixlab.bias.ext.Profile} and calls {@link #setDefaultMouseBindings()} and
+   * creates the frame {@link Profile} and calls {@link #setDefaultMouseBindings()} and
    * {@link #setDefaultKeyBindings()}.
    *
    * @see #drawEye(PGraphics)
@@ -342,7 +343,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.handle(event)}.
    *
-   * @see remixlab.bias.ext.Profile#handle(BogusEvent)
+   * @see Profile#handle(BogusEvent)
    */
   @Override
   public void performInteraction(BogusEvent event) {
@@ -374,9 +375,9 @@ public class InteractiveFrame extends GenericFrame {
    * Low-level profile handling routine. Call this method to set a binding for a custom bogus event, like this:
    * {@code frame.setBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
-   * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see Profile#setBinding(Shortcut, String)
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Shortcut shortcut, String action) {
     profile.setBinding(p5Java2DModifiersFix(shortcut), action);
@@ -388,9 +389,9 @@ public class InteractiveFrame extends GenericFrame {
    * Low-level profile handling routine. Call this method to set a binding for a custom bogus event, like this:
    * {@code frame.setBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
-   * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see Profile#setBinding(Object, Shortcut, String)
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Object object, Shortcut shortcut, String action) {
     profile.setBinding(object, p5Java2DModifiersFix(shortcut), action);
@@ -399,7 +400,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.set(otherFrame.profile)}.
    *
-   * @see remixlab.bias.ext.Profile#set(Profile)
+   * @see Profile#set(Profile)
    */
   public void setBindings(InteractiveFrame otherFrame) {
     profile.set(otherFrame.profile);
@@ -412,9 +413,9 @@ public class InteractiveFrame extends GenericFrame {
    * Low-level profile handling routine. Call this method to query for a binding from a custom bogus event, like this:
    * {@code frame.hasBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
-   * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see Profile#hasBinding(Shortcut)
+   * @see BogusEvent
+   * @see Shortcut
    */
   public boolean hasBinding(Shortcut shortcut) {
     return profile.hasBinding(p5Java2DModifiersFix(shortcut));
@@ -426,9 +427,9 @@ public class InteractiveFrame extends GenericFrame {
    * Low-level profile handling routine. Call this method to remove a binding for a custom bogus event, like this:
    * {@code frame.removeBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
-   * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see Profile#removeBinding(Shortcut)
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));
@@ -437,7 +438,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.removeBindings()}.
    *
-   * @see remixlab.bias.ext.Profile#removeBindings()
+   * @see Profile#removeBindings()
    */
   public void removeBindings() {
     profile.removeBindings();
@@ -446,7 +447,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.removeBindings(cls)}.
    *
-   * @see remixlab.bias.ext.Profile#removeBindings(Class)
+   * @see Profile#removeBindings(Class)
    */
   public void removeBindings(Class<? extends Shortcut> cls) {
     profile.removeBindings(cls);
@@ -455,7 +456,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code profile.info(cls)}.
    *
-   * @see remixlab.bias.ext.Profile#info(Class)
+   * @see Profile#info(Class)
    */
   public String info(Class<? extends Shortcut> cls) {
     return profile.info(cls);
@@ -471,7 +472,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code return profile.action(key)}.
    *
-   * @see remixlab.bias.ext.Profile#action(Shortcut)
+   * @see Profile#action(Shortcut)
    */
   public String action(Shortcut shortcut) {
     return profile.action(p5Java2DModifiersFix(shortcut));
@@ -480,7 +481,7 @@ public class InteractiveFrame extends GenericFrame {
   /**
    * Same as {@code return profile.isActionBound(action)}.
    *
-   * @see remixlab.bias.ext.Profile#isActionBound(String)
+   * @see Profile#isActionBound(String)
    */
   public boolean isActionBound(String action) {
     return profile.isActionBound(action);
@@ -859,17 +860,6 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Same as {@code for (int i = 1; i < 4; i++) removeBinding(new ClickShortcut(id, i))}.
-   *
-   * @deprecated use {@link #removeClickBinding(int, int)}.
-   */
-  @Deprecated
-  public void removeClickBinding(int id) {
-    for (int i = 1; i < 4; i++)
-      removeBinding(new ClickShortcut(id, i));
-  }
-
-  /**
    * Remove all click bindings. Same as {@code removeBindings(ClickShortcut.class)}.
    *
    * @see #removeBindings(Class)
@@ -888,15 +878,6 @@ public class InteractiveFrame extends GenericFrame {
   public void set(InteractiveFrame otherFrame) {
     setWorldMatrix(otherFrame);
     setBindings(otherFrame);
-    setShape(otherFrame);
-  }
-
-  /**
-   * @deprecated use {@link #set(Frame)}.
-   */
-  @Deprecated
-  public void fromFrame(InteractiveFrame otherFrame) {
-    super.fromFrame(otherFrame);
     setShape(otherFrame);
   }
 
@@ -1049,7 +1030,7 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Checks for the existence of the
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)} condition at the
    * {@link Scene#pApplet()}, having
    * {@code public boolean checkIfGrabsInput(InteractiveFrame, CustomEvent)} as method
    * prototype. If it doesn't find it there, looks for the condition at this instance,
@@ -1643,29 +1624,5 @@ public class InteractiveFrame extends GenericFrame {
       }
     if (pShape.set(methodName))
       updatePickingBufferCache();
-  }
-
-  /**
-   * @deprecated use {@link #setShape(Object, String)}.
-   */
-  @Deprecated
-  public void addGraphicsHandler(Object obj, String methodName) {
-    setShape(obj, methodName);
-  }
-
-  /**
-   * @deprecated use {@link #resetShape()}.
-   */
-  @Deprecated
-  public void removeGraphicsHandler() {
-    resetShape();
-  }
-
-  /**
-   * @deprecated keep pshape and method references at application space.
-   */
-  @Deprecated
-  public PShape shape() {
-    return fShape.shp;
   }
 }
