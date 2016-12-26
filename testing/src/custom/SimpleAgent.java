@@ -1,8 +1,8 @@
 package custom;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.Agent;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Shortcut;
 import remixlab.proscene.Scene;
 
 /**

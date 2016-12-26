@@ -1,8 +1,7 @@
 package custom;
 
 import processing.core.PApplet;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.BogusEvent;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.Scene;
 

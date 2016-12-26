@@ -2,6 +2,15 @@
 
 ## Foundation
 
+Examples need refactor:
+
+1. Define new categories. Particularly for Basics, e.g., Minimap
+2. Update the following examples (use InteractiveFrame instead of GrabberObject) while moving the original ones to other repo such as proscene-experiments:
+    1. Sensitivities
+    2. Scramble
+    3. CameraInterpolation
+    4. Dizzy
+
 The following three issues were tested with Processing-3.2.3 under Windows and Linux and they give similar results. They need testing under MAC.
 
 1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
@@ -30,17 +39,7 @@ The following three issues were tested with Processing-3.2.3 under Windows and L
 ## JS
 
 1. Set webgl matrices,
-2. Test if the latest release can still be transpiled into JS code. Currently it gives the following errors:
-    * Error:GWT Compiler: The constructor Camera() is undefined
-    * Error:GWT Compiler: Hint: Check that the type name 'main.client.CameraFacadeExporterImpl' is really what you meant
-    * Error:GWT Compiler: Hint: Check that your classpath includes all required source roots
-    * Error:GWT Compiler: Rebind result 'main.client.CameraFacadeExporterImpl' could not be found
-    * Error:GWT Compiler: The constructor KeyboardEvent() is undefined
-    * Error:GWT Compiler: Hint: Check that the type name 'main.client.KeyboardEventFacadeExporterImpl' is really what you meant
-    * Error:GWT Compiler: Rebind result 'main.client.KeyboardEventFacadeExporterImpl' could not be found
-    * Error:GWT Compiler: Rebind result 'main.client.CameraFacadeExporterImpl' could not be found
-    * Error:GWT Compiler: Rebind result 'main.client.KeyboardEventFacadeExporterImpl' could not be found
-3. Release a first proof-of-concept [example]().
+2. Release a first proof-of-concept [example]().
 
 ## Demos
 

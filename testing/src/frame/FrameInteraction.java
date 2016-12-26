@@ -3,7 +3,7 @@ package frame;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.Event;
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 import remixlab.bias.event.MotionEvent;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.MouseAgent;

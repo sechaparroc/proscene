@@ -20,13 +20,14 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PVector;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Grabber;
+import remixlab.bias.Profile;
+import remixlab.bias.Shortcut;
 import remixlab.bias.event.ClickShortcut;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.KeyboardShortcut;
 import remixlab.bias.event.MotionShortcut;
-import remixlab.bias.core.Profile;
 import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.core.Eye;
@@ -40,7 +41,7 @@ import java.lang.reflect.Method;
 
 /**
  * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link Profile}
- * instance which allows {@link remixlab.bias.core.Shortcut} to
+ * instance which allows {@link Shortcut} to
  * {@link java.lang.reflect.Method} bindings high-level customization (see all the
  * <b>*Binding*()</b> methods). Refer to
  * {@link Profile#setBinding(Shortcut, String)} and
@@ -375,8 +376,8 @@ public class InteractiveFrame extends GenericFrame {
    * {@code frame.setBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see Profile#setBinding(Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Shortcut shortcut, String action) {
     profile.setBinding(p5Java2DModifiersFix(shortcut), action);
@@ -389,8 +390,8 @@ public class InteractiveFrame extends GenericFrame {
    * {@code frame.setBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID), "customBehavior")}.
    *
    * @see Profile#setBinding(Object, Shortcut, String)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void setBinding(Object object, Shortcut shortcut, String action) {
     profile.setBinding(object, p5Java2DModifiersFix(shortcut), action);
@@ -413,8 +414,8 @@ public class InteractiveFrame extends GenericFrame {
    * {@code frame.hasBinding(object, new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see Profile#hasBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public boolean hasBinding(Shortcut shortcut) {
     return profile.hasBinding(p5Java2DModifiersFix(shortcut));
@@ -427,8 +428,8 @@ public class InteractiveFrame extends GenericFrame {
    * {@code frame.removeBinding(new CustomShortcut(mask, CustomAgent.CUSTOM_ID)}.
    *
    * @see Profile#removeBinding(Shortcut)
-   * @see remixlab.bias.core.BogusEvent
-   * @see remixlab.bias.core.Shortcut
+   * @see BogusEvent
+   * @see Shortcut
    */
   public void removeBinding(Shortcut shortcut) {
     profile.removeBinding(p5Java2DModifiersFix(shortcut));
@@ -1029,7 +1030,7 @@ public class InteractiveFrame extends GenericFrame {
 
   /**
    * Checks for the existence of the
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} condition at the
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)} condition at the
    * {@link Scene#pApplet()}, having
    * {@code public boolean checkIfGrabsInput(InteractiveFrame, CustomEvent)} as method
    * prototype. If it doesn't find it there, looks for the condition at this instance,

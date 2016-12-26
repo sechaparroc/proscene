@@ -1,6 +1,6 @@
 package custom;
 
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.Shortcut;
 
 /**
  * Created by pierre on 11/24/16.

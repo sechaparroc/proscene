@@ -10,15 +10,16 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Profile;
+import remixlab.bias.Agent;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Grabber;
+import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
 
 /**
- * Proscene key-agent. A Processing fully fledged key {@link remixlab.bias.core.Agent}.
+ * Proscene key-agent. A Processing fully fledged key {@link Agent}.
  *
- * @see remixlab.bias.core.Agent
+ * @see Agent
  * @see remixlab.proscene.MouseAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
@@ -58,7 +59,7 @@ public class KeyAgent extends Agent {
    * <p>
    * Current implementation requires grabber objects to have a
    * {@link Profile} and to implement
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on a
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)} on a
    * {@code KeyboardEvent} as follows:
    * <p>
    * <pre>

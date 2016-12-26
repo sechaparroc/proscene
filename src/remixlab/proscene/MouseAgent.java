@@ -10,15 +10,15 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.Agent;
+import remixlab.bias.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
  * Proscene mouse-agent. A Processing fully fledged mouse
- * {@link remixlab.bias.core.Agent}.
+ * {@link Agent}.
  *
- * @see remixlab.bias.core.Agent
+ * @see Agent
  * @see remixlab.proscene.KeyAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
