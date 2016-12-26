@@ -19,6 +19,7 @@ public class Button2D {
   public Button2D(Scene scn, PVector p, PFont font, String t) {
     scene = scn;
     iFrame = new InteractiveFrame(scene);
+    iFrame.removeBindings();
     iFrame.disablePickingHint();
     iFrame.setFrontShape(this, "display");
     iFrame.setPickingShape(this, "highlight");
