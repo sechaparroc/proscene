@@ -15,8 +15,8 @@ import main.p5js.P5JS;
 
 import com.gwtent.reflection.client.Reflectable;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.Agent;
+import remixlab.bias.BogusEvent;
 import remixlab.bias.event.ClickEvent;
 import remixlab.bias.event.DOF1Event;
 import remixlab.bias.event.DOF2Event;

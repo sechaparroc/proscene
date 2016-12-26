@@ -10,7 +10,7 @@
 
 package main.eventjs;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 
 
 import com.google.gwt.core.client.JavaScriptObject;

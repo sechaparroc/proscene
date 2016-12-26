@@ -3,7 +3,7 @@ package main.p5js;
 
 
 import main.eventjs.JsEventHandler;
-import remixlab.bias.core.Agent;
+import remixlab.bias.Agent;
 import remixlab.dandelion.geom.Mat;
 
 import com.google.gwt.core.client.JavaScriptObject;

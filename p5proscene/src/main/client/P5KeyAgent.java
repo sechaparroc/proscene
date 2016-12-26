@@ -15,7 +15,7 @@ import main.p5js.P5JS;
 
 import com.gwtent.reflection.client.Reflectable;
 
-import remixlab.bias.core.Agent;
+import remixlab.bias.Agent;
 import remixlab.bias.event.KeyboardEvent;
 
 @Reflectable
