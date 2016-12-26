@@ -1,7 +1,6 @@
 package frame;
 
-import processing.core.PApplet;
-import processing.core.PGraphics;
+import processing.core.*;
 import processing.event.Event;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.event.MotionEvent;
@@ -27,6 +26,10 @@ public class FrameInteraction extends PApplet {
     scene = new Scene(this);
     scene.eyeFrame().setDamping(0);
     scene.setPickingVisualHint(true);
+
+    Button2D button = new Button2D(scene, new PVector(100, 100), loadFont("FreeSans-16.vlw"), "hello world");
+    button.setFont(loadFont("FreeSans-36.vlw"));
+    button.setText("PiERRE");
 
     //frame 1
     frame1 = new InteractiveFrame(scene);

@@ -25,7 +25,6 @@ public abstract class Button2D extends GrabberObject {
     parent = pnt;
     scene = scn;
     position = p;
-    myText = t;
     myFont = font;
     parent.textFont(myFont);
     parent.textAlign(PApplet.LEFT);
