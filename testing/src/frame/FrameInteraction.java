@@ -50,6 +50,7 @@ public class FrameInteraction extends PApplet {
     //frame3 = new InteractiveFrame(scene);
     //frame3.setShape("drawAxes");
     //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
+    frame3.disablePickingHint();
     frame3.translate(-100, -50);
     frame3.setMotionBinding(LEFT, "boxCustomMotion");
     frame3.setClickBinding(LEFT, 1, "boxCustomClick");
