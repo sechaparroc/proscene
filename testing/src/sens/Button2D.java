@@ -1,13 +1,16 @@
-/**
- * Button 2D.
- * by Jean Pierre Charalambos.
- * 
- * Base class of "2d buttons" that shows how simple is to implement
- * a MouseGrabber which can enable complex mouse interactions.
- */
+package sens;
 
+import remixlab.bias.*;
+import remixlab.bias.event.*;
+import remixlab.proscene.*;
+import processing.core.*;
+
+/**
+ * Created by pierre on 12/26/16.
+ */
 public abstract class Button2D extends GrabberObject {
-  public Scene scene;  
+  Sensitivities parent;
+  public Scene scene;
   String myText;
   PFont myFont;
   float myWidth;
@@ -20,34 +23,34 @@ public abstract class Button2D extends GrabberObject {
 
   public Button2D(Scene scn, PVector p, PFont font, String t) {
     scene = scn;
+    parent = (Sensitivities) scn.pApplet();
     position = p;
-    myText = t;
     myFont = font;
-    textFont(myFont);
-    textAlign(LEFT);
+    parent.textFont(myFont);
+    parent.textAlign(PApplet.LEFT);
     setText(t);
     scene.motionAgent().addGrabber(this);
   }
 
   public void setText(String text) {
     myText = text;
-    myWidth = textWidth(myText);
-    myHeight = textAscent() + textDescent();
+    myWidth = parent.textWidth(myText);
+    myHeight = parent.textAscent() + parent.textDescent();
   }
 
   public void display() {
-    pushStyle();    
-    fill(255);
+    parent.pushStyle();
+    parent.fill(255);
     if (grabsInput(scene.motionAgent()))
-      fill(255);
+      parent.fill(255);
     else
-      fill(100);
+      parent.fill(100);
     scene.beginScreenDrawing();
-    text(myText, position.x, position.y, myWidth+1, myHeight);
+    parent.text(myText, position.x, position.y, myWidth+1, myHeight);
     scene.endScreenDrawing();
-    popStyle();
+    parent.popStyle();
   }
-  
+
   @Override
   public boolean checkIfGrabsInput(DOF2Event event) {
     float x = event.x();

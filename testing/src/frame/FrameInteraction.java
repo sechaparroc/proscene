@@ -1,7 +1,6 @@
 package frame;
 
-import processing.core.PApplet;
-import processing.core.PGraphics;
+import processing.core.*;
 import processing.event.Event;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.event.MotionEvent;
@@ -28,6 +27,10 @@ public class FrameInteraction extends PApplet {
     scene.eyeFrame().setDamping(0);
     scene.setPickingVisualHint(true);
 
+    Button2D button = new Button2D(scene, new PVector(100, 100), loadFont("FreeSans-16.vlw"), "hello world");
+    button.setFont(loadFont("FreeSans-36.vlw"));
+    button.setText("PiERRE");
+
     //frame 1
     frame1 = new InteractiveFrame(scene);
     frame1.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
@@ -50,6 +53,7 @@ public class FrameInteraction extends PApplet {
     //frame3 = new InteractiveFrame(scene);
     //frame3.setShape("drawAxes");
     //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
+    frame3.disableVisualHint();
     frame3.translate(-100, -50);
     frame3.setMotionBinding(LEFT, "boxCustomMotion");
     frame3.setClickBinding(LEFT, 1, "boxCustomClick");

@@ -1,3 +1,12 @@
+package sens;
+
+import remixlab.bias.event.*;
+import remixlab.proscene.*;
+import processing.core.*;
+
+/**
+ * Created by pierre on 12/26/16.
+ */
 public class ClickButton extends Button2D {
   boolean increase;
   Sensitivity sensitivity;
@@ -12,8 +21,8 @@ public class ClickButton extends Button2D {
   public void performInteraction(ClickEvent event) {
     if (event.clickCount() == 1)
       if (increase)
-        increaseSensitivity(sensitivity);
+        parent.increaseSensitivity(sensitivity);
       else
-        decreaseSensitivity(sensitivity);
+        parent.decreaseSensitivity(sensitivity);
   }
 }
