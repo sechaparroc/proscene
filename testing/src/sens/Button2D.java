@@ -17,13 +17,13 @@ public abstract class Button2D extends GrabberObject {
   float myHeight;
   PVector position;
 
-  public Button2D(Sensitivities pnt, Scene scn, PVector p, PFont font) {
-    this(pnt, scn, p, font, "");
+  public Button2D(Scene scn, PVector p, PFont font) {
+    this(scn, p, font, "");
   }
 
-  public Button2D(Sensitivities pnt, Scene scn, PVector p, PFont font, String t) {
-    parent = pnt;
+  public Button2D(Scene scn, PVector p, PFont font, String t) {
     scene = scn;
+    parent = (Sensitivities) scn.pApplet();
     position = p;
     myFont = font;
     parent.textFont(myFont);

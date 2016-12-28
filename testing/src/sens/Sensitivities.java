@@ -49,16 +49,16 @@ public class Sensitivities extends PApplet {
     defWheelSens = interactiveFrame.wheelSensitivity();
     defDampFrict = interactiveFrame.damping();
 
-    buttons.add(new ClickButton(this, scene, new PVector(xM + 210, 50), myFont, "+", Sensitivity.ROTATION, true));
-    buttons.add(new ClickButton(this, scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 50), myFont, "-", Sensitivity.ROTATION, false));
-    buttons.add(new ClickButton(this, scene, new PVector(xM + 210, 70), myFont, "+", Sensitivity.TRANSLATION, true));
-    buttons.add(new ClickButton(this, scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 70), myFont, "-", Sensitivity.TRANSLATION, false));
-    buttons.add(new ClickButton(this, scene, new PVector(xM + 210, 90), myFont, "+", Sensitivity.SPINNING, true));
-    buttons.add(new ClickButton(this, scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 90), myFont, "-", Sensitivity.SPINNING, false));
-    buttons.add(new ClickButton(this, scene, new PVector(xM + 210, 110), myFont, "+", Sensitivity.WHEEL, true));
-    buttons.add(new ClickButton(this, scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 110), myFont, "-", Sensitivity.WHEEL, false));
-    buttons.add(new ClickButton(this, scene, new PVector(xM + 210, 130), myFont, "+", Sensitivity.DAMPING, true));
-    buttons.add(new ClickButton(this, scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 130), myFont, "-", Sensitivity.DAMPING, false));
+    buttons.add(new ClickButton(scene, new PVector(xM + 210, 50), myFont, "+", Sensitivity.ROTATION, true));
+    buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 50), myFont, "-", Sensitivity.ROTATION, false));
+    buttons.add(new ClickButton(scene, new PVector(xM + 210, 70), myFont, "+", Sensitivity.TRANSLATION, true));
+    buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 70), myFont, "-", Sensitivity.TRANSLATION, false));
+    buttons.add(new ClickButton(scene, new PVector(xM + 210, 90), myFont, "+", Sensitivity.SPINNING, true));
+    buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 90), myFont, "-", Sensitivity.SPINNING, false));
+    buttons.add(new ClickButton(scene, new PVector(xM + 210, 110), myFont, "+", Sensitivity.WHEEL, true));
+    buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 110), myFont, "-", Sensitivity.WHEEL, false));
+    buttons.add(new ClickButton(scene, new PVector(xM + 210, 130), myFont, "+", Sensitivity.DAMPING, true));
+    buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 130), myFont, "-", Sensitivity.DAMPING, false));
 
     scene.setRadius(150);
     scene.showAll();

@@ -3100,7 +3100,7 @@ public class Scene extends AbstractScene implements PConstants {
       System.err.println("eye frames don't have a picking target");
       return;
     }
-    if (!iFrame.isPickingHintEnabled())
+    if (!iFrame.isVisualHintEnabled())
       return;
     // if (!inputHandler().hasGrabber(iFrame)) {
     // System.err.println("add iFrame to motionAgent before drawing picking target");
