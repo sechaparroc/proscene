@@ -2,8 +2,22 @@
  * Dizzy
  * by Jean Pierre Charalambos.
  *
- * This example demonstrates how 2D key frames may be used to perform a Prezi-like
- * presentation. 
+ * This example demonstrates how 2D key frames may be used to perform a
+ * Prezi-like presentation.
+ *
+ * The displayed eye path is defined by some interactive-frames which can
+ * be moved with the mouse, making the path editable.
+ *
+ * The eye interpolating path is played with the shortcut '1'.
+ *
+ * Press CONTROL + '1' to add (more) key frames to the eye path.
+ *
+ * Press ALT + '1' to delete the eye path.
+ *
+ * Note that the eye actually holds 3 paths, bound to the [1..3] keys.
+ * Pressing CONTROL + [1..3] adds key frames to the specific path.
+ * Pressing ALT + [1..3] deletes the specific path. Press 'r' to display
+ * all the key frame eye paths (if any). The displayed paths are editable.
  *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
