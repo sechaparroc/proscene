@@ -10,13 +10,12 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
-import remixlab.bias.*;
-import remixlab.bias.event.*;
 
 Scene scene;
 PImage img;
-PFont buttonFont;
-ArrayList buttons;
+Info toggleInfo;
+ArrayList<Info> info;
+PFont font;
 InteractiveFrame message1;
 InteractiveFrame message2;
 InteractiveFrame image;
@@ -26,7 +25,7 @@ int fSize = 16;
 public void setup() {
   size(640, 360, P2D);
 
-  img = loadImage("dizzi.jpg");
+  img = loadImage("dizzy.jpg");
   scene = new Scene(this);
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);
@@ -50,16 +49,12 @@ public void setup() {
   // create a camera path and add some key frames:
   // key frames can be added at runtime with keys [j..n]
   scene.loadConfig();
-
-  buttons = new ArrayList(6);
-  for (int i = 0; i < 5; ++i)
-    buttons.add(null);
-
-  buttonFont = loadFont("FreeSans-16.vlw");
-  
-  Button2D button = new ClickButton(scene, new PVector(10, 5), buttonFont, 0);
-  h = button.myHeight;
-  buttons.set(0, button);
+  scene.loadConfig();
+  font = loadFont("FreeSans-24.vlw");
+  toggleInfo = new Info(new PVector(10, 7), font);
+  info = new ArrayList<Info>();
+  for (int i=0; i<3; ++i)
+    info.add(new Info(new PVector(10, toggleInfo.height*(i+1) + 7*(i+2)), font, String.valueOf(i+1)));
 }
 
 public void draw() {
@@ -83,25 +78,22 @@ public void draw() {
   text("but I feel dizzy", 10, 50);
   popMatrix();
 
-  updateButtons();
-  displayButtons();
+  info();
 }
 
-void updateButtons() {
-  for (int i = 1; i < buttons.size(); i++) {
+void info() {
+  toggleInfo.setText("Camera paths edition "
+                     + ( scene.pathsVisualHint() ? "ON" : "OFF" )
+                     + " (press 'r' to toggle it)");
+  toggleInfo.display();
+  for (int i = 0; i < info.size(); i++)
     // Check if CameraPathPlayer is still valid
-    if ((buttons.get(i) != null) && (scene.eye().keyFrameInterpolator(i) == null))
-      buttons.set(i, null);
-    // Or add it if needed
-    if ((scene.eye().keyFrameInterpolator(i) != null)	&& (buttons.get(i) == null))
-      buttons.set(i, new ClickButton(scene, new PVector(10, +(i) * (h + 7)), buttonFont, i));
-  }
-}
-
-void displayButtons() {
-  for (int i = 0; i < buttons.size(); i++) {
-    Button2D button = (Button2D) buttons.get(i);
-    if (button != null)
-      button.display();
-  }
+    if (scene.eye().keyFrameInterpolator(i+1) != null) {
+      info.get(i).setText("Path " + String.valueOf(i+1) + "( press " + String.valueOf(i+1) + " to" +
+                           (scene.eye().keyFrameInterpolator(i+1).numberOfKeyFrames() > 1 ?
+                           scene.eye().keyFrameInterpolator(i+1).interpolationStarted() ?
+                           " stop it)" : " play it)"
+                           : " restore init position)"));
+      info.get(i).display();
+    }
 }

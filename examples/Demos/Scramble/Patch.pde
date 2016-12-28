@@ -22,7 +22,7 @@ public class Patch extends InteractiveFrame {
 
   public void display(PGraphics pg) {
     pg.pushStyle();
-    // set the appropiate fill and stroke weight based on the result of grabsMouse()
+    // set the appropriate fill and stroke weight based on the result of grabsMouse()
     if (grabsInput()) {
       pg.fill(250, 250, 60);
       pg.stroke(200, 200, 100);
