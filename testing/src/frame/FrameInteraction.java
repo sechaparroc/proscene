@@ -39,8 +39,9 @@ public class FrameInteraction extends PApplet {
 
     // frame 2
     // Thanks to the Processing Foundation for providing the rocket shape
-    frame2 = new InteractiveFrame(scene, loadShape("testing/data/frame_interaction/rocket.obj"));
+    frame2 = new InteractiveFrame(scene, frame1, loadShape("testing/data/frame_interaction/rocket.obj"));
     frame2.scale(0.2f);
+    frame2.translate(-100, -100);
     frame2.setMotionBinding((Event.SHIFT | Event.CTRL), LEFT, "translate");
     frame2.setMotionBinding(RIGHT, "scale");
     frame2.setKeyBinding('u', "translateXPos");
@@ -53,7 +54,7 @@ public class FrameInteraction extends PApplet {
     //frame3 = new InteractiveFrame(scene);
     //frame3.setShape("drawAxes");
     //frame3.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
-    frame3.disableVisualHint();
+    //frame3.disableVisualHint();
     frame3.translate(-100, -50);
     frame3.setMotionBinding(LEFT, "boxCustomMotion");
     frame3.setClickBinding(LEFT, 1, "boxCustomClick");
@@ -68,7 +69,7 @@ public class FrameInteraction extends PApplet {
     //frame 4
     //frame4 will behave as frame3 since the latter is passed as its
     //referenceFrame() in its constructor
-    frame4 = new InteractiveFrame(scene, frame3);
+    frame4 = new InteractiveFrame(scene, frame2);
     frame4.setFrontShape("boxDrawing");
     frame4.setPickingShape("boxPicking");
     // note that the following:
@@ -77,7 +78,8 @@ public class FrameInteraction extends PApplet {
     // also works. The first parameter points to the class where your code is implemented.
     // You will always need it when your code is declared within a class different than the PApplet.
     frame4.setHighlightingMode(InteractiveFrame.HighlightingMode.FRONT_PICKING_SHAPES);
-    frame4.translate(0, 100);
+    frame4.translate(200, 200);
+    frame4.scale(3);
     // if two frames have the same key binding (frame2 has also the 'u' binding)
     // the one that is the default grabber takes higher precedence
     frame4.setKeyBinding('u', "translateXPos");
@@ -185,6 +187,10 @@ public class FrameInteraction extends PApplet {
       scene.inputHandler().setDefaultGrabber(scene.eyeFrame());
       println(scene.eyeFrame().info());
     }
+    if(key == 'm')
+      frame2.get();
+    if(key == 'n')
+      frame4.get();
   }
 
   public class CustomEvent extends BogusEvent {
