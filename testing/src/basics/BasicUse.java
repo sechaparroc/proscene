@@ -1,56 +1,43 @@
 package basics;
 
-import processing.core.PApplet;
-import remixlab.dandelion.core.Camera;
-import remixlab.dandelion.geom.Vec;
-import remixlab.proscene.Scene;
+import processing.core.*;
+import remixlab.proscene.*;
+import remixlab.dandelion.geom.*;
 
 /**
  * Created by pierre on 11/15/16.
  */
 public class BasicUse extends PApplet {
   Scene scene;
-  float radians = 0;
+  InteractiveFrame iFrame;
+  float length = 100;
 
   public void settings() {
-    size(640, 360, P3D);  // your size() command here
+    size(800, 800, FX2D);
   }
 
   public void setup() {
-    println("Version: " + Scene.prettyVersion);
+    rectMode(CENTER);
     scene = new Scene(this);
-    scene.enableBoundaryEquations();
-    scene.loadConfig();
-    /*
-    scene.mouseAgent().addGrabber(scene);
-    scene.mouseAgent().setDefaultGrabber(scene);
-    scene.setBinding(new ClickShortcut(LEFT, 2), "sceneCustomClick");
-    */
+    scene.setPickingVisualHint(true);
+    scene.setRadius(200);
+    scene.disablePickingBuffer();
+    iFrame = new InteractiveFrame(scene, "graphics");
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+    iFrame.setGrabsInputThreshold(length);
+    iFrame.translate(50,50);
+    iFrame.rotate(new Rot(QUARTER_PI));
+    scene.showAll();
   }
 
-  public void keyPressed() {
-    if (key == 'x') scene.shiftTimers();
-    if (key == 'f') scene.flip();
+  public void graphics(PGraphics pg) {
+    pg.fill(255,0,255);
+    pg.rect(0,0,length,length);
   }
 
   public void draw() {
     background(0);
-  /*
-  if (frame != null) {
-   frame.setResizable(true);
-   PApplet.println("set size");
-  }
-  */
-    noStroke();
-    if (scene.camera().ballVisibility(new Vec(0, 0, 0), 40) == Camera.Visibility.SEMIVISIBLE)
-      fill(255, 0, 0);
-    else
-      fill(0, 255, 0);
-    sphere(40);
-  }
-
-  public void sceneCustomClick(Scene scn) {
-    scn.setAxesVisualHint(!scn.axesVisualHint());
+    scene.drawFrames();
   }
 
   public static void main(String args[]) {

@@ -311,10 +311,10 @@ public class InteractiveFrame extends GenericFrame {
 
   protected InteractiveFrame(InteractiveFrame otherFrame) {
     super(otherFrame);
+    id = ++scene().iFrameCount;
     profile = new Profile(this);
     this.profile.set(otherFrame.profile);
     this.highlight = otherFrame.highlight;
-    this.id = otherFrame.id;
     this.fShape = new Shape(this);
     this.pShape = new Shape(this);
     this.pShape.set(otherFrame.pShape);
