@@ -53,3 +53,4 @@ The following three issues were tested with Processing-3.2.3 under Windows and L
 ## Foundation
 
 1. Serialize scene profiles and iFrame shapes and profiles.
+2. Perform a deep copy of generic-children frames.
