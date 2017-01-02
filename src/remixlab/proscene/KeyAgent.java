@@ -10,11 +10,13 @@
 
 package remixlab.proscene;
 
+import processing.core.PApplet;
+import processing.core.PGraphics;
 import remixlab.bias.Agent;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.Grabber;
-import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.ext.Profile;
 
 /**
  * Proscene key-agent. A Processing fully fledged key {@link Agent}.
@@ -26,7 +28,8 @@ import remixlab.bias.event.KeyboardEvent;
  */
 public class KeyAgent extends Agent {
   /**
-   * Note that keyboard ids are automatically registered in {@link Scene#initVKeys(Class)}.
+   * Note that keyboard ids are automatically registered in
+   * {@link Scene#Scene(PApplet, PGraphics, int, int)}.
    * We just know in advanced the values of the arrow keys.
    */
   public static final int LEFT_KEY = 37, RIGHT_KEY = 39, UP_KEY = 38, DOWN_KEY = 40;
