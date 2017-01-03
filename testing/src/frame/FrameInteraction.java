@@ -3,6 +3,7 @@ package frame;
 import processing.core.*;
 import processing.event.Event;
 import remixlab.bias.BogusEvent;
+import remixlab.bias.event.DOF2Event;
 import remixlab.bias.event.MotionEvent;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.MouseAgent;
@@ -100,9 +101,17 @@ public class FrameInteraction extends PApplet {
     pg.sphere(30);
   }
 
+  ///*
   public void boxCustomMotion(InteractiveFrame frame, MotionEvent event) {
     frame.screenRotate(event);
   }
+  //*/
+
+  /*
+  public void boxCustomMotion(InteractiveFrame frame, DOF2Event event) {
+    println("custom"); frame.screenRotate(event);
+  }
+  //*/
 
   public void boxCustomClick(InteractiveFrame frame) {
     if (frame.scene().mouseAgent().pickingMode() == MouseAgent.PickingMode.MOVE)

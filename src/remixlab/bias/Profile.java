@@ -10,10 +10,9 @@
 
 package remixlab.bias;
 
-import remixlab.bias.event.MotionEvent;
-import remixlab.bias.event.MotionShortcut;
-
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -52,6 +51,39 @@ public class Profile {
   protected Grabber grabber;
 
   // static stuff
+
+  /**
+   * Utility function to programmatically register virtual keys to a {@link remixlab.bias.Shortcut} class,
+   * typically {@code KeyboardShortcuts}.
+   */
+  public static void registerVKeys(Class<? extends Shortcut> shortcutClass, Class<?> keyEventClass) {
+    // TODO android needs testing
+    // idea took from here:
+    // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
+    // and here:
+    // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
+    String prefix = keyEventClass.getName().contains("android") ? "KEYCODE_" : "VK_";
+    int l = prefix.length();
+    Field[] fields = keyEventClass.getDeclaredFields();
+    for (Field f : fields) {
+      if (Modifier.isStatic(f.getModifiers()) && Modifier.isPublic(f.getModifiers())) {
+        Class<?> clazzType = f.getType();
+        if (clazzType.toString().equals("int")) {
+          int id = -1;
+          try {
+            id = f.getInt(keyEventClass);
+            String name = f.getName();
+            if (!Shortcut.hasID(shortcutClass, id) && name.substring(0, l).equals(prefix))
+              Shortcut.registerID(shortcutClass, id, name);
+          } catch (Exception e) {
+            System.out.println("Warning: couldn't register key");
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+  }
+
   public static Object context = null;
 
   /**
@@ -248,9 +280,9 @@ public class Profile {
         try {
           method = context.getClass().getMethod(action, new Class<?>[]{grabber.getClass()});
         } catch (Exception empty) {
-          if (shortcut instanceof MotionShortcut)
+          if (shortcut.defaultEventClass() != null)
             try {
-              method = context.getClass().getMethod(action, new Class<?>[]{grabber.getClass(), MotionEvent.class});
+              method = context.getClass().getMethod(action, new Class<?>[]{grabber.getClass(), shortcut.defaultEventClass()});
             } catch (Exception e) {
               proto1 = prototypes(context, shortcut, action);
             }
@@ -273,9 +305,9 @@ public class Profile {
       try {
         method = grabber.getClass().getMethod(action, new Class<?>[]{});
       } catch (Exception empty) {
-        if (shortcut instanceof MotionShortcut)
+        if (shortcut.defaultEventClass() != null)
           try {
-            method = grabber.getClass().getMethod(action, new Class<?>[]{MotionEvent.class});
+            method = grabber.getClass().getMethod(action, new Class<?>[]{shortcut.defaultEventClass()});
           } catch (Exception motion) {
             proto2 = prototypes(shortcut, action);
             System.out.println("Warning: not binding set! Check the existence of one of the following method prototypes: " + (
@@ -347,9 +379,9 @@ public class Profile {
       try {
         method = object.getClass().getMethod(action, new Class<?>[]{grabber.getClass()});
       } catch (Exception empty) {
-        if (shortcut instanceof MotionShortcut)
+        if (shortcut.defaultEventClass() != null)
           try {
-            method = object.getClass().getMethod(action, new Class<?>[]{grabber.getClass(), MotionEvent.class});
+            method = object.getClass().getMethod(action, new Class<?>[]{grabber.getClass(), shortcut.defaultEventClass()});
           } catch (Exception e) {
             System.out.println(
                 "Warning: not binding set! Check the existence of one of the following method prototypes: " + prototypes(
@@ -382,10 +414,10 @@ public class Profile {
     String sgn2 =
         "public void " + object.getClass().getSimpleName() + "." + action + "(" + grabber().getClass().getSimpleName()
             + ", " + shortcut.eventClass().getSimpleName() + ")";
-    if (shortcut instanceof MotionShortcut) {
+    if (shortcut.defaultEventClass() != null) {
       String sgn3 =
           "public void " + object.getClass().getSimpleName() + "." + action + "(" + grabber().getClass().getSimpleName()
-              + ", " + MotionEvent.class.getSimpleName() + ")";
+              + ", " + shortcut.defaultEventClass().getSimpleName() + ")";
       return sgn1 + ", " + sgn2 + ", " + sgn3;
     } else
       return sgn1 + ", " + sgn2;
@@ -396,13 +428,13 @@ public class Profile {
    *
    * @see #setBinding(Shortcut, String)
    */
-  protected String prototypes(Shortcut key, String action) {
+  protected String prototypes(Shortcut shortcut, String action) {
     String sgn1 = "public void " + grabber.getClass().getSimpleName() + "." + action + "()";
     String sgn2 =
-        "public void " + grabber.getClass().getSimpleName() + "." + action + "(" + key.eventClass().getSimpleName() + ")";
-    if (key instanceof MotionShortcut) {
+        "public void " + grabber.getClass().getSimpleName() + "." + action + "(" + shortcut.eventClass().getSimpleName() + ")";
+    if (shortcut.defaultEventClass() != null) {
       String sgn3 =
-          "public void " + grabber.getClass().getSimpleName() + "." + action + "(" + MotionEvent.class.getSimpleName()
+          "public void " + grabber.getClass().getSimpleName() + "." + action + "(" + shortcut.defaultEventClass().getSimpleName()
               + ")";
       return sgn1 + ", " + sgn2 + ", " + sgn3;
     } else

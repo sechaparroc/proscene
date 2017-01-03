@@ -15,6 +15,9 @@ import remixlab.bias.BogusEvent;
 import remixlab.bias.Grabber;
 import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.event.KeyboardShortcut;
+
+import java.awt.event.KeyEvent;
 
 /**
  * Proscene key-agent. A Processing fully fledged key {@link Agent}.
@@ -25,10 +28,6 @@ import remixlab.bias.event.KeyboardEvent;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class KeyAgent extends Agent {
-  /**
-   * Note that keyboard ids are automatically registered in {@link Scene#initVKeys(Class)}.
-   * We just know in advanced the values of the arrow keys.
-   */
   public static final int LEFT_KEY = 37, RIGHT_KEY = 39, UP_KEY = 38, DOWN_KEY = 40;
   // public static int LEFT_KEY = PApplet.LEFT, RIGHT_KEY = PApplet.RIGHT,
   // UP_KEY = PApplet.UP, DOWN_KEY = PApplet.DOWN;
@@ -41,6 +40,7 @@ public class KeyAgent extends Agent {
    */
   public KeyAgent(Scene scn) {
     super(scn.inputHandler());
+    Profile.registerVKeys(KeyboardShortcut.class, KeyEvent.class);
     scene = scn;
     addGrabber(scene);
   }
