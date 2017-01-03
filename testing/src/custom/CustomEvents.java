@@ -2,6 +2,7 @@ package custom;
 
 import processing.core.PApplet;
 import remixlab.bias.BogusEvent;
+import remixlab.bias.Shortcut;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.Scene;
 

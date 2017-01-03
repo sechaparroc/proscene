@@ -27,10 +27,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 
-import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -210,7 +207,6 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 4. Create agents and register P5 methods
     profile = new Profile(this);
-    initVKeys(platform() == Platform.PROCESSING_ANDROID ? android.view.KeyEvent.class : KeyEvent.class);
     if (platform() == Platform.PROCESSING_ANDROID) {
       defMotionAgent = new DroidTouchAgent(this);
       defKeyboardAgent = new DroidKeyAgent(this);
@@ -1813,37 +1809,6 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().shader(pickingBufferShaderTriangle);
     pickingBuffer().shader(pickingBufferShaderLine, LINES);
     pickingBuffer().shader(pickingBufferShaderPoint, POINTS);
-  }
-
-  /**
-   * Internal use. Programmatically register virtual keys.
-   */
-  protected void initVKeys(Class<?> keyEventClass) {
-    // TODO android needs testing
-    // idea took from here:
-    // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
-    // and here:
-    // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
-    String prefix = keyEventClass.getName().contains("android") ? "KEYCODE_" : "VK_";
-    int l = prefix.length();
-    Field[] fields = keyEventClass.getDeclaredFields();
-    for (Field f : fields) {
-      if (Modifier.isStatic(f.getModifiers()) && Modifier.isPublic(f.getModifiers())) {
-        Class<?> clazzType = f.getType();
-        if (clazzType.toString().equals("int")) {
-          int id = -1;
-          try {
-            id = f.getInt(keyEventClass);
-            String name = f.getName();
-            if (!KeyboardShortcut.hasID(id) && name.substring(0, l).equals(prefix))
-              KeyboardShortcut.registerID(id, name);
-          } catch (Exception e) {
-            System.out.println("Warning: couldn't register key");
-            e.printStackTrace();
-          }
-        }
-      }
-    }
   }
 
   protected boolean unchachedBuffer;
