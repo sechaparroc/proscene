@@ -13,8 +13,9 @@ package remixlab.proscene;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import remixlab.bias.Agent;
+import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.bias.ext.Profile;
+import remixlab.bias.event.KeyboardShortcut;
 
 /**
  * Proscene Android key-agent. A Processing fully fledged Android-key
@@ -26,7 +27,7 @@ public class DroidKeyAgent extends Agent {
 
   public DroidKeyAgent(Scene scn) {
     super(scn.inputHandler());
-    Profile.registerVKeys(android.view.KeyEvent.class);
+    Profile.registerVKeys(KeyboardShortcut.class, android.view.KeyEvent.class);
     scene = scn;
     addGrabber(scene);
   }

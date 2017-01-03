@@ -13,8 +13,9 @@ package remixlab.proscene;
 import remixlab.bias.Agent;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.Grabber;
+import remixlab.bias.Profile;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.bias.ext.Profile;
+import remixlab.bias.event.KeyboardShortcut;
 
 import java.awt.event.KeyEvent;
 
@@ -39,7 +40,7 @@ public class KeyAgent extends Agent {
    */
   public KeyAgent(Scene scn) {
     super(scn.inputHandler());
-    Profile.registerVKeys(KeyEvent.class);
+    Profile.registerVKeys(KeyboardShortcut.class, KeyEvent.class);
     scene = scn;
     addGrabber(scene);
   }
