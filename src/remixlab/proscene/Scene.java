@@ -31,7 +31,6 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 
-import java.awt.event.KeyEvent;
 import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -212,7 +211,6 @@ public class Scene extends AbstractScene implements PConstants {
 
     // 4. Create agents and register P5 methods
     profile = new Profile(this);
-    Profile.registerVKeys(platform() == Platform.PROCESSING_ANDROID ? android.view.KeyEvent.class : KeyEvent.class);
     if (platform() == Platform.PROCESSING_ANDROID) {
       defMotionAgent = new DroidTouchAgent(this);
       defKeyboardAgent = new DroidKeyAgent(this);
