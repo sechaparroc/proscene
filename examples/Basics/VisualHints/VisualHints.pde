@@ -15,12 +15,14 @@ InteractiveFrame iFrame;
 boolean displayPaths = true;
 Point fCorner = new Point();
 
-//Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
+//Choose FX2D, JAVA2D, P2D or P3D
 String renderer = P3D;
 
 public void setup() {
   size(640, 360, renderer);
   scene = new CustomizedScene(this);
+  //do not overwrite the config file on dispose
+  unregisterMethod("dispose", scene);
   iFrame = new InteractiveFrame(scene);
   iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
   iFrame.setGrabsInputThreshold(scene.radius()/4);

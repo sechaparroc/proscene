@@ -53,7 +53,7 @@ public Vec[] getCube(PShape shape) {
 }
 
 public Vec[][] getFaces(InteractiveFrame m){
-  Vec[] cub = getCube(m.shape());
+  Vec[] cub = getCube(m.frontShape());
   Vec[][] faces = new Vec[6][4];
   faces[0][0] = m.inverseCoordinatesOf(new Vec(cub[0].x(), cub[0].y(), cub[0].z()));
   faces[0][1] = m.inverseCoordinatesOf(new Vec(cub[1].x(), cub[0].y(), cub[0].z()));
