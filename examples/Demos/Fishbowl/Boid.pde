@@ -1,4 +1,4 @@
-/*Flock adapted version of Matt Wetmore and Jean Pierre Charalambos
+/*Adapted version of Matt Wetmore and Jean Pierre Charalambos
 Here a Boid encapsulates all the required behavior to render and modify the
 movement of a Fish
 */
@@ -75,7 +75,7 @@ class Boid{
     Boid nearest = getNearest();
     avoidPredators();
     followPreys();
-    flock(boids); 
+    shoal(boids); 
     move(nearest);
   }
   
@@ -122,7 +122,7 @@ class Boid{
     return steer;
   }
 
-  void flock(ArrayList<Boid> bl){
+  void shoal(ArrayList<Boid> bl){
     aligment   = getAlignment(bl);
     cohesion   = getCohesion(bl);
     separation = getSeparation(bl);

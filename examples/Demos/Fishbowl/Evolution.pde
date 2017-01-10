@@ -113,7 +113,7 @@ public Fish mutation(Fish fi){
 
 void updateGA(){
   //actualize turing morph and parameters to render the agents
-  flock.clear();
+  shoal.clear();
   for(Fish f : agents){    
     last_texture = execute(true, true, f);        
     f.boid.s = updateShape(f);
@@ -123,7 +123,7 @@ void updateGA(){
     f.boid = generateBoid((int)random(0,r_world.x() - 100), (int)random(0,r_world.y() - 100), (int)random(0,r_world.z() - 100),f.boid.s, f);
     f.boid.boids = new ArrayList<Boid>();
     f.boid.boids.add(f.boid);
-    flock.add(f.boid);
+    shoal.add(f.boid);
     f.updateVision();
   }
 }
