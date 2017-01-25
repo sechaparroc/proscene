@@ -4,6 +4,7 @@ ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0-brightgreen.sv
 **Table of Contents**
 
 - [Description](#user-content-description)
+- [Philosophy](#user-content-philosophy)
 - [Key features](#user-content-key-features)
 - [Origin of the name](#user-content-origin-of-the-name)
 - [Usage](#user-content-usage)
@@ -20,6 +21,11 @@ ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0-brightgreen.sv
 **ProScene** provides seemless integration with **Processing**: its API has been designed to fit that of **Processing** and its implementation has been optimized to work along side with it. It suppports all major **Processing** flavours: Desktop, JS, and Android.
 
 **ProScene** support is led by the active and great Processing community at its [forum](http://forum.processing.org/search/proscene) where you can reach us. News and technical details are found at our [blog](http://otrolado.info).
+
+# Philosophy
+
+One of the main Proscene goals is to provide [HCI](https://en.wikipedia.org/wiki/Human%E2%80%93computer_interaction) researchers with a common and simple, yet fully customizable, framework to test different experimental ideas involving
+the _three universal interaction tasks_: 1. Object selection; 2. Object manipulation; and, 3. Application control. For further details please refer to [this paper](http://www.sciencedirect.com/science/article/pii/S235271101730002X).
 
 # Key features
 
