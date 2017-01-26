@@ -110,7 +110,7 @@ public class Fish{
 
   
   //join to the most appropiate group
-  void joinToFlock(){
+  void joinToShoal(){
     if(most_similar == null) return;
     //join to the most similar in the current iteration
     float prop = boid.boids.size()*1./(boid.boids.size() + most_similar.boid.boids.size());
@@ -159,6 +159,6 @@ public class Fish{
   public void run(){
     float calc = getHappiness();
     if(calc >= 0.9)
-      joinToFlock();
+      joinToShoal();
   }
 }

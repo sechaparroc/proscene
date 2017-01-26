@@ -106,8 +106,6 @@ public class InteractiveFrame extends GenericFrame {
     NONE, FRONT_SHAPE, FRONT_PICKING_SHAPES, PICKING_SHAPE
   }
 
-  ;
-
   // profile
   protected Profile profile;
   // id

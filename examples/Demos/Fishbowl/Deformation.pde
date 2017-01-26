@@ -67,8 +67,6 @@ PShape applyDeformation(Fish agent){
   return deformed_figure;
 }
 
-
-
 Boid generateBoid(int x, int y, int z, PShape p, Fish agent){
   InteractiveFrame f = new InteractiveFrame(scene);
   f.setPosition(x,y,z);
