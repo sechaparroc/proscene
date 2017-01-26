@@ -2,9 +2,8 @@
  * PostEffects.
  * by Ivan Castellanos and Jean Pierre Charalambos.
  *
- * This example illustrates how to attach a PShape to an interactive frame.
- * PShapes attached to interactive frames can then be automatically picked
- * and easily drawn.
+ * This example illustrates shader chaining which requires drawing the scene
+ * frames into an arbitrary PGraphics (see line 116).
  *
  * Press '1' to '9' to (de)activate effect.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
@@ -112,6 +111,8 @@ public void draw() {
   if (bdepth){
     colorGraphics.beginDraw();
     colorGraphics.background(0);
+    //Note that when drawing the frames into an arbitrary PGraphics
+    //the eye position of the main PGraphics is used
     scene.drawFrames(colorGraphics);
     colorGraphics.endDraw();
     drawGraphics = colorGraphics;

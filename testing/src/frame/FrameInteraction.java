@@ -90,9 +90,11 @@ public class FrameInteraction extends PApplet {
   }
 
   public void boxDrawing(PGraphics pg) {
-    pg.fill(0, 255, 0);
-    pg.strokeWeight(3);
-    pg.box(30);
+    //pg.fill(0, 255, 0);
+    pg.noFill();
+    scene.drawCone(pg);
+    //pg.strokeWeight(3);
+    //pg.box(30);
   }
 
   public void boxPicking(PGraphics pg) {
@@ -119,7 +121,7 @@ public class FrameInteraction extends PApplet {
   }
 
   public void draw() {
-    background(0);
+    background(255);
 
     // 1. Draw frames for which visual representations have been set
     // this methods returns at the world coordinate system and hence
