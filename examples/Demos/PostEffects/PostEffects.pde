@@ -11,10 +11,10 @@
 
 import remixlab.proscene.*;
 
-PShader noiseShader, kaleidoShader, raysShader, dofShader, pixelShader, edgeShader, colorShader, fxaaShader, horizontalShader;
-PGraphics drawGraphics, dofGraphics, noiseGraphics, kaleidoGraphics, raysGraphics, pixelGraphics, edgeGraphics, graphics, colorGraphics, fxaaGraphics, horizontalGraphics;
+PShader noiseShader, kaleidoShader, raysShader, dofShader, pixelShader, edgeShader, colorShader, horizontalShader;
+PGraphics drawGraphics, dofGraphics, noiseGraphics, kaleidoGraphics, raysGraphics, pixelGraphics, edgeGraphics, graphics, colorGraphics, horizontalGraphics;
 Scene scene;
-boolean bdepth, brays, bpixel, bedge, bdof, bkaleido, bnoise, bfxaa, bhorizontal;
+boolean bdepth, brays, bpixel, bedge, bdof, bkaleido, bnoise, bhorizontal;
 float posns[];
 int startTime;
 InteractiveFrame[] models;
@@ -83,11 +83,6 @@ public void setup() {
   noiseShader.set("frequency", 4.0);
   noiseShader.set("amplitude", 0.1);
   noiseShader.set("speed", 0.1);
-  
-  fxaaShader = loadShader("fxaa.glsl");
-  fxaaGraphics = createGraphics(width, height, P3D);
-  fxaaGraphics.shader(fxaaShader);
-  fxaaShader.set("resolution", 1.0 / width, 1.0 / height);
   
   horizontalShader = loadShader("horizontal.glsl");
   horizontalGraphics = createGraphics(width, height, P3D);
@@ -170,13 +165,6 @@ public void draw() {
     raysGraphics.endDraw();    
     drawGraphics = raysGraphics;
   }
-  if (bfxaa) {
-    fxaaGraphics.beginDraw();
-    fxaaShader.set("tDiffuse", drawGraphics);
-    fxaaGraphics.image(graphics, 0, 0);
-    fxaaGraphics.endDraw();    
-    drawGraphics = fxaaGraphics;
-  }
   scene.display(drawGraphics);
   drawText();
 }
@@ -191,7 +179,6 @@ void drawText() {
   text(bedge ? "6. Edge (*)" : "6. Edge", 5, 95);
   text(bhorizontal ? "7. Horizontal (*)" : "7. Horizontal", 5, 110);
   text(brays ? "8. Rays (*)" : "8. Rays", 5, 125);
-  text(bfxaa ? "9. Fxaa (*)" : "9. Fxaa", 5, 140);
   scene.endScreenDrawing();
 }
 
@@ -223,8 +210,6 @@ void keyPressed() {
     bhorizontal = !bhorizontal;
   if(key=='8')
     brays = !brays;
-  if(key=='9')
-    bfxaa = !bfxaa;
   if(key == ' ')
     scene.togglePickingBuffer();
 }
