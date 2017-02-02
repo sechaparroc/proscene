@@ -30,7 +30,7 @@ Feel free to star the project if you like it, and please reference it if you are
 
 # Key features
 
-* *Tested* under Linux, Mac OSX and Windows, and properly works with the JAVA2D, FX2D, P2D and P3D **Processing** renderers. No special dependencies or requirements needed (apart of course from [Processing-3.x](https://github.com/processing/processing/releases)).
+* *Tested* under Linux, Mac OSX and Windows, and properly works with the JAVA2D, FX2D, P2D and P3D **Processing** renderers. No special dependencies or requirements needed (apart of course from [Processing >= 3.2.4](https://github.com/processing/processing/releases)).
 * It supports all major **Processing** flavours: Desktop, Android (since [Proscene v-3.0.0-beta.6](https://github.com/remixlab/proscene/releases/tag/v-3.0.0-beta.6)) and (soon) JS.
 * API design that provides seemless integration with **Processing** (e.g., providing flexible animation and drawing mechanisms), and allows extensibility of its key features.
 * Generic support to [Human Interface Devices (HIDs)](http://en.wikipedia.org/wiki/Human_interface_device), including not only the mouse and the keyboard, but advanced HID's such as a [touchscreen](http://en.wikipedia.org/wiki/Touchscreen), a [space navigator](http://en.wikipedia.org/wiki/3Dconnexion) or a [kinect](http://en.wikipedia.org/wiki/Kinect).
