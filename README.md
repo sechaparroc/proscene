@@ -26,7 +26,6 @@ ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0-brightgreen.sv
 
 One of the main Proscene goals is to provide [HCI](https://en.wikipedia.org/wiki/Human%E2%80%93computer_interaction) researchers with a common and simple, yet fully customizable, framework to test different experimental ideas involving
 the _three universal interaction tasks_: Object selection & manipulation, including the scene point-of-view; and, application control. For further details please refer to [this paper](http://www.sciencedirect.com/science/article/pii/S235271101730002X).
-Feel free to star the project if you like it, and please reference it if you are using it.
 
 # Key features
 
