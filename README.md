@@ -57,7 +57,7 @@ the _three universal interaction tasks_: Object selection & manipulation, includ
 
 # Usage
 
-All library features requires a `Scene` object (which is the main package class) to be instantiated (usually within your sketch setup method). There are three ways to do that:
+All library features requires a `Scene` object (which is the main package class) to be instantiated (usually within your sketch setup method). There are two ways to do that:
 
 1. **Direct instantiation**. In this case you should instantiate your own Scene object at the `PApplet.setup()` function.
 2. **Inheritance**. In this case, once you declare a `Scene` derived class, you should implement `proscenium()` which defines the objects in your scene. Just make sure to define the `PApplet.draw()` method, even if it's empty.
