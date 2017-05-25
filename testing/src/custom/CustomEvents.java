@@ -3,6 +3,7 @@ package custom;
 import processing.core.PApplet;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.Shortcut;
+import remixlab.dandelion.geom.Vec;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.Scene;
 
@@ -27,7 +28,7 @@ public class CustomEvents extends PApplet {
     scene.disableMouseAgent();
 
     weirdAgent = new WeirdAgent(scene);
-    simpleAgent = new SimpleAgent(scene);
+    //simpleAgent = new SimpleAgent(scene);
 
     iFrame = new InteractiveFrame(scene);
     iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
@@ -54,7 +55,16 @@ public class CustomEvents extends PApplet {
     println("Simple behavior Arrived!");
   }
 
-  //TODO checkIfGrabsInput pending
+  //checkIfGrabsInput example
+
+  public boolean checkIfGrabsInput(InteractiveFrame frame, WeirdEvent event) {
+    Vec proj = scene.eye().projectedCoordinatesOf(frame.position());
+    float halfThreshold = 50;
+    boolean result = ((Math.abs(event.x - proj.vec[0]) < halfThreshold) && (Math.abs(event.y - proj.vec[1]) < halfThreshold));
+    if(result)
+      println("frame selected");
+    return result;
+  }
 
   public void draw() {
     background(0);

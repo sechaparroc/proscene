@@ -86,6 +86,10 @@ public class FrameInteraction extends PApplet {
     frame4.setKeyBinding('u', "translateXPos");
     frame4.setKeyBinding(Event.SHIFT, 'u', "translateXNeg");
 
+    frame4.setTrackingEyeDistance(1000);
+    frame4.setTrackingEyeAzimuth(PI);
+    frame4.setTrackingEyeInclination(PI);
+    scene.setAvatar(frame4);
     //scene.eyeFrame().removeMotionBindings();
   }
 

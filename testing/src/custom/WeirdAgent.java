@@ -37,11 +37,11 @@ public class WeirdAgent extends Agent {
     press = e.getAction() == processing.event.MouseEvent.PRESS;
     drag = e.getAction() == processing.event.MouseEvent.DRAG;
     release = e.getAction() == processing.event.MouseEvent.RELEASE;
-    if (move || press || drag || release) {
-      currentEvent = new WeirdEvent(e.getX() - scene.pApplet().width / 2, e.getY() - scene.pApplet().height / 2,
-          e.getModifiers(), /*e.getButton()*/ WEIRD_ID);
+    currentEvent = new WeirdEvent(e.getX() - scene.pApplet().width / 2, e.getY() - scene.pApplet().height / 2,
+        e.getModifiers(), /*e.getButton()*/ WEIRD_ID);
+    if (press || drag || release)
       handle(currentEvent);
-      return;
-    }
+    if (move)
+      updateTrackedGrabber(currentEvent);
   }
 }
