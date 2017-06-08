@@ -532,10 +532,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     };
     scene().registerTimingTask(flyTimerTask);
     // end
-
-    // init 3rd person stuff
-    q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
-    // updateTrackingEyeFrame();
   }
 
   protected GenericFrame(GenericFrame otherFrame) {
@@ -3142,6 +3138,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   public float trackingEyeAzimuth() {
     // azimuth <-> pitch
+    if(q==null)
+      q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
     if (scene().is3D())
       return ((Quat) q).taitBryanAngles().vec[1];
     else {
@@ -3158,6 +3156,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   public void setTrackingEyeAzimuth(float a) {
     if (scene().is3D()) {
+      if(q==null)
+        q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
       float roll = ((Quat) q).taitBryanAngles().vec[0];
       ((Quat) q).fromTaitBryan(roll, a, 0);
       updateTrackingEyeFrame();
@@ -3173,6 +3173,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   public float trackingEyeInclination() {
     // inclination <-> roll
+    if(q==null)
+      q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
     if (scene().is3D())
       return ((Quat) q).taitBryanAngles().vec[0];
     else
@@ -3187,6 +3189,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   public void setTrackingEyeInclination(float i) {
     if (scene().is3D()) {
+      if(q==null)
+        q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
       float pitch = ((Quat) q).taitBryanAngles().vec[1];
       ((Quat) q).fromTaitBryan(i, pitch, 0);
     } else
@@ -3204,6 +3208,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * @see remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)
    */
   protected void updateTrackingEyeFrame() {
+    if(q==null)
+      q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
     if (eFrame == null) {
       eFrame = new GenericFrame(scene(), this);
       scene().pruneBranch(eFrame);
@@ -3239,6 +3245,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   @Override
   public GenericFrame trackingEyeFrame() {
+    if (eFrame == null)
+      updateTrackingEyeFrame();
     return eFrame;
   }
 }
