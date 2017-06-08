@@ -108,8 +108,6 @@ public class InteractiveFrame extends GenericFrame {
 
   // profile
   protected Profile profile;
-  // id
-  protected int id;
   // shape
   protected Shape fShape, pShape;
 
@@ -272,10 +270,6 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init() {
-    id = ++scene().iFrameCount;
-    // unlikely but theoretically possible
-    if (id == 16777216)
-      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     fShape = new Shape(this);
     pShape = new Shape(this);
     highlight = HighlightingMode.FRONT_SHAPE;
@@ -288,10 +282,6 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   protected void init(GenericFrame referenceFrame) {
-    id = ++scene().iFrameCount;
-    // unlikely but theoretically possible
-    if (id == 16777216)
-      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     fShape = new Shape(this);
     pShape = new Shape(this);
     highlight = HighlightingMode.FRONT_SHAPE;
@@ -309,7 +299,6 @@ public class InteractiveFrame extends GenericFrame {
 
   protected InteractiveFrame(InteractiveFrame otherFrame) {
     super(otherFrame);
-    id = ++scene().iFrameCount;
     profile = new Profile(this);
     this.profile.set(otherFrame.profile);
     this.highlight = otherFrame.highlight;
@@ -939,16 +928,6 @@ public class InteractiveFrame extends GenericFrame {
   }
 
   /**
-   * Internal use. Frame graphics color to use in the
-   * {@link remixlab.proscene.Scene#pickingBuffer()}.
-   */
-  protected int id() {
-    // see here:
-    // http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
-    return (255 << 24) | ((id & 255) << 16) | (((id >> 8) & 255) << 8) | (id >> 16) & 255;
-  }
-
-  /**
    * Same as {@code shiftFrontShape(shift); shiftPickingShape(shift)}.
    * <p>
    * This method is only meaningful when frame is not eyeFrame.
@@ -1149,6 +1128,7 @@ public class InteractiveFrame extends GenericFrame {
       float r = (float) (id & 255) / 255.f;
       float g = (float) ((id >> 8) & 255) / 255.f;
       float b = (float) ((id >> 16) & 255) / 255.f;
+
       // funny, only safe way. Otherwise break things horribly when setting shapes
       // and there are more than one iFrame
       scene().applyPickingBufferShaders();

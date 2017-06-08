@@ -116,8 +116,6 @@ public class Scene extends AbstractScene implements PConstants {
   protected PApplet parent;
   protected PGraphics mainPGraphics;
 
-  // iFrames
-  protected int iFrameCount;
   // pb : picking buffer
   protected PGraphics pb;
   protected boolean pickingBufferEnabled;

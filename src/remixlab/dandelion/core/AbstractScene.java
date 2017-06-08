@@ -139,6 +139,9 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 
   protected List<GenericFrame> seeds;
 
+  // iFrames
+  public int nodeCount;
+
   // public final static int PUP = 1 << 6;
   // public final static int ARP = 1 << 7;
 

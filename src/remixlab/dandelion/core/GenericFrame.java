@@ -157,6 +157,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   private boolean hint;
 
+  // id
+  protected int id;
+
   /**
    * Enumerates the Picking precision modes.
    */
@@ -504,6 +507,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   protected void init(AbstractScene scn) {
     gScene = scn;
+    id = ++scene().nodeCount;
+    // unlikely but theoretically possible
+    if (id == 16777216)
+      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     visit = true;
     childrenList = new ArrayList<GenericFrame>();
     // scene().addLeadingFrame(this);
@@ -537,6 +544,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected GenericFrame(GenericFrame otherFrame) {
     super(otherFrame);
     this.gScene = otherFrame.gScene;
+    this.id = ++scene().nodeCount;
+    // unlikely but theoretically possible
+    if (this.id == 16777216)
+      throw new RuntimeException("Maximum iFrame instances reached. Exiting now!");
     this.theeye = otherFrame.theeye;
 
     this.visit = otherFrame.visit;
@@ -614,6 +625,18 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     scene().pruneBranch(frame);
     frame.setWorldMatrix(this);
     return frame;
+  }
+
+  //id
+
+  /**
+   * Internal use. Frame graphics color to use in the
+   * {@link remixlab.proscene.Scene#pickingBuffer()}.
+   */
+  protected int id() {
+    // see here:
+    // http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
+    return (255 << 24) | ((id & 255) << 16) | (((id >> 8) & 255) << 8) | (id >> 16) & 255;
   }
 
   // GRAPH
