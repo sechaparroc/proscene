@@ -11,11 +11,14 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$USER_HOME$/.lib/android" />
+          <root url="file://$USER_HOME$/Android/Sdk/platforms/android-25" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/.lib/android" recursive="false" />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Android/Sdk/platforms/android-25" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Android/Sdk/platforms/android-25" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Android/Sdk/platforms/android-25" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>

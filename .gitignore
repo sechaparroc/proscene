@@ -3,3 +3,4 @@ distribution
 data/config.json
 .idea/workspace.xml
 .idea/tasks.xml
+resources/build.properties
