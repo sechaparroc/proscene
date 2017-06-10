@@ -633,7 +633,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Internal use. Frame graphics color to use in the
    * {@link remixlab.proscene.Scene#pickingBuffer()}.
    */
-  protected int id() {
+  public int id() {
     // see here:
     // http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
     return (255 << 24) | ((id & 255) << 16) | (((id >> 8) & 255) << 8) | (id >> 16) & 255;
