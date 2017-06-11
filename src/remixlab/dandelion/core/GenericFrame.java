@@ -3272,4 +3272,130 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       updateTrackingEyeFrame();
     return eFrame;
   }
+
+  //SOME METHODS REQUIRED FOR IK
+
+
+  /*Set the orientation of the parent when children has been translated*/
+  public void setRotation(GenericFrame children){
+    setRotation(children.translation());
+  }
+
+  /*
+   * TODO : Use Quat Methods
+   * Set orientation of a Joint when its children has been translated
+   * Returns a Quat that must be used by the rest of the chain to perform
+   * inverse rotation.
+   * */
+  public Rotation setRotation(Vec newPos){
+    if(this.is3D()){
+      /*First we set Z-Axis to be in the direction of the child new position */
+      Vec z = new Vec(0,0,1);
+      float angle_z = Vec.angleBetween(z, newPos);
+      if(angle_z == 0) return new Quat();
+      Vec axis_z = new Vec();
+      Vec.cross(z, newPos, axis_z);
+      Quat qz = new Quat(axis_z, angle_z);
+      this.rotate(qz);
+      /*Then we let Y-Axis to be Z_parent X Z*/
+      Vec new_y = new Vec();
+      Vec z_wp = referenceFrame() != null ?
+              referenceFrame().inverseTransformOf(new Vec(0,0,1))
+              : new Vec(0,0,1);
+      Vec z_w = inverseTransformOf(new Vec(0,0,1));
+      Vec y_w =	inverseTransformOf(new Vec(0,1,0));
+      Vec.cross(z_wp, z_w, new_y);
+      if(Math.abs(z_w.dot(z_wp) - 1) < Float.MIN_VALUE){
+        new_y = referenceFrame() != null ?
+                referenceFrame().inverseTransformOf(new Vec(0,1,0))
+                : new Vec(0,1,0);
+      }
+      float angle_y = Vec.angleBetween(new_y, y_w);
+      if(Vec.dot(Vec.cross(y_w, new_y, null), z_w) < 0) {
+        angle_y = -angle_y;
+      }
+      Quat qy = new Quat(new Vec(0,0,1), angle_y);
+      this.rotate(qy);
+      for(int i = 0; i < children().size(); i++) {
+        children().get(i).setRotation(Quat.compose((Quat) Quat.compose(qz, qy).inverse(), children().get(i).rotation()));
+        children().get(i).setTranslation(new Vec(0, 0, children().get(i).translation().magnitude()));
+      }
+      return (Quat) Quat.compose(qz, qy);
+    }else{
+      /*First we set X-Axis to be in the direction of the child new position */
+      Vec x = new Vec(1,0);
+      Rot rot = new Rot(x, newPos);
+      this.rotate(rot);
+      for(int i = 0; i < children().size(); i++) {
+        children().get(i).setRotation(Rot.compose(rot.inverse(), children().get(i).rotation()));
+        children().get(i).setTranslation(new Vec(children().get(i).translation().magnitude(), 0));
+      }
+      return rot.get();
+    }
+  }
+
+  public void setReferenceFrame(GenericFrame parent, boolean setHierarchy){
+    //TODO : Currently Working just with chains
+    //TODO when remove also remove subBase if children size == 1
+    //TODO Checkout ReferenceFrame to remove a Frame in the Tree
+    if(!setHierarchy || parent == null){
+      setReferenceFrame(parent);
+      return;
+    }
+    /*Get number of joints related with the parent*/
+    int siblings = 0;
+    for(GenericFrame f : parent.children()){
+      siblings = f != this ? siblings + 1 : siblings;
+    }
+    if(siblings == 0){
+      //Set parent orientation
+      Vec translation = parent.coordinatesOfFrom(new Vec(), this);
+      float magnitude = translation.magnitude();
+      parent.setRotation(translation.get());
+      setReferenceFrame(parent);
+      if(this.is3D())this.setTranslation(new Vec(0,0,magnitude));
+      else this.setTranslation(new Vec(magnitude,0));
+    }else if (siblings > 1){
+      GenericFrame grandpa = parent.referenceFrame();
+      if(grandpa == null){
+        //Copy parent and create a "new branch"
+        GenericFrame dummy = new GenericFrame(scene());
+        dummy.setTranslation(parent.translation().get());
+        dummy.setOrientation(parent.orientation().get());
+        //Set parent orientation
+        Vec translation = dummy.coordinatesOfFrom(new Vec(), this);
+        float magnitude = translation.magnitude();
+        dummy.setRotation(translation.get());
+        setReferenceFrame(dummy);
+        if(this.is3D())this.setTranslation(new Vec(0,0,magnitude));
+        else this.setTranslation(new Vec(magnitude,0));
+      }else if(!(grandpa instanceof GenericFrame)){
+        //Copy parent and create a "new branch"
+        GenericFrame dummy = new GenericFrame(scene());
+        dummy.setReferenceFrame(grandpa);
+        dummy.setTranslation(parent.translation().get());
+        dummy.setOrientation(parent.orientation().get());
+        //Set parent orientation
+        Vec translation = dummy.coordinatesOfFrom(new Vec(), this);
+        float magnitude = translation.magnitude();
+        dummy.setRotation(translation.get());
+        setReferenceFrame(dummy);
+        if(this.is3D())this.setTranslation(new Vec(0,0,magnitude));
+        else this.setTranslation(new Vec(magnitude,0));
+      }
+    }
+  }
+  /**
+   * Taking this as Root reconstruct the Tree so
+   * Standard Notation for IK (Parent points to Children) is taking into account
+   */
+  public void setupHierarchy(){
+    for(GenericFrame f : children()){
+        f.setReferenceFrame(this, true);
+    }
+    for(GenericFrame f : children()) {
+        f.setupHierarchy();
+    }
+  }
+
 }

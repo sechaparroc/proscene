@@ -2727,4 +2727,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Enables z-buffer.
    */
   public abstract void enableDepthTest();
+
+  //SOME METHODS REQUIERED FOR IK
+
+
 }
