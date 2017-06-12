@@ -9,6 +9,7 @@ import remixlab.proscene.*;
 import remixlab.util.*;
 import remixlab.dandelion.ik.Solver.*;
 import java.util.Map;
+
 /**
  * Author: Sebastian Chaparro
  * A simple Chain of GenericFrames that is continuosly updated
