@@ -16,7 +16,6 @@ public class BasicIK3D extends PApplet {
     PFont myFont;
     ArrayList<GenericFrame>  joints = new ArrayList<GenericFrame>();
     ArrayList<GenericFrame>  jointsConstrained = new ArrayList<GenericFrame>();
-    String renderer = P3D;
 
     int num_joints = 12;
     float constraint_factor = 50;

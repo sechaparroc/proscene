@@ -147,6 +147,7 @@ public class BasicIK2D extends PApplet {
     HashMap<Integer, Vec> backward = null;
 
     boolean inv = false;
+
     public void keyPressed(){
         if(key == 'v'){
             counter+=3;
@@ -155,21 +156,18 @@ public class BasicIK2D extends PApplet {
             if(target.position().x() > 130) inv = true;
             if(target.position().x() < -130) inv = false;
         }
-
         if(key == 'c'){
             //create solver
             ChainSolver solver = new ChainSolver(joints, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
-
         if(key == 'd'){
             //create solver
             ChainSolver solver = new ChainSolver(jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
-
         if(key == 'j'){
             backward = null;
             enableBack = false;
