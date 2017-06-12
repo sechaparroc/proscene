@@ -2728,7 +2728,5 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   public abstract void enableDepthTest();
 
-  //SOME METHODS REQUIERED FOR IK
-
-
+  //TODO: high-level ik api handling
 }

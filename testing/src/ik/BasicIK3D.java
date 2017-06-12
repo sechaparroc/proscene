@@ -16,6 +16,7 @@ public class BasicIK3D extends PApplet {
     PFont myFont;
     ArrayList<GenericFrame>  joints = new ArrayList<GenericFrame>();
     ArrayList<GenericFrame>  jointsConstrained = new ArrayList<GenericFrame>();
+    InteractiveFrame target;
 
     int num_joints = 12;
     float constraint_factor = 50;
@@ -126,12 +127,11 @@ public class BasicIK3D extends PApplet {
             solverUnconstrained.solve();
         }
 
-        if(forward != null)drawChain(forward, color(0,255,0,30));
-        if(backward != null)drawChain(backward, color(0,0,255,30));
-
+        //if(forward != null)drawChain(forward, color(0,255,0,30));
+        //if(backward != null)drawChain(backward, color(0,0,255,30));
     }
 
-    InteractiveFrame target;
+    /*
     float counter = 0;
     boolean enableBack = false;
     Vec initial = null;
@@ -204,7 +204,7 @@ public class BasicIK3D extends PApplet {
 
     }
 
-/*DEBUG METHODS*/
+    //DEBUG METHODS
 
     public void drawChain(HashMap<Integer, Vec> positions, int c){
         PShape p = createShape(SPHERE,12);
@@ -219,6 +219,7 @@ public class BasicIK3D extends PApplet {
             tr +=20;
         }
     }
+    //*/
 
     public static void main(String args[]) {
         PApplet.main(new String[]{"ik.BasicIK3D"});
