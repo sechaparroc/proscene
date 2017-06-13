@@ -3334,7 +3334,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     }
   }
 
-  public void setReferenceFrame(GenericFrame parent, boolean setHierarchy){
+  protected void setReferenceFrame(GenericFrame parent, boolean setHierarchy){
     //TODO : Currently Working just with chains
     //TODO when remove also remove subBase if children size == 1
     //TODO Checkout ReferenceFrame to remove a Frame in the Tree

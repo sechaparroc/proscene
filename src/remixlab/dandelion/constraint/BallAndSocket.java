@@ -1,3 +1,14 @@
+/**************************************************************************************
+ * dandelion_tree
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
+ * @author Sebastian Chaparro, https://github.com/sechaparroc
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ **************************************************************************************/
+
 package remixlab.dandelion.constraint;
 
 import remixlab.dandelion.geom.*;
@@ -6,8 +17,6 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 /**
- * Created by sebchaparr on 1/05/17.
- *
  * A Frame is constrained to disable translation and
  * allow 2-DOF rotation limiting Rotation in a Sphere to
  * laid inside an Ellipse.

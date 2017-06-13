@@ -1,3 +1,14 @@
+/**************************************************************************************
+ * dandelion_tree
+ * Copyright (c) 2014-2017 National University of Colombia, https://github.com/remixlab
+ * @author Sebastian Chaparro, https://github.com/sechaparroc
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ **************************************************************************************/
+
 package remixlab.dandelion.ik;
 
 import remixlab.dandelion.constraint.BallAndSocket;
@@ -11,8 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Created by sebchaparr on 8/05/17.
- *
  * A Solver is a convenient class to solve IK problem
  * Given a Chain or a Tree Structure of Frames, this class will
  * solve the configuration that the frames must have to reach
