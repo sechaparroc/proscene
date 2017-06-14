@@ -13,7 +13,6 @@ package remixlab.dandelion.ik;
 
 import remixlab.dandelion.constraint.BallAndSocket;
 import remixlab.dandelion.constraint.Hinge;
-import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.GenericFrame;
 import remixlab.dandelion.geom.*;
 
@@ -116,7 +115,7 @@ public  abstract class Solver {
     * the reference frame of the Frame at i + 1
     * */
 
-    public void executeForwardReaching(ArrayList<GenericFrame> chain, GenericFrame target, int endEffectors){
+    public void executeForwardReaching(ArrayList<GenericFrame> chain, Frame target, int endEffectors){
         for(int i = chain.size()-2; i >= 0; i--){
             Vec pos_i = positions.get(chain.get(i).id());
             Vec pos_i1 = positions.get(chain.get(i+1).id());
@@ -266,7 +265,8 @@ public  abstract class Solver {
         private GenericFrame head; //Pointer to head of the chain
         private GenericFrame tail; //Pointer to tail of the chain
 
-        protected GenericFrame target;
+        protected Frame target;
+        private Frame prevTarget;
 
         public ArrayList<GenericFrame> getChain() {
             return chain;
@@ -292,15 +292,15 @@ public  abstract class Solver {
             //bestSolution = copyChain(chain);
         }
 
-        public GenericFrame getTarget() {
+        public Frame getTarget() {
             return target;
         }
 
-        public void setTarget(GenericFrame target) {
+        public void setTarget(Frame target) {
             this.target = target;
         }
 
-        public ChainSolver(String name, ArrayList<GenericFrame> chain, GenericFrame target){
+        public ChainSolver(String name, ArrayList<GenericFrame> chain, Frame target){
             this.name = name;
             setChain(chain);
             positions = new HashMap<Integer, Vec>();
@@ -308,6 +308,7 @@ public  abstract class Solver {
                 positions.put(joint.id(), joint.position().get());
             }
             this.target = target;
+            this.prevTarget = new Frame(target.position().get(), target.orientation().get());
         }
         /*Get maximum length of a given chain*/
         public float getLength(){
@@ -383,10 +384,12 @@ public  abstract class Solver {
         }
 
         public boolean stateChanged(){
-            return !(target.lastUpdate() == AbstractScene.frameCount);
+            if(prevTarget == null) prevTarget = new Frame(target.position().get(), target.orientation().get());
+            return !(prevTarget.position().equals(target.position()) && prevTarget.orientation().equals(target.orientation()));
         }
 
         public void reset(){
+            prevTarget = new Frame(target.position().get(), target.orientation().get());;
             iterations = 0;
         }
 
@@ -406,7 +409,7 @@ public  abstract class Solver {
         private HashMap<Integer, Vec> initialPositions = new HashMap<Integer, Vec>();
         private HashMap<Integer, Integer> subBase = new HashMap<Integer, Integer>();
         private HashMap<Integer, Boolean> solved = new HashMap<Integer, Boolean>();
-        private HashMap<Integer, GenericFrame> targets = new HashMap<Integer, GenericFrame>();
+        private HashMap<Integer, Frame> targets = new HashMap<Integer, Frame>();
 
 
         private boolean finished = false;
@@ -421,7 +424,7 @@ public  abstract class Solver {
             initialPositions = new HashMap<Integer, Vec>();
             subBase = new HashMap<Integer, Integer>();
             endEffector = new HashSet<Integer>();
-            targets = new HashMap<Integer, GenericFrame>();
+            targets = new HashMap<Integer, Frame>();
             leaves = new HashSet<Integer>();
             getSubBases(root);
         }
