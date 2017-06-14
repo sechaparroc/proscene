@@ -72,7 +72,7 @@ public class BasicIK extends PApplet {
                     hinge.setAxis(branch.get(i).transformOf(new Vec(1, -1, 0)));
                     branch.get(i).setConstraint(hinge);
                 }
-        solver = new ChainSolver("Solver",scene.branch(chainRoot, false), target);
+        solver = new ChainSolver("solver", scene.branch(chainRoot, false), target);
         solver.setTIMESPERFRAME(TimesPerFrame);
         solver.setMINCHANGE(999);
     }

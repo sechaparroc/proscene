@@ -2759,7 +2759,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     return solvers().add(newSolver);
   }
 
-  public boolean registerSolver(String name, ArrayList<GenericFrame> chain, Frame target) {
+  public boolean registerSolver(String name, ArrayList<GenericFrame> chain, GenericFrame target) {
     for(Solver solver : solvers) {
       if (solver.getName().equals(name))
         return false;
