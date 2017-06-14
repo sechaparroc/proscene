@@ -70,10 +70,10 @@ public class BasicIK3D extends PApplet {
         target = new InteractiveFrame(scene);
         target.translate(new Vec(50, 50*noise(0)));
 
-        solverConstrained = new ChainSolver(jointsConstrained, target);
+        solverConstrained = new ChainSolver("Constrained",jointsConstrained, target);
         solverConstrained.setTIMESPERFRAME(TimesPerFrame);
         solverConstrained.setMINCHANGE(999);
-        solverUnconstrained = new ChainSolver(joints, target);
+        solverUnconstrained = new ChainSolver("Unconstrained",joints, target);
         solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
         solverUnconstrained.setMINCHANGE(999);
     }
@@ -151,14 +151,14 @@ public class BasicIK3D extends PApplet {
 
         if(key == 'c'){
             //create solver
-            ChainSolver solver = new ChainSolver(joints, target);
+            ChainSolver solver = new ChainSolver("unconstrained", joints, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
 
         if(key == 'd'){
             //create solver
-            ChainSolver solver = new ChainSolver(jointsConstrained, target);
+            ChainSolver solver = new ChainSolver("Constrained", jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
@@ -167,7 +167,7 @@ public class BasicIK3D extends PApplet {
             backward = null;
             enableBack = false;
             //create solver
-            solver = new ChainSolver(jointsConstrained, target);
+            solver = new ChainSolver("Constrained",jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             GenericFrame root = jointsConstrained.get(0);
             GenericFrame end   = jointsConstrained.get(jointsConstrained.size()-1);
