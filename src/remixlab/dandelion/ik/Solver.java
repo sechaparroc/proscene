@@ -37,7 +37,8 @@ import java.util.Map;
 * */
 
 public  abstract class Solver {
-
+    /*Convenient String to register/unregister solvers in an Abstract Scene*/
+    protected String name;
     protected float ERROR = 0.1f;
     protected int MAXITER = 200;
     protected float MINCHANGE = 0.01f;
@@ -102,6 +103,13 @@ public  abstract class Solver {
         this.iterations = iterations;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
     /*
     * Performs First Stage of FABRIK Algorithm, receives a chan of Frames, being the Frame at i
     * the reference frame of the Frame at i + 1
@@ -176,13 +184,13 @@ public  abstract class Solver {
         Rot rot = new Rot();
         Vec diff = Vec.subtract(p, o);
         diff.add(parent.position());
-        return new Rot(new Vec(1,0), parent.coordinatesOf(diff));
+        return new Rot(j.translation(), parent.coordinatesOf(diff));
     }
 
     public Quat posToQuat(Frame j, Frame parent, Vec o, Vec p){
         Vec diff = Vec.subtract(p, o);
         diff.add(parent.position());
-        return new Quat(new Vec(0,0,1), parent.coordinatesOf(diff));
+        return new Quat(j.translation(), parent.coordinatesOf(diff));
     }
 
     /*
@@ -196,7 +204,7 @@ public  abstract class Solver {
         if(parent.constraint() instanceof BallAndSocket){
             BallAndSocket constraint = (BallAndSocket) parent.constraint();
             Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));
-            Vec target = Quat.multiply(desired, new Vec(0,0, 1));
+            Vec target = Quat.multiply(desired, j.translation());
             target = constraint.getConstraint(target);
             target.normalize();
             target.multiply(Vec.subtract(p,o).magnitude());
@@ -206,7 +214,7 @@ public  abstract class Solver {
                 Hinge constraint = (Hinge) parent.constraint();
                 Rot desired = posToRot(j,parent, o, p);
                 Rot constrained = (Rot) constraint.constrainRotation(desired, parent);
-                Vec target = constrained.rotate(new Vec(1,0));
+                Vec target = constrained.rotate(j.translation());
                 target.normalize();
                 target.multiply(Vec.subtract(p,o).magnitude());
             }
@@ -254,6 +262,9 @@ public  abstract class Solver {
         protected ArrayList<GenericFrame> chain;
         private ArrayList<GenericFrame> bestSolution;
         private ArrayList<GenericFrame> chainCopied;
+        private GenericFrame head; //Pointer to head of the chain
+        private GenericFrame tail; //Pointer to tail of the chain
+
         protected Frame target;
         private Frame prevTarget;
 
@@ -289,14 +300,15 @@ public  abstract class Solver {
             this.target = target;
         }
 
-        public ChainSolver(ArrayList<GenericFrame> chain, Frame target){
+        public ChainSolver(String name, ArrayList<GenericFrame> chain, Frame target){
+            this.name = name;
             setChain(chain);
             positions = new HashMap<Integer, Vec>();
             for(GenericFrame joint : chainCopied){
                 positions.put(joint.id(), joint.position().get());
             }
             this.target = target;
-            this.prevTarget = target.get();
+            this.prevTarget = new Frame(target.position().get(), target.orientation().get());
         }
         /*Get maximum length of a given chain*/
         public float getLength(){
@@ -372,15 +384,12 @@ public  abstract class Solver {
         }
 
         public boolean stateChanged(){
-            if(prevTarget == null) prevTarget = target.get();
+            if(prevTarget == null) prevTarget = new Frame(target.position().get(), target.orientation().get());
             return !(prevTarget.position().equals(target.position()) && prevTarget.orientation().equals(target.orientation()));
         }
 
         public void reset(){
-            if(prevTarget instanceof GenericFrame){
-                ((GenericFrame) prevTarget).scene().pruneBranch((GenericFrame) prevTarget);
-            }
-            prevTarget = target.get();
+            prevTarget = new Frame(target.position().get(), target.orientation().get());;
             iterations = 0;
         }
 
