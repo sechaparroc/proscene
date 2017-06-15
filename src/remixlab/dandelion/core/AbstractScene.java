@@ -17,6 +17,7 @@ import remixlab.bias.InputHandler;
 import remixlab.bias.event.*;
 import remixlab.dandelion.constraint.Constraint;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.ik.Solver;
 import remixlab.fpstiming.Animator;
 import remixlab.fpstiming.AnimatorObject;
 import remixlab.fpstiming.TimingHandler;
@@ -145,6 +146,10 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   // public final static int PUP = 1 << 6;
   // public final static int ARP = 1 << 7;
 
+  // IKinematics solvers
+  protected List<Solver> solvers;
+
+
   /**
    * Default constructor which defines a right-handed OpenGL compatible Scene with its own
    * {@link remixlab.dandelion.core.MatrixStackHelper}. The constructor also instantiates
@@ -173,6 +178,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   public AbstractScene() {
     seeds = new ArrayList<GenericFrame>();
+    solvers = new ArrayList<Solver>();
     setPlatform();
     setTimingHandler(new TimingHandler(this));
     deltaCount = frameCount;
@@ -1381,6 +1387,10 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     proscenium();
     // 4. Display visual hints
     displayVisualHints(); // abstract
+    // Execute IK Solvers in the order they were registered
+    for(Solver solver : solvers){
+      solver.solve();
+    }
   }
 
   /**
@@ -2729,4 +2739,58 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public abstract void enableDepthTest();
 
   //TODO: high-level ik api handling
+
+  /**
+   * Return registered solvers
+   * */
+  public List<Solver> solvers() {
+    return solvers;
+  }
+
+  /**
+   * Registers the given chain with the given name
+   * to solve IK.
+   */
+  public boolean registerSolver(Solver newSolver){
+    for(Solver solver : solvers) {
+      if (solver.getName().equals(newSolver))
+        return false;
+    }
+    return solvers().add(newSolver);
+  }
+
+  public boolean registerSolver(String name, ArrayList<GenericFrame> chain, GenericFrame target) {
+    for(Solver solver : solvers) {
+      if (solver.getName().equals(name))
+        return false;
+    }
+    return solvers().add(new Solver.ChainSolver(name, chain, target));
+  }
+
+  /**
+   * Unregisters the IK Solver with the given name
+   */
+  public boolean unregisterSolver(String name) {
+    Solver toRemove = null;
+    for(Solver solver: solvers) {
+      if (solver.getName().equals(name)) {
+        toRemove = solver;
+        break;
+      }
+    }
+    return solvers.remove(toRemove);
+  }
+
+  /**
+   * Gets the IK Solver with the given name
+   */
+  public Solver getSolver(String name){
+    for(Solver solver: solvers) {
+      if (solver.getName().equals(name)) {
+        return solver;
+      }
+    }
+    return null;
+  }
+
 }
