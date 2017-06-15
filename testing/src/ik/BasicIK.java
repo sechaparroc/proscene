@@ -25,7 +25,7 @@ public class BasicIK extends PApplet {
 
     boolean constrained = true;
     //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-    String renderer = P2D;
+    String renderer = P3D;
 
     public void settings() {
         size(700, 700, renderer);

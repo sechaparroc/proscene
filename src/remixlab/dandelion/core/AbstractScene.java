@@ -1414,14 +1414,14 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       eye().updateBoundaryEquations();
       lastEqUpdate = frameCount;
     }
-    // 3. Alternative use only
-    proscenium();
-    // 4. Display visual hints
-    displayVisualHints(); // abstract
-    // Execute IK Solvers in the order they were registered
+    // 3. Execute IK Solvers in the order they were registered
     for(Solver solver : solvers){
       solver.solve();
     }
+    // 4. Alternative use only
+    proscenium();
+    // 5. Display visual hints
+    displayVisualHints(); // abstract
   }
 
   /**
