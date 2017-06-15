@@ -174,7 +174,7 @@ public class BasicIK2D extends PApplet {
             backward = null;
             enableBack = false;
             //create solver
-            solver = new ChainSolver("Constrained", constrainedFrames, target);
+            solver = new ChainSolver(constrainedFrames, target);
             solver.setTIMESPERFRAME(1);
             float length = solver.getLength();
             GenericFrame root = constrainedFrames.get(0);

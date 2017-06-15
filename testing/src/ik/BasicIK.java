@@ -14,7 +14,6 @@ public class BasicIK extends PApplet {
     InteractiveFrame target;
 
     int num_joints = 12;
-    ChainSolver solver;
 
     //ballandsocket
     float constraint_factor = 50;
@@ -63,7 +62,7 @@ public class BasicIK extends PApplet {
                 if (scene.is3D()) {
                     BallAndSocket constraint = new BallAndSocket(radians(constraint_factor), radians(constraint_factor), radians(constraint_factor), radians(constraint_factor));
                     constraint.setRestRotation((Quat) branch.get(i).rotation().get());
-                    branch.get(i).setConstraint(constraint);
+                    //branch.get(i).setConstraint(constraint);
                 } else {
                     Hinge hinge = new Hinge();
                     hinge.setRestRotation(branch.get(i).rotation());
@@ -72,9 +71,9 @@ public class BasicIK extends PApplet {
                     hinge.setAxis(branch.get(i).transformOf(new Vec(1, -1, 0)));
                     branch.get(i).setConstraint(hinge);
                 }
-        solver = new ChainSolver("solver", scene.branch(chainRoot, false), target);
-        solver.setTIMESPERFRAME(TimesPerFrame);
-        solver.setMINCHANGE(999);
+        scene.registerSolver("Solver", scene.branch(chainRoot, false), target);
+        scene.getSolver("Solver").setTIMESPERFRAME(TimesPerFrame);
+        scene.getSolver("Solver").setMINCHANGE(999);
     }
 
     public void frameGraphics(InteractiveFrame iFrame, PGraphics pg) {
@@ -108,13 +107,6 @@ public class BasicIK extends PApplet {
     public void draw() {
         background(0);
         scene.drawFrames();
-
-        //TODO: esto deberia ejecutarse automaticamente desde AbstractScene.preDraw
-        //lo cual quiere decir agregar los metodos para administrar los solvers desde la escena
-        //siguiendo los patrones de administracion de agentes y timing handlers
-        //if(auto){
-        solver.solve();
-        //}
     }
 
     public static void main(String args[]) {

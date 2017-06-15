@@ -25,6 +25,7 @@ import remixlab.bias.event.KeyboardShortcut;
 import remixlab.bias.event.MotionShortcut;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.ik.Solver;
 import remixlab.fpstiming.TimingTask;
 
 import java.lang.reflect.Method;
@@ -1218,6 +1219,10 @@ public class Scene extends AbstractScene implements PConstants {
     if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
       eye().updateBoundaryEquations();
       lastEqUpdate = frameCount;
+    }
+    // Execute IK Solvers in the order they were registered
+    for(Solver solver : solvers){
+      solver.solve();
     }
   }
 
