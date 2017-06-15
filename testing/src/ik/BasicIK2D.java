@@ -78,9 +78,9 @@ public class BasicIK2D extends PApplet {
         target = new InteractiveFrame(scene);
         target.translate(new Vec(50, 50*noise(0)));
 
-        solverConstrained = new ChainSolver(constrainedFrames, target);
+        solverConstrained = new ChainSolver("Constrained", constrainedFrames, target);
         solverConstrained.setTIMESPERFRAME(1);
-        solverUnconstrained = new ChainSolver(unconstrainedFrames, target);
+        solverUnconstrained = new ChainSolver("Unconstrained",unconstrainedFrames, target);
         solverUnconstrained.setTIMESPERFRAME(1);
     }
 
@@ -160,13 +160,13 @@ public class BasicIK2D extends PApplet {
         }
         if(key == 'c'){
             //create solver
-            ChainSolver solver = new ChainSolver(unconstrainedFrames, target);
+            ChainSolver solver = new ChainSolver("unconstrained", unconstrainedFrames, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
         if(key == 'd'){
             //create solver
-            ChainSolver solver = new ChainSolver(constrainedFrames, target);
+            ChainSolver solver = new ChainSolver("Constrained", constrainedFrames, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
