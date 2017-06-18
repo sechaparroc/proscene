@@ -5,9 +5,12 @@ import processing.event.Event;
 import remixlab.bias.BogusEvent;
 import remixlab.bias.event.DOF2Event;
 import remixlab.bias.event.MotionEvent;
+import remixlab.dandelion.core.GenericFrame;
 import remixlab.proscene.InteractiveFrame;
 import remixlab.proscene.MouseAgent;
 import remixlab.proscene.Scene;
+
+import java.util.ArrayList;
 
 /**
  * Created by pierre on 11/15/16.
@@ -91,6 +94,9 @@ public class FrameInteraction extends PApplet {
     frame4.setTrackingEyeInclination(PI);
     scene.setAvatar(frame4);
     //scene.eyeFrame().removeMotionBindings();
+
+    ArrayList<GenericFrame> path = scene.branch(frame1, frame2, false);
+    println(path.size());
   }
 
   public void boxDrawing(PGraphics pg) {

@@ -22,6 +22,7 @@ import remixlab.fpstiming.Animator;
 import remixlab.fpstiming.AnimatorObject;
 import remixlab.fpstiming.TimingHandler;
 import remixlab.fpstiming.TimingTask;
+import sun.net.www.content.text.Generic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -385,6 +386,36 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public ArrayList<GenericFrame> branch(GenericFrame frame, boolean eyeframes) {
     ArrayList<GenericFrame> list = new ArrayList<GenericFrame>();
     collectFrames(list, frame, eyeframes);
+    return list;
+  }
+
+  /**
+   * Returns a straight path of frames between {@code tail} and {@code tip}. When {@code eyeframes} is
+   * {@code true} eye-frames will also be included.
+   * <p>
+   * If {@code tip} is descendant of {@code tail} the returned list will include both of them. Otherwise it will be empty.
+   */
+  //TODO decide me
+  public ArrayList<GenericFrame> branch(GenericFrame tail, GenericFrame tip, boolean eyeframes) {
+    ArrayList<GenericFrame> list = new ArrayList<GenericFrame>();
+    //1. Check if tip is a tail descendant
+    boolean desc = false;
+    ArrayList<GenericFrame> descList = branch(tail, eyeframes);
+    for(GenericFrame gFrame : descList)
+      if(gFrame == tip) {
+        desc = true;
+        break;
+      }
+    //2. If so, return the path between the two
+    if(desc) {
+      GenericFrame _tip = tip;
+      while(_tip != tail) {
+        if (!_tip.isEyeFrame() || eyeframes)
+          list.add(0, _tip);
+          _tip = _tip.referenceFrame();
+      }
+      list.add(0, tail);
+    }
     return list;
   }
 
@@ -1383,14 +1414,14 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       eye().updateBoundaryEquations();
       lastEqUpdate = frameCount;
     }
-    // 3. Alternative use only
-    proscenium();
-    // 4. Display visual hints
-    displayVisualHints(); // abstract
-    // Execute IK Solvers in the order they were registered
+    // 3. Execute IK Solvers in the order they were registered
     for(Solver solver : solvers){
       solver.solve();
     }
+    // 4. Alternative use only
+    proscenium();
+    // 5. Display visual hints
+    displayVisualHints(); // abstract
   }
 
   /**
