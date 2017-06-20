@@ -119,8 +119,16 @@ public  abstract class Solver {
         for(int i = chain.size()-2; i >= 0; i--){
             Vec pos_i = positions.get(chain.get(i).id());
             Vec pos_i1 = positions.get(chain.get(i+1).id());
-            /*Check constrictions*/
-            Vec pos_i1_constrained = applyConstraints(chain.get(i+1), chain.get(i+1).referenceFrame(), pos_i, pos_i1);
+            /*Check constraints (for Ball & Socket) it is not applied in First iteration
+            * Look at paper FABRIK: A fast, iterative solver for the Inverse Kinematics problem For more information*/
+            Vec pos_i2 = null;
+            Frame child = null;
+            if(i != chain.size()-2){
+                pos_i2 = positions.get(chain.get(i+2).id());
+                child = chain.get(i + 2);
+            }
+            //Vec pos_i1_constrained = applyConstraintsForwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), child,  pos_i, pos_i1, pos_i2);
+            Vec pos_i1_constrained = applyConstraintsBackwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), pos_i, pos_i1);
             Vec diff = Vec.subtract(pos_i1, pos_i1_constrained);
             pos_i.add(diff);
             positions.put(chain.get(i).id(), pos_i);
@@ -154,7 +162,7 @@ public  abstract class Solver {
             Vec pos_i1 = positions.get(chain.get(i+1).id());
 
             /*Check constraints*/
-            pos_i1 = applyConstraints(chain.get(i+1), chain.get(i+1).referenceFrame(), pos_i, pos_i1);
+            pos_i1 = applyConstraintsBackwardStage(chain.get(i+1), chain.get(i+1).referenceFrame(), pos_i, pos_i1);
             positions.put(chain.get(i+1).id(), pos_i1);
             //Get the distance between Joint i and the Target
             float r_i = Vec.distance(pos_i, pos_i1);
@@ -195,12 +203,44 @@ public  abstract class Solver {
 
     /*
     * Check the type of the constraint related to the Frame Parent,
-    * Frame j is the frame used to verify if the orientation of Parent is appropriate,
-    * Vec o is a Vector
-    *
+    * Frame J is the frame used to verify if the orientation of Parent is appropriate,
+    * Vec o is a Vector where Parent is located, whereas p is express the position of J
+    * Vec q is the position of Child of J.
     * */
+    public Vec applyConstraintsForwardStage(Frame j, Frame parent, Frame child, Vec o, Vec p, Vec q){
+        if(parent.constraint() instanceof BallAndSocket){
+            if(child == null) return p;
+            Vec newTransalation = Vec.subtract(q,p);
+            newTransalation = j.coordinatesOf(newTransalation);
+            //Get The Quat between current Translation and new Translation
+            Quat quat = new Quat(child.translation(), newTransalation);
+            BallAndSocket constraint = (BallAndSocket) parent.constraint();
+            Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));
+            Vec target = Quat.multiply(desired, j.translation());
+            target = constraint.getConstraint(target, (Quat) Quat.compose(constraint.getRestRotation(),quat));
+            target.normalize();
+            target.multiply(Vec.subtract(p,o).magnitude());
+            return parent.inverseCoordinatesOf(Quat.multiply((Quat)parent.rotation().inverse(), target));
+        } else if(parent.constraint() instanceof Hinge){
+            if(parent.is2D()){
+                Hinge constraint = (Hinge) parent.constraint();
+                Rot desired = posToRot(j,parent, o, p);
+                Rot constrained = (Rot) constraint.constrainRotation(desired, parent);
+                Vec target = constrained.rotate(j.translation());
+                target.normalize();
+                target.multiply(Vec.subtract(p,o).magnitude());
+            }
+        }
+        return p;
+    }
 
-    public Vec applyConstraints(Frame j, Frame parent, Vec o, Vec p){
+
+    /*
+    * Check the type of the constraint related to the Frame Parent,
+    * Frame J is the frame used to verify if the orientation of Parent is appropriate,
+    * Vec o is a Vector where Parent is located, whereas p is express the position of J
+    * */
+    public Vec applyConstraintsBackwardStage(Frame j, Frame parent, Vec o, Vec p){
         if(parent.constraint() instanceof BallAndSocket){
             BallAndSocket constraint = (BallAndSocket) parent.constraint();
             Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));

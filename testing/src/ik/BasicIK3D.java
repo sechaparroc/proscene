@@ -23,7 +23,8 @@ public class BasicIK3D extends PApplet {
 
     ChainSolver solverUnconstrained;
     ChainSolver solverConstrained;
-    boolean auto = true;
+    boolean auto = false;
+    boolean showSteps = true;
 
     int TimesPerFrame = 1;
 
@@ -37,6 +38,7 @@ public class BasicIK3D extends PApplet {
         scene.setAxesVisualHint(true);
         Vec v = new Vec(10,10,10);
         InteractiveFrame prev = null;
+        target = new InteractiveFrame(scene);
         //Unconstrained Chain
         for(int i = 0; i < num_joints; i++){
             InteractiveFrame j;
@@ -67,7 +69,6 @@ public class BasicIK3D extends PApplet {
             constraint.setRestRotation((Quat)jointsConstrained.get(i).rotation().get());
             jointsConstrained.get(i).setConstraint(constraint);
         }
-        target = new InteractiveFrame(scene);
         target.translate(new Vec(50, 50*noise(0)));
 
         solverConstrained = new ChainSolver("Constrained",jointsConstrained, target);
@@ -127,11 +128,11 @@ public class BasicIK3D extends PApplet {
             solverUnconstrained.solve();
         }
 
-        //if(forward != null)drawChain(forward, color(0,255,0,30));
-        //if(backward != null)drawChain(backward, color(0,0,255,30));
+        if(forward != null && showSteps)drawChain(forward, color(0,255,0,30));
+        if(backward != null && showSteps)drawChain(backward, color(0,0,255,30));
     }
 
-    /*
+    ///*
     float counter = 0;
     boolean enableBack = false;
     Vec initial = null;
@@ -195,6 +196,10 @@ public class BasicIK3D extends PApplet {
         if(key == 'z'){
             auto = !auto;
         }
+        if(key == 'x'){
+            showSteps = !showSteps;
+        }
+
         if(key == 'n'){
             TimesPerFrame++;
             solverConstrained.setTIMESPERFRAME(TimesPerFrame);
@@ -207,7 +212,7 @@ public class BasicIK3D extends PApplet {
     //DEBUG METHODS
 
     public void drawChain(HashMap<Integer, Vec> positions, int c){
-        PShape p = createShape(SPHERE,12);
+        PShape p = createShape(SPHERE,5);
         p.setStroke(false);
         int tr = 30;
         for(Vec v : positions.values()){
