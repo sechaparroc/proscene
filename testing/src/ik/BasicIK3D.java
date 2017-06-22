@@ -139,8 +139,8 @@ public class BasicIK3D extends PApplet {
     boolean enableBack = false;
     Vec initial = null;
     ChainSolver solver = null;
-    HashMap<Integer, Vec> forward = null;
-    HashMap<Integer, Vec> backward = null;
+    ArrayList<Vec> forward = null;
+    ArrayList<Vec> backward = null;
     boolean inv = false;
 
     public void keyPressed(){
@@ -180,17 +180,17 @@ public class BasicIK3D extends PApplet {
             initial = solver.getPositions().get(root.id()).get();
             if(Vec.distance(end.position(), target) <= solver.getERROR()) return;
             enableBack = true;
-            solver.getPositions().put(end.id(), target.get());
+            solver.getPositions().set(jointsConstrained.size()-1, target.get());
             //Stage 1: Forward Reaching
-            forward = new HashMap<Integer, Vec>();
+            forward = new ArrayList<Vec>();
             solver.executeForwardReaching(solver.getChain());
-            for(Map.Entry<Integer, Vec> entry : solver.getPositions().entrySet()){
-                forward.put(entry.getKey(), entry.getValue());
+            for(Vec v : solver.getPositions()){
+                forward.add(v);
             }
         }
         if(key == 'k'){
             if(!enableBack) return;
-            solver.getPositions().put(jointsConstrained.get(0).id(), initial);
+            solver.getPositions().set(0, initial);
             solver.executeBackwardReaching(solver.getChain());
             backward = solver.getPositions();
             solver.update();
@@ -214,11 +214,11 @@ public class BasicIK3D extends PApplet {
 
     //DEBUG METHODS
 
-    public void drawChain(HashMap<Integer, Vec> positions, int c){
+    public void drawChain(ArrayList<Vec> positions, int c){
         PShape p = createShape(SPHERE,5);
         p.setStroke(false);
         int tr = 30;
-        for(Vec v : positions.values()){
+        for(Vec v : positions){
             p.setFill(color(red(c),green(c),blue(c), tr));
             pushMatrix();
             translate(v.x(),v.y(),v.z());

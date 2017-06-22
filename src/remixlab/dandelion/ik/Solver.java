@@ -47,9 +47,9 @@ public  abstract class Solver {
     protected int iterations = 0;
 
     /*Store Joint's desired position*/
-    protected HashMap<Integer,Vec> positions = new HashMap<Integer,Vec>();
+    protected ArrayList<Vec> positions = new ArrayList<Vec>();
 
-    public HashMap<Integer,Vec> getPositions(){ return positions;}
+    public ArrayList<Vec> getPositions(){ return positions;}
 
     public void restartIterations(){
         iterations = 0;
@@ -115,26 +115,26 @@ public  abstract class Solver {
     * the reference frame of the Frame at i + 1
     * */
 
-    public void executeForwardReaching(ArrayList<GenericFrame> chain, Frame target, int endEffectors){
+    public void executeForwardReaching(ArrayList<? extends Frame> chain, Frame target, int endEffectors){
         for(int i = chain.size()-2; i >= 0; i--){
-            Vec pos_i = positions.get(chain.get(i).id());
-            Vec pos_i1 = positions.get(chain.get(i+1).id());
+            Vec pos_i = positions.get(i);
+            Vec pos_i1 = positions.get(i+1);
             /*Check constraints (for Ball & Socket) it is not applied in First iteration
             * Look at paper FABRIK: A fast, iterative solver for the Inverse Kinematics problem For more information*/
             Vec pos_i2 = null;
             if(i != chain.size()-2){
-                pos_i2 = positions.get(chain.get(i+2).id());
+                pos_i2 = positions.get(i+2);
             }
             Vec pos_i1_constrained = applyConstraintsForwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(),  pos_i, pos_i1, pos_i2);
             /*Checking constraints without considering special cases in Forward Step, as the Paper suggests, is possible, solutions are not as good thought*/
             //Vec pos_i1_constrained = applyConstraintsBackwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), pos_i, pos_i1);
             Vec diff = Vec.subtract(pos_i1, pos_i1_constrained);
             pos_i.add(diff);
-            positions.put(chain.get(i).id(), pos_i);
+            positions.set(i, pos_i);
             float r_i = Vec.distance(pos_i, pos_i1);
             float dist_i = chain.get(i+1).translation().magnitude()/chain.get(i+1).magnitude();
             if(dist_i == 0){
-                positions.put(chain.get(i).id(), pos_i1.get());
+                positions.set(i, pos_i1.get());
                 continue;
             }
             float lambda_i =  dist_i/r_i;
@@ -146,49 +146,53 @@ public  abstract class Solver {
                             Vec.add(target.position(),
                                     Vec.multiply(new_pos, 1.f/endEffectors)));
             }else{
-                positions.put(chain.get(i).id(), new_pos);
+                positions.set(i, new_pos);
             }
         }
     }
 
-    public void executeForwardReaching(ArrayList<GenericFrame> chain){
+    public void executeForwardReaching(ArrayList<? extends Frame> chain){
         executeForwardReaching(chain, null, 0);
     }
 
-    public void executeBackwardReaching(ArrayList<GenericFrame> chain){
+    /*Return the total distance between the configuration at beginning of the Iteration and the final configuration*/
+    public float executeBackwardReaching(ArrayList<? extends Frame> chain){
+        float change = 0;
         for(int i = 0; i < chain.size()-1; i++){
-            Vec pos_i = positions.get(chain.get(i).id());
-            Vec pos_i1 = positions.get(chain.get(i+1).id());
+            Vec pos_i = positions.get(i);
+            Vec pos_i1 = positions.get(i+1);
 
             /*Check constraints*/
             pos_i1 = applyConstraintsBackwardStage(chain.get(i+1), chain.get(i+1).referenceFrame(), pos_i, pos_i1);
-            positions.put(chain.get(i+1).id(), pos_i1);
+            positions.set(i+1, pos_i1);
             //Get the distance between Joint i and the Target
             float r_i = Vec.distance(pos_i, pos_i1);
             float dist_i = chain.get(i+1).translation().magnitude()/chain.get(i+1).magnitude();
             if(dist_i == 0){
-                positions.put(chain.get(i+1).id(), pos_i.get());
+                positions.set(i+1, pos_i.get());
                 continue;
             }
             float lambda_i =  dist_i/r_i;
             Vec new_pos = Vec.multiply(pos_i, 1.f - lambda_i);
             new_pos.add(Vec.multiply(pos_i1, lambda_i));
-            positions.put(chain.get(i+1).id(), new_pos);
+            positions.set(i+1, new_pos);
 
             Rotation delta = null;
             if(chain.get(i+1).is3D())
-                delta = posToQuat(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(chain.get(i+1).id()));
+                delta = posToQuat(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(i+1));
             else
-                delta = posToRot(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(chain.get(i+1).id()));
+                delta = posToRot(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(i+1));
 
             chain.get(i+1).referenceFrame().rotate(delta);
-            positions.put(chain.get(i+1).id(), chain.get(i+1).position().get());
+            Vec constrained_pos = chain.get(i+1).position().get();
+            change += Vec.distance(positions.get(i+1),constrained_pos);
+            positions.set(i+1, constrained_pos);
         }
+        return change;
     }
     /*Set Joint's Parent orientation assuming that
      * new Joint position is v*/
     public Rot posToRot(Frame j, Frame parent, Vec o, Vec p){
-        Rot rot = new Rot();
         Vec diff = Vec.subtract(p, o);
         diff.add(parent.position());
         return new Rot(j.translation(), parent.coordinatesOf(diff));
@@ -212,14 +216,14 @@ public  abstract class Solver {
             Vec newTranslation = Vec.subtract(q,p);
             newTranslation.add(parent.position());
             newTranslation = parent.coordinatesOf(newTranslation);
-            //Get The Quat between current Translation and new Translation
-            Quat quat = new Quat(j.translation(), newTranslation);
+            //Get The Quat between current Translation and new Translation to set new rotation axis
+            Quat deltaRestRotation = new Quat(j.translation(), newTranslation);
             BallAndSocket constraint = (BallAndSocket) parent.constraint();
             Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));
             Vec target = Quat.multiply(desired, j.translation());
-            Quat aux = (Quat) Quat.compose(parent.rotation(), constraint.getRestRotation().inverse());
-            aux = (Quat) Quat.compose(constraint.getRestRotation(), aux);
-            target = constraint.getConstraint(target, (Quat) Quat.compose(aux,quat));
+            Quat restRotation = (Quat) Quat.compose(parent.rotation(), constraint.getRestRotation().inverse());
+            restRotation = (Quat) Quat.compose(constraint.getRestRotation(), restRotation);
+            target = constraint.getConstraint(target, (Quat) Quat.compose(restRotation,deltaRestRotation));
             target.normalize();
             target.multiply(Vec.subtract(p,o).magnitude());
             return parent.inverseCoordinatesOf(Quat.multiply((Quat)parent.rotation().inverse(), target));
@@ -295,46 +299,49 @@ public  abstract class Solver {
         return false;
     }
 
-    public float change(ArrayList<GenericFrame> chain){
+    public float change(ArrayList<? extends Frame> chain){
         float change = 0.f;
-        for(GenericFrame joint : chain){
-            change += Vec.distance(joint.position(), positions.get(joint.id()));
+        for(int i = 0; i < chain.size(); i++){
+            change += Vec.distance(chain.get(i).position(), positions.get(i));
         }
         return change;
     }
 
     public static class ChainSolver extends Solver{
-        protected ArrayList<GenericFrame> chain;
-        private ArrayList<GenericFrame> bestSolution;
-        private ArrayList<GenericFrame> chainCopied;
-        private GenericFrame head; //Pointer to head of the chain
-        private GenericFrame tail; //Pointer to tail of the chain
+        protected ArrayList<? extends Frame> chain;
+        private ArrayList<Frame> bestSolution;
+        private ArrayList<Frame> copiedChain;
+        private int idxEndEffector; //index of the End effector in the chain (Mos of the cases is a leaf)
 
         protected Frame target;
         private Frame prevTarget;
 
-        public ArrayList<GenericFrame> getChain() {
+        public ArrayList<? extends Frame> getChain() {
             return chain;
         }
 
-        private ArrayList<GenericFrame> copyChain(ArrayList<GenericFrame> list){
-            ArrayList<GenericFrame> copy = new ArrayList<GenericFrame>();
-            GenericFrame reference = list.get(0).referenceFrame();
-            for(GenericFrame joint : list){
-                GenericFrame newJoint = joint.get();
+        private ArrayList<Frame> copyChain(ArrayList<? extends Frame> list){
+            ArrayList<Frame> copy = new ArrayList<Frame>();
+            Frame reference = list.get(0).referenceFrame();
+            if(reference != null){
+                reference = new Frame(reference.position().get(), reference.orientation().get());
+            }
+            for(Frame joint : list){
+                Frame newJoint = new Frame();
                 newJoint.setReferenceFrame(reference);
-                newJoint.setConstraint(newJoint.constraint());
+                newJoint.setPosition(joint.position().get());
+                newJoint.setOrientation(joint.orientation().get());
+                newJoint.setConstraint(joint.constraint());
                 copy.add(newJoint);
                 reference = newJoint;
             }
             return copy;
         }
 
-        public void setChain(ArrayList<GenericFrame> chain) {
-            this.chain = chain;
-            chainCopied = chain;
-            bestSolution = chain;
-            //bestSolution = copyChain(chain);
+        public void setChain(ArrayList<? extends Frame> chain) {
+            this.chain      = chain;
+            copiedChain     = copyChain(chain);
+            bestSolution    = copyChain(chain);
         }
 
         public Frame getTarget() {
@@ -345,12 +352,12 @@ public  abstract class Solver {
             this.target = target;
         }
 
-        public ChainSolver(String name, ArrayList<GenericFrame> chain, Frame target){
+        public ChainSolver(String name, ArrayList<? extends Frame> chain, Frame target){
             this.name = name;
             setChain(chain);
-            positions = new HashMap<Integer, Vec>();
-            for(GenericFrame joint : chainCopied){
-                positions.put(joint.id(), joint.position().get());
+            positions = new ArrayList<Vec>();
+            for(Frame joint : copiedChain){
+                positions.add(joint.position().get());
             }
             this.target = target;
             this.prevTarget = new Frame(target.position().get(), target.orientation().get());
@@ -364,16 +371,16 @@ public  abstract class Solver {
             return dist;
         }
 
-        public void stretchChain(ArrayList<GenericFrame> chain, Vec target){
+        public void stretchChain(ArrayList<? extends Frame> chain, Vec target){
             for(int i = 0; i < chain.size()-1; i++){
                 //Get the distance between Joint i and the Target
-                Vec pos_i = positions.get(chain.get(i).id());
+                Vec pos_i = positions.get(i);
                 float r_i = Vec.distance(pos_i, target);
                 float dist_i = chain.get(i+1).translation().magnitude()/chain.get(i+1).magnitude();
                 float lambda_i =  dist_i/r_i;
                 Vec new_pos = Vec.multiply(pos_i, 1.f - lambda_i);
                 new_pos.add(Vec.multiply(target, lambda_i));
-                positions.put(chain.get(i+1).id(), new_pos);
+                positions.set(i+1, new_pos);
             }
         }
 
@@ -383,9 +390,9 @@ public  abstract class Solver {
          *
          * */
         public boolean execute(){
-            GenericFrame root = chainCopied.get(0);
-            GenericFrame end	 = chainCopied.get(chainCopied.size()-1);
-            Vec target = this.target.position().get();
+            Frame root  = copiedChain.get(0);
+            Frame end   = copiedChain.get(copiedChain.size()-1);
+            Vec target  = this.target.position().get();
 
             //Execute Until the distance between the end effector and the target is below a threshold
             if(Vec.distance(end.position(), target) <= ERROR){
@@ -402,27 +409,23 @@ public  abstract class Solver {
                 return true;
             }else{*/
             //Initial root position
-            Vec initial = positions.get(root.id()).get();
+            Vec initial = positions.get(0).get();
             //Stage 1: Forward Reaching
-            positions.put(end.id(), target.get());
-            executeForwardReaching(chainCopied);
+            positions.set(copiedChain.size()-1, target.get());
+            executeForwardReaching(copiedChain);
             //Stage 2: Backward Reaching
-            positions.put(root.id(), initial);
-            executeBackwardReaching(chainCopied);
+            positions.set(0, initial);
+            float change = executeBackwardReaching(copiedChain);
             //Save best solution
-            //if(Vec.distance(target, end.position()) <  Vec.distance(target, bestSolution.get(chainCopied.size()-1).position())) {
-            //bestSolution = copyChain(chainCopied);
-            //}
+            if(Vec.distance(target, end.position()) <  Vec.distance(target, bestSolution.get(copiedChain.size()-1).position())) {
+                bestSolution = copyChain(copiedChain);
+            }
             //Check total position change
-            //if(change() <= MINCHANGE) return true;
+            if(change <= MINCHANGE) return true;
             return false;
         }
 
-        public float change(){
-            return change(chainCopied);
-        }
-
-        public void executeForwardReaching(ArrayList<GenericFrame> chain){
+        public void executeForwardReaching(ArrayList<? extends Frame> chain){
             executeForwardReaching(chain, null,0);
         }
 
@@ -499,7 +502,7 @@ public  abstract class Solver {
             if(endEffectors > 0){
                 endEffector.add(root.id());
                 //set initial position
-                positions.put(root.id(), root.position());
+                //positions.put(root.id(), root.position());
             }
             if(endEffectors > 1)subBase.put(root.id(), endEffectors);
         }
@@ -520,7 +523,7 @@ public  abstract class Solver {
                 //Stage 1: Forward Reaching
                 if(Vec.distance(joint.position(), targets.get(joint.id()).position()) > ERROR){
                     initialPositions.put(chain.get(0).id(), chain.get(0).position().get());
-                    positions.put(joint.id(), targets.get(joint.id()).position().get());
+                    //positions.put(joint.id(), targets.get(joint.id()).position().get());
                     printPositions(root);
                     executeForwardReaching(chain, targets.get(chain.get(0).id()) ,endEffectors);
                     finished = false;
@@ -551,7 +554,7 @@ public  abstract class Solver {
 
 
                 if(Vec.distance(end.position(), targets.get(end.id()).position()) > ERROR){
-                    positions.put(root.id(), initialPositions.get(root.id()).get());
+                    //positions.put(root.id(), initialPositions.get(root.id()).get());
                     printChain(chain);
                     executeBackwardReaching(chain);
                     change += change(chain);
