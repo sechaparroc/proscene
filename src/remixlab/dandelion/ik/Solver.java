@@ -39,7 +39,7 @@ import java.util.Map;
 public  abstract class Solver {
     /*Convenient String to register/unregister solvers in an Abstract Scene*/
     protected String name;
-    protected float ERROR = 0.1f;
+    protected float ERROR = 0.01f;
     protected int MAXITER = 200;
     protected float MINCHANGE = 0.01f;
     protected float TIMESPERFRAME = 1.f;
@@ -122,13 +122,12 @@ public  abstract class Solver {
             /*Check constraints (for Ball & Socket) it is not applied in First iteration
             * Look at paper FABRIK: A fast, iterative solver for the Inverse Kinematics problem For more information*/
             Vec pos_i2 = null;
-            Frame child = null;
             if(i != chain.size()-2){
                 pos_i2 = positions.get(chain.get(i+2).id());
-                child = chain.get(i + 2);
             }
-            //Vec pos_i1_constrained = applyConstraintsForwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), child,  pos_i, pos_i1, pos_i2);
-            Vec pos_i1_constrained = applyConstraintsBackwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), pos_i, pos_i1);
+            Vec pos_i1_constrained = applyConstraintsForwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(),  pos_i, pos_i1, pos_i2);
+            /*Checking constraints without considering special cases in Forward Step, as the Paper suggests, is possible, solutions are not as good thought*/
+            //Vec pos_i1_constrained = applyConstraintsBackwardStage(chain.get(i + 1), chain.get(i + 1).referenceFrame(), pos_i, pos_i1);
             Vec diff = Vec.subtract(pos_i1, pos_i1_constrained);
             pos_i.add(diff);
             positions.put(chain.get(i).id(), pos_i);
@@ -207,22 +206,26 @@ public  abstract class Solver {
     * Vec o is a Vector where Parent is located, whereas p is express the position of J
     * Vec q is the position of Child of J.
     * */
-    public Vec applyConstraintsForwardStage(Frame j, Frame parent, Frame child, Vec o, Vec p, Vec q){
+    public Vec applyConstraintsForwardStage(Frame j, Frame parent, Vec o, Vec p, Vec q){
         if(parent.constraint() instanceof BallAndSocket){
-            if(child == null) return p;
-            Vec newTransalation = Vec.subtract(q,p);
-            newTransalation = j.coordinatesOf(newTransalation);
+            if(q == null) return p;
+            Vec newTranslation = Vec.subtract(q,p);
+            newTranslation.add(parent.position());
+            newTranslation = parent.coordinatesOf(newTranslation);
             //Get The Quat between current Translation and new Translation
-            Quat quat = new Quat(child.translation(), newTransalation);
+            Quat quat = new Quat(j.translation(), newTranslation);
             BallAndSocket constraint = (BallAndSocket) parent.constraint();
             Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));
             Vec target = Quat.multiply(desired, j.translation());
-            target = constraint.getConstraint(target, (Quat) Quat.compose(constraint.getRestRotation(),quat));
+            Quat aux = (Quat) Quat.compose(parent.rotation(), constraint.getRestRotation().inverse());
+            aux = (Quat) Quat.compose(constraint.getRestRotation(), aux);
+            target = constraint.getConstraint(target, (Quat) Quat.compose(aux,quat));
             target.normalize();
             target.multiply(Vec.subtract(p,o).magnitude());
             return parent.inverseCoordinatesOf(Quat.multiply((Quat)parent.rotation().inverse(), target));
         } else if(parent.constraint() instanceof Hinge){
             if(parent.is2D()){
+                /*Consider same steps as in Backward Step*/
                 Hinge constraint = (Hinge) parent.constraint();
                 Rot desired = posToRot(j,parent, o, p);
                 Rot constrained = (Rot) constraint.constrainRotation(desired, parent);
@@ -233,7 +236,6 @@ public  abstract class Solver {
         }
         return p;
     }
-
 
     /*
     * Check the type of the constraint related to the Frame Parent,
@@ -274,8 +276,11 @@ public  abstract class Solver {
             reset();
         }
 
-        if(iterations == MAXITER) return true;
+        if(iterations == MAXITER){
+            return true;
+        }
         FRAMECOUNTER += TIMESPERFRAME;
+
         while(Math.floor(FRAMECOUNTER) > 0){
             //Returns a boolean that indicates if a termination condition has been accomplished
             if(execute()){
@@ -378,11 +383,17 @@ public  abstract class Solver {
          *
          * */
         public boolean execute(){
-            //Get the distance between the Root and the End Effector
-            float length = getLength();
             GenericFrame root = chainCopied.get(0);
             GenericFrame end	 = chainCopied.get(chainCopied.size()-1);
             Vec target = this.target.position().get();
+
+            //Execute Until the distance between the end effector and the target is below a threshold
+            if(Vec.distance(end.position(), target) <= ERROR){
+                return true;
+            }
+
+            //Get the distance between the Root and the End Effector
+            float length = getLength();
             //Get the distance between the Root and the Target
             float dist = Vec.distance(root.position(), target);
             //When Target is unreachable        //Debug methods
@@ -392,8 +403,6 @@ public  abstract class Solver {
             }else{*/
             //Initial root position
             Vec initial = positions.get(root.id()).get();
-            //Execute Until the distance between the end effector and the target is below a threshold
-            if(Vec.distance(end.position(), target) <= ERROR) return true;
             //Stage 1: Forward Reaching
             positions.put(end.id(), target.get());
             executeForwardReaching(chainCopied);
@@ -405,7 +414,7 @@ public  abstract class Solver {
             //bestSolution = copyChain(chainCopied);
             //}
             //Check total position change
-            if(change() <= MINCHANGE) return true;
+            //if(change() <= MINCHANGE) return true;
             return false;
         }
 

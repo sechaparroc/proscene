@@ -18,25 +18,27 @@ public class BasicIK3D extends PApplet {
     ArrayList<GenericFrame>  jointsConstrained = new ArrayList<GenericFrame>();
     InteractiveFrame target;
 
-    int num_joints = 12;
+    int num_joints = 8;
     float constraint_factor = 50;
+    float boneLength = 20;
 
     ChainSolver solverUnconstrained;
     ChainSolver solverConstrained;
     boolean auto = false;
     boolean showSteps = true;
 
-    int TimesPerFrame = 1;
+    int TimesPerFrame = 10;
 
     public void settings() {
-        size(800, 800, P3D);
+        size(500, 500, P3D);
     }
 
     public void setup() {
         scene = new Scene(this);
         scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
         scene.setAxesVisualHint(true);
-        Vec v = new Vec(10,10,10);
+        Vec v = new Vec(1, 1, 1);
+        v.normalize(); v.multiply(boneLength);
         InteractiveFrame prev = null;
         target = new InteractiveFrame(scene);
         //Unconstrained Chain
@@ -73,10 +75,10 @@ public class BasicIK3D extends PApplet {
 
         solverConstrained = new ChainSolver("Constrained",jointsConstrained, target);
         solverConstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverConstrained.setMINCHANGE(999);
+        solverConstrained.setMINCHANGE(0.001f);
         solverUnconstrained = new ChainSolver("Unconstrained",joints, target);
         solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverUnconstrained.setMINCHANGE(999);
+        solverUnconstrained.setMINCHANGE(0.001f);
     }
 
 
@@ -162,6 +164,7 @@ public class BasicIK3D extends PApplet {
             ChainSolver solver = new ChainSolver("Constrained", jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
+            printChange();
         }
 
         if(key == 'j'){
@@ -225,6 +228,17 @@ public class BasicIK3D extends PApplet {
         }
     }
     //*/
+
+    //Debug method to print how much must the chain change from restRotation
+    public void printChange(){
+        float angle = 0.f;
+        for(GenericFrame f : jointsConstrained){
+            BallAndSocket b = (BallAndSocket) f.constraint();
+            Quat q = Quat.multiply((Quat)f.rotation(), b.getRestRotation().inverse());
+            angle += q.angle();
+        }
+        System.out.println("---> How much the chain has rotated : " + angle);
+    }
 
     public static void main(String args[]) {
         PApplet.main(new String[]{"ik.BasicIK3D"});
