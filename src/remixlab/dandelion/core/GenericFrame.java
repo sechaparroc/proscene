@@ -3390,7 +3390,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Standard Notation for IK (Parent points to Children) is taking into account
    */
   public void setupHierarchy(){
-    for(GenericFrame f : children()){
+    for(int i = 0; i < children().size(); i++){
+        GenericFrame f = children().get(i);
         f.setReferenceFrame(this, true);
     }
     for(GenericFrame f : children()) {

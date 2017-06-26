@@ -45,6 +45,7 @@ public  abstract class Solver {
     protected float TIMESPERFRAME = 1.f;
     protected float FRAMECOUNTER = 0;
     protected int iterations = 0;
+    private float weight = 1; //attribute used for Multiple End Effectors System
 
     /*Store Joint's desired position*/
     protected ArrayList<Vec> positions = new ArrayList<Vec>();
@@ -115,7 +116,7 @@ public  abstract class Solver {
     * the reference frame of the Frame at i + 1
     * */
 
-    public void executeForwardReaching(ArrayList<? extends Frame> chain, Frame target, int endEffectors){
+    public void executeForwardReaching(ArrayList<? extends Frame> chain){
         for(int i = chain.size()-2; i >= 0; i--){
             Vec pos_i = positions.get(i);
             Vec pos_i1 = positions.get(i+1);
@@ -140,19 +141,8 @@ public  abstract class Solver {
             float lambda_i =  dist_i/r_i;
             Vec new_pos = Vec.multiply(pos_i1, 1.f - lambda_i);
             new_pos.add(Vec.multiply(pos_i, lambda_i));
-            if(i <= 1 && endEffectors > 1){
-                if(i == 1)
-                    target.setPosition(
-                            Vec.add(target.position(),
-                                    Vec.multiply(new_pos, 1.f/endEffectors)));
-            }else{
-                positions.set(i, new_pos);
-            }
+            positions.set(i, new_pos);
         }
-    }
-
-    public void executeForwardReaching(ArrayList<? extends Frame> chain){
-        executeForwardReaching(chain, null, 0);
     }
 
     /*Return the total distance between the configuration at beginning of the Iteration and the final configuration*/
@@ -308,10 +298,12 @@ public  abstract class Solver {
     }
 
     public static class ChainSolver extends Solver{
+
+        //TODO: It will be useful that any Joint in the chain could have a Target ?
+        //TODO: Enable Translation of Head (Skip Backward Step)
+
         protected ArrayList<? extends Frame> chain;
         private ArrayList<Frame> bestSolution;
-        private ArrayList<Frame> copiedChain;
-        private int idxEndEffector; //index of the End effector in the chain (Mos of the cases is a leaf)
 
         protected Frame target;
         private Frame prevTarget;
@@ -340,7 +332,6 @@ public  abstract class Solver {
 
         public void setChain(ArrayList<? extends Frame> chain) {
             this.chain      = chain;
-            copiedChain     = copyChain(chain);
             bestSolution    = copyChain(chain);
         }
 
@@ -352,15 +343,31 @@ public  abstract class Solver {
             this.target = target;
         }
 
-        public ChainSolver(String name, ArrayList<? extends Frame> chain, Frame target){
-            this.name = name;
+        public Frame getHead(){
+            return chain.get(0);
+        }
+
+        public Frame getEndEffector(){
+            return chain.get(chain.size()-1);
+        }
+
+        public ChainSolver(ArrayList<? extends Frame> chain){
+            this(chain, null);
+        }
+
+        public ChainSolver(ArrayList<? extends Frame> chain, Frame target){
             setChain(chain);
             positions = new ArrayList<Vec>();
-            for(Frame joint : copiedChain){
+            for(Frame joint : chain){
                 positions.add(joint.position().get());
             }
             this.target = target;
-            this.prevTarget = new Frame(target.position().get(), target.orientation().get());
+            this.prevTarget =
+                    target == null ? null : new Frame(target.position().get(), target.orientation().get());
+        }
+        public ChainSolver(String name, ArrayList<? extends Frame> chain, Frame target){
+            this(chain,target);
+            this.name = name;
         }
         /*Get maximum length of a given chain*/
         public float getLength(){
@@ -390,8 +397,10 @@ public  abstract class Solver {
          *
          * */
         public boolean execute(){
-            Frame root  = copiedChain.get(0);
-            Frame end   = copiedChain.get(copiedChain.size()-1);
+            //As no target is specified there is no need to perform FABRIK
+            if(target == null) return true;
+            Frame root  = chain.get(0);
+            Frame end   = chain.get(chain.size()-1);
             Vec target  = this.target.position().get();
 
             //Execute Until the distance between the end effector and the target is below a threshold
@@ -411,22 +420,26 @@ public  abstract class Solver {
             //Initial root position
             Vec initial = positions.get(0).get();
             //Stage 1: Forward Reaching
-            positions.set(copiedChain.size()-1, target.get());
-            executeForwardReaching(copiedChain);
+            positions.set(chain.size()-1, target.get());
+            executeForwardReaching();
             //Stage 2: Backward Reaching
             positions.set(0, initial);
-            float change = executeBackwardReaching(copiedChain);
+            float change = executeBackwardReaching();
             //Save best solution
-            if(Vec.distance(target, end.position()) <  Vec.distance(target, bestSolution.get(copiedChain.size()-1).position())) {
-                bestSolution = copyChain(copiedChain);
+            if(Vec.distance(target, end.position()) <  Vec.distance(target, bestSolution.get(chain.size()-1).position())) {
+                bestSolution = copyChain(chain);
             }
             //Check total position change
             if(change <= MINCHANGE) return true;
             return false;
         }
 
-        public void executeForwardReaching(ArrayList<? extends Frame> chain){
-            executeForwardReaching(chain, null,0);
+        public void executeForwardReaching(){
+            executeForwardReaching(chain);
+        }
+
+        public float executeBackwardReaching(){
+            return executeBackwardReaching(chain);
         }
 
         public void update(){
@@ -436,21 +449,171 @@ public  abstract class Solver {
         }
 
         public boolean stateChanged(){
-            if(prevTarget == null) prevTarget = new Frame(target.position().get(), target.orientation().get());
+            if(target == null){
+                prevTarget = null;
+                return false;
+            }else if(prevTarget == null) {
+                return true;
+            }
             return !(prevTarget.position().equals(target.position()) && prevTarget.orientation().equals(target.orientation()));
         }
 
         public void reset(){
-            prevTarget = new Frame(target.position().get(), target.orientation().get());;
+            prevTarget = target == null ? null : new Frame(target.position().get(), target.orientation().get());
             iterations = 0;
         }
 
     }
 
+    public static class TreeSolver extends Solver{
+
+        /*Convenient Class to store ChainSolvers in a Tree Structure*/
+        private static class Node{
+            private Node parent;
+            private ArrayList<Node> children;
+            private ChainSolver solver;
+            private float weight;
+            public Node(ChainSolver solver){
+                this.solver = solver;
+
+            }
+            private Node(Node parent, ChainSolver solver){
+                this.parent = parent;
+                this.solver = solver;
+                if(parent != null){
+                    parent.addChild(this);
+                }
+            }
+            private boolean addChild(Node n){
+                if(children == null) children = new ArrayList<Node>();
+                return  children.add(n);
+            }
+
+            private ArrayList<Node> getChildren(){ return children; }
+            private float getWeight(){ return  weight; }
+            private ChainSolver getSolver(){ return solver; }
+       }
+
+        //TODO Relate weights with End Effectors not with chains
+        /*Tree structure that contains a list of Solvers that must be accessed in a BFS way*/
+        private Node solvers;
+
+        public void setup(Node parent, GenericFrame frame, ArrayList<GenericFrame> list){
+            if(frame == null) return;
+            if(frame.children().isEmpty()){
+                list.add(frame);
+                ChainSolver solver = new ChainSolver(list, null);
+                chainSolvers.add(solver);
+                Node node = new Node(parent, solver);
+                //Keep Track of chainSolvers by Head
+                if(!chainSolversByHead.containsKey(((GenericFrame)solver.getHead()).id())){
+                    chainSolversByHead.put(((GenericFrame)solver.getHead()).id(), new ArrayList<ChainSolver>());
+                }
+                chainSolversByHead.get(((GenericFrame)solver.getHead()).id()).add(solver);
+                return;
+            }
+            if(frame.children().size() > 1){
+                list.add(frame);
+                chainSolvers.add(new ChainSolver(list,null));
+                for(GenericFrame child : frame.children()){
+                    ArrayList<GenericFrame> newList = new ArrayList<GenericFrame>();
+                    newList.add(frame);
+                    setup(child, newList);
+                }
+            }else{
+                list.add(frame);
+                setup(frame.children().get(0), list);
+            }
+        }
+
+        public boolean addTarget(GenericFrame endEffector, GenericFrame target){
+            for(ChainSolver solver : chainSolvers){
+                System.out.println("--> Possible end effector : " + ((GenericFrame)solver.getEndEffector()).id());
+                if(((GenericFrame)solver.getEndEffector()).id() == endEffector.id()){
+                    solver.setTarget(target);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public TreeSolver(GenericFrame genericFrame){
+            Node root = new Node();
+            setup(root, new ArrayList<GenericFrame>());
+        }
+
+        @Override
+        public boolean execute(){
+            int numSolvers = chainSolvers.size();
+            boolean [] modified = new boolean[numSolvers];
+            float change = 0.f;
+            for(int i = numSolvers-1; i >= 0; i--){
+                //Stage 1: Forward Reaching
+                ChainSolver solver = chainSolvers.get(i);
+                //Execute Until the distance between the end effector and the target is below a threshold
+                if(solver.getTarget() == null){
+                    modified[i] = false;
+                    continue;
+                }
+                if(Vec.distance(solver.getEndEffector().position(), solver.getTarget().position()) <= ERROR){
+                    modified[i] = false;
+                    continue;
+                }
+                solver.getPositions().set(solver.getChain().size()-1, solver.target.position().get());
+                solver.executeForwardReaching();
+                if(subBasesWeights.containsKey(((GenericFrame)solver.getHead()).id())){
+                    //Update Target
+                    solver.getTarget().translate(Vec.multiply(solver.getPositions().get(0),1.f/
+                            subBasesWeights.get(((GenericFrame)solver.getHead()).id())));
+                }
+                //as it was modified Backward Step must be Performed
+                modified[i] = true;
+            }
+
+            int modifiedChains = 0;
+            for(int i = 0; i < numSolvers; i++){
+                //If it was not modified then Backward Step must not be performed
+                if(!modified[i]) continue;
+                //Stage 2: Backward Reaching
+                //TODO : Consider subbase case (Average)
+                ChainSolver solver = chainSolvers.get(i);
+                solver.getPositions().set(0,solver.getHead().position());
+                change += solver.executeBackwardReaching();
+                modifiedChains++;
+            }
+
+            //Check total position change
+            if(change/(modifiedChains*1.) <= MINCHANGE) return true;
+            return false;
+        }
+
+        @Override
+        public void update() {
+            //As BackwardStep modify chains, no update is required
+        }
+
+        @Override
+        public boolean stateChanged() {
+            for(ChainSolver chain : chainSolvers){
+                if(chain.stateChanged()) return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void reset() {
+            iterations = 0;
+            for(ChainSolver chain : chainSolvers){
+                //Update Previous Target
+                if(chain.stateChanged()) chain.reset();
+            }
+        }
+    }
+
     /*
     * TODO: FIX TreeSolver, At this very moment is not working
     * */
-    public static class TreeSolver extends Solver{
+    public static class TreeSolver2 extends Solver{
         /*Keeps track of a tree structure*/
         private GenericFrame root;
         private boolean setup; //flag used to setup the structure
@@ -466,7 +629,7 @@ public  abstract class Solver {
 
         private boolean finished = false;
         private float change;
-        public TreeSolver(GenericFrame root){
+        public TreeSolver2(GenericFrame root){
             //Find sub-base joints
             this.root = root;
             getSubBases(root);
@@ -525,7 +688,7 @@ public  abstract class Solver {
                     initialPositions.put(chain.get(0).id(), chain.get(0).position().get());
                     //positions.put(joint.id(), targets.get(joint.id()).position().get());
                     printPositions(root);
-                    executeForwardReaching(chain, targets.get(chain.get(0).id()) ,endEffectors);
+                    //executeForwardReaching(chain, targets.get(chain.get(0).id()) ,endEffectors);
                     finished = false;
                 }
             }
