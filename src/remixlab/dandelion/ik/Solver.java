@@ -472,10 +472,16 @@ public  abstract class Solver {
             private Node parent;
             private ArrayList<Node> children;
             private ChainSolver solver;
-            private float weight;
+            private boolean modified;
+            private float weight = 1.f;
+
+            public Node(){
+                children = new ArrayList<Node>();
+            }
+
             public Node(ChainSolver solver){
                 this.solver = solver;
-
+                children = new ArrayList<Node>();
             }
             private Node(Node parent, ChainSolver solver){
                 this.parent = parent;
@@ -483,105 +489,131 @@ public  abstract class Solver {
                 if(parent != null){
                     parent.addChild(this);
                 }
+                children = new ArrayList<Node>();
             }
             private boolean addChild(Node n){
-                if(children == null) children = new ArrayList<Node>();
                 return  children.add(n);
             }
 
             private ArrayList<Node> getChildren(){ return children; }
             private float getWeight(){ return  weight; }
             private ChainSolver getSolver(){ return solver; }
-       }
+
+            public boolean isModified() {
+                return modified;
+            }
+
+            public void setModified(boolean modified) {
+                this.modified = modified;
+            }
+        }
 
         //TODO Relate weights with End Effectors not with chains
         /*Tree structure that contains a list of Solvers that must be accessed in a BFS way*/
-        private Node solvers;
+        private Node root;
 
         public void setup(Node parent, GenericFrame frame, ArrayList<GenericFrame> list){
             if(frame == null) return;
             if(frame.children().isEmpty()){
                 list.add(frame);
                 ChainSolver solver = new ChainSolver(list, null);
-                chainSolvers.add(solver);
-                Node node = new Node(parent, solver);
-                //Keep Track of chainSolvers by Head
-                if(!chainSolversByHead.containsKey(((GenericFrame)solver.getHead()).id())){
-                    chainSolversByHead.put(((GenericFrame)solver.getHead()).id(), new ArrayList<ChainSolver>());
-                }
-                chainSolversByHead.get(((GenericFrame)solver.getHead()).id()).add(solver);
+                new Node(parent, solver);
                 return;
             }
             if(frame.children().size() > 1){
                 list.add(frame);
-                chainSolvers.add(new ChainSolver(list,null));
+                ChainSolver solver = new ChainSolver(list,null);
+                Node node = new Node(parent, solver);
                 for(GenericFrame child : frame.children()){
                     ArrayList<GenericFrame> newList = new ArrayList<GenericFrame>();
                     newList.add(frame);
-                    setup(child, newList);
+                    setup(node, child, newList);
                 }
             }else{
                 list.add(frame);
-                setup(frame.children().get(0), list);
+                setup(parent, frame.children().get(0), list);
             }
         }
 
-        public boolean addTarget(GenericFrame endEffector, GenericFrame target){
-            for(ChainSolver solver : chainSolvers){
-                System.out.println("--> Possible end effector : " + ((GenericFrame)solver.getEndEffector()).id());
-                if(((GenericFrame)solver.getEndEffector()).id() == endEffector.id()){
-                    solver.setTarget(target);
-                    return true;
-                }
+        private boolean addTarget(Node node, GenericFrame endEffector, GenericFrame target){
+            if(node == null) return false;
+            if(((GenericFrame)node.getSolver().getEndEffector()).id() == endEffector.id()){
+                node.getSolver().setTarget(target);
+                return true;
+            }
+            for(Node child : node.getChildren()){
+                addTarget(child, endEffector, target);
             }
             return false;
         }
 
+        public boolean addTarget(GenericFrame endEffector, GenericFrame target){
+            return addTarget(root, endEffector, target);
+        }
+
         public TreeSolver(GenericFrame genericFrame){
-            Node root = new Node();
-            setup(root, new ArrayList<GenericFrame>());
+            Node dummy = new Node(); //Dummy Node to Keep Reference
+            setup(dummy, genericFrame, new ArrayList<GenericFrame>());
+            //dummy must have only a child,
+            this.root = dummy.getChildren().get(0);
+        }
+
+        public int executeForward(Node node){
+            float totalWeight = 0;
+            boolean modified = false;
+            int chains = 0;
+            for(Node child : node.getChildren()) {
+                chains += executeForward(child);
+                if(child.getSolver().getTarget() != null) totalWeight += child.getWeight();
+                modified = modified || child.isModified();
+            }
+            //Stage 1: Forward Reaching
+            ChainSolver solver = node.getSolver();
+            //TODO: add embedded target and enable to give it some weight - Weight/Target as an attribute of Chain or as Node attribute?
+            //Update Target according to children Head new Position
+            Vec newTarget = new Vec();
+            for(Node child : node.getChildren()) {
+                //If Child Chain Joints new positions doesn't matter
+                if(child.getSolver().getTarget() == null) continue;
+                newTarget.add(Vec.multiply(child.getSolver().getPositions().get(0),1.f/totalWeight));
+            }
+            if(newTarget.magnitude() > 0){
+                solver.setTarget(new Frame(newTarget,solver.getEndEffector().orientation().get()));
+            }
+
+            //Execute Until the distance between the end effector and the target is below a threshold
+            if(solver.getTarget() == null){
+                node.setModified(false);
+                return 0;
+            }
+            if(Vec.distance(solver.getEndEffector().position(), solver.getTarget().position()) <= ERROR){
+                node.setModified(false);
+                return 0;
+            }
+            solver.getPositions().set(solver.getChain().size()-1, solver.target.position().get());
+            solver.executeForwardReaching();
+            node.setModified(true);
+            return chains + 1;
+        }
+
+        public float executeBackward(Node node){
+            float change = MINCHANGE;
+            if(node.isModified()){
+                //TODO : Consider subbase case (Average)
+                ChainSolver solver = node.getSolver();
+                solver.getPositions().set(0,solver.getHead().position());
+                change = solver.executeBackwardReaching();
+            }
+            for(Node child : node.getChildren()){
+                change += executeBackward(child);
+            }
+            return change;
         }
 
         @Override
         public boolean execute(){
-            int numSolvers = chainSolvers.size();
-            boolean [] modified = new boolean[numSolvers];
-            float change = 0.f;
-            for(int i = numSolvers-1; i >= 0; i--){
-                //Stage 1: Forward Reaching
-                ChainSolver solver = chainSolvers.get(i);
-                //Execute Until the distance between the end effector and the target is below a threshold
-                if(solver.getTarget() == null){
-                    modified[i] = false;
-                    continue;
-                }
-                if(Vec.distance(solver.getEndEffector().position(), solver.getTarget().position()) <= ERROR){
-                    modified[i] = false;
-                    continue;
-                }
-                solver.getPositions().set(solver.getChain().size()-1, solver.target.position().get());
-                solver.executeForwardReaching();
-                if(subBasesWeights.containsKey(((GenericFrame)solver.getHead()).id())){
-                    //Update Target
-                    solver.getTarget().translate(Vec.multiply(solver.getPositions().get(0),1.f/
-                            subBasesWeights.get(((GenericFrame)solver.getHead()).id())));
-                }
-                //as it was modified Backward Step must be Performed
-                modified[i] = true;
-            }
-
-            int modifiedChains = 0;
-            for(int i = 0; i < numSolvers; i++){
-                //If it was not modified then Backward Step must not be performed
-                if(!modified[i]) continue;
-                //Stage 2: Backward Reaching
-                //TODO : Consider subbase case (Average)
-                ChainSolver solver = chainSolvers.get(i);
-                solver.getPositions().set(0,solver.getHead().position());
-                change += solver.executeBackwardReaching();
-                modifiedChains++;
-            }
-
+            int modifiedChains =  executeForward(root);
+            float change = executeBackward(root);
             //Check total position change
             if(change/(modifiedChains*1.) <= MINCHANGE) return true;
             return false;
@@ -592,22 +624,35 @@ public  abstract class Solver {
             //As BackwardStep modify chains, no update is required
         }
 
-        @Override
-        public boolean stateChanged() {
-            for(ChainSolver chain : chainSolvers){
-                if(chain.stateChanged()) return true;
+        private boolean stateChanged(Node node) {
+            if(node == null) return false;
+            if(node.getSolver().stateChanged()) return true;
+            for(Node child : node.getChildren()){
+                if(stateChanged(child)) return true;
             }
             return false;
         }
 
         @Override
-        public void reset() {
-            iterations = 0;
-            for(ChainSolver chain : chainSolvers){
-                //Update Previous Target
-                if(chain.stateChanged()) chain.reset();
+        public boolean stateChanged() {
+            return stateChanged(root);
+        }
+
+        private void reset(Node node){
+            if(node == null) return;
+            //Update Previous Target
+            if(node.getSolver().stateChanged()) node.getSolver().reset();
+            for(Node child : node.getChildren()){
+                reset(child);
             }
         }
+
+        @Override
+        public void reset() {
+            iterations = 0;
+            reset(root);
+        }
+
     }
 
     /*

@@ -31,9 +31,9 @@ public class MultipleEndEffectorIK3D extends PApplet {
     boolean auto = false;
     boolean showSteps = true;
 
-    int TimesPerFrame = 10;
+    int TimesPerFrame = 40;
     InteractiveFrame root;
-    InteractiveFrame target;
+    ArrayList<InteractiveFrame> targets = new ArrayList<InteractiveFrame>();//one target per Leaf
 
 
     public void settings() {
@@ -64,22 +64,30 @@ public class MultipleEndEffectorIK3D extends PApplet {
         scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
         scene.setAxesVisualHint(true);
 
-        target = new InteractiveFrame(scene);
+        for(int i = 0; i < numSliblings; i++)
+            targets.add(new InteractiveFrame(scene));
 
         root = new InteractiveFrame(scene);
-        ArrayList<InteractiveFrame> children;
-        children = createBranch(root,  numSliblings, boneLength);
-        int idx = children.size()/2;
-        children = createBranch(children.get(idx),  numSliblings, boneLength);
+        ArrayList<InteractiveFrame> leaves;
+        leaves = createBranch(root,  numSliblings, boneLength);
+        int idx = leaves.size()/2;
+        leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
+        idx = leaves.size()/2;
+        leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
 
         //Fix hierarchy
         root.setupHierarchy();
         solverUnconstrained = new Solver.TreeSolver(root);
-        boolean cond = solverUnconstrained.addTarget(children.get(0), target);
-        System.out.println("Idx : " + children.get(0).id());
-        if(cond) System.out.println("Target added");
-        //solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-        //solverUnconstrained.setMINCHANGE(0.001f);
+
+        for(int i = 0; i < leaves.size(); i++){
+            targets.get(i).setPosition(leaves.get(i).position());
+            targets.get(i).setOrientation(leaves.get(i).orientation());
+            boolean cond = solverUnconstrained.addTarget(leaves.get(i), targets.get(i));
+            System.out.println("Idx : " + leaves.get(i).id());
+            if(cond) System.out.println("Target added");
+        }
+        solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
+        solverUnconstrained.setMINCHANGE(0.001f);
     }
 
 
@@ -101,14 +109,16 @@ public class MultipleEndEffectorIK3D extends PApplet {
             popMatrix();
         }
 
-        pushMatrix();
-        pushStyle();
-        noStroke();
-        fill(255,0,0,200);
-        translate(target.position().x(),target.position().y(),target.position().z());
-        sphere(5);
-        popStyle();
-        popMatrix();
+        for(GenericFrame target : targets) {
+            pushMatrix();
+            pushStyle();
+            noStroke();
+            fill(255, 0, 0, 200);
+            translate(target.position().x(), target.position().y(), target.position().z());
+            sphere(5);
+            popStyle();
+            popMatrix();
+        }
 
         if(auto){
             solverUnconstrained.solve();
