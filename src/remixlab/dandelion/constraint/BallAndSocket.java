@@ -102,12 +102,9 @@ public class BallAndSocket extends Constraint{
     public Rotation constrainRotation(Rotation rotation, Frame frame) {
         if(frame.is2D())
             throw new RuntimeException("This constrained not supports 2D Frames");
-        Vec upvec    = Quat.multiply(restRotation,new Vec(0,1,0));
-        Vec rightvec = Quat.multiply(restRotation,new Vec(1,0,0));
-        Vec line = Quat.multiply(restRotation, new Vec(0,0,1));
         Quat desired = (Quat) Quat.compose(frame.rotation(),rotation);
         Vec new_pos = Quat.multiply(desired, new Vec(0,0,1));
-        Vec constrained = getConstraint(new_pos, line, rightvec, upvec);
+        Vec constrained = getConstraint(new_pos, restRotation);
         //Get Quaternion
         return new Quat(new Vec(0,0,1), Quat.multiply((Quat)frame.rotation().inverse(),constrained));
     }
@@ -123,14 +120,16 @@ public class BallAndSocket extends Constraint{
       * Adapted from http://wiki.roblox.com/index.php?title=Inverse_kinematics
       * new_pos: new position defined in terms of local coordinates
     */
+
     public Vec getConstraint(Vec target){
-        Vec upvec    = Quat.multiply(restRotation,new Vec(0,1,0));
-        Vec rightvec = Quat.multiply(restRotation,new Vec(1,0,0));
-        Vec line = Quat.multiply(restRotation, new Vec(0,0,1));
-        return getConstraint(target, line, rightvec, upvec);
+        return getConstraint(target, restRotation);
     }
 
-    public Vec getConstraint(Vec target, Vec line, Vec rvec, Vec uvec){
+    public Vec getConstraint(Vec target, Quat restRotation){
+        Vec uvec    = Quat.multiply(restRotation,new Vec(0,1,0));
+        Vec rvec = Quat.multiply(restRotation,new Vec(1,0,0));
+        Vec line = Quat.multiply(restRotation, new Vec(0,0,1));
+
         float PI = (float) Math.PI;
         Vec f = target.get();
         float scalar = Vec.dot(target, line)/line.magnitude();
