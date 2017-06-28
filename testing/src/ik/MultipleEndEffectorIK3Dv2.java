@@ -14,10 +14,12 @@ import remixlab.proscene.Scene;
 
 import java.util.ArrayList;
 
+
 /**
- * Created by sebchaparr on 25/06/17.
+ * Created by sebchaparr on 27/06/17.
  */
-public class MultipleEndEffectorIK3D extends PApplet {
+public class MultipleEndEffectorIK3Dv2 extends PApplet{
+
     Scene scene;
     PFont myFont;
     float distanceBtwnSliblings = 30.f;
@@ -46,13 +48,11 @@ public class MultipleEndEffectorIK3D extends PApplet {
         float step = PI/numSliblings;
         //float offset = PI;
         for(int j = 0; j < numSliblings; j++){
-            InteractiveFrame dummy = new InteractiveFrame(scene);
-            dummy.setReferenceFrame(root);
             Vec vec = new Vec(0,0, boneLength);
             Quat q = new Quat(new Vec(1,0,0), step*j - PI);
             vec = q.multiply(vec);
             InteractiveFrame child = new InteractiveFrame(scene);
-            child.setReferenceFrame(dummy);
+            child.setReferenceFrame(root);
             child.translate(vec);
             frames.add(child);
         }
@@ -227,6 +227,6 @@ public class MultipleEndEffectorIK3D extends PApplet {
 
 
     public static void main(String args[]) {
-        PApplet.main(new String[]{"ik.MultipleEndEffectorIK3D"});
+        PApplet.main(new String[]{"ik.MultipleEndEffectorIK3Dv2"});
     }
 }

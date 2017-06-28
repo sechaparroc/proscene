@@ -599,10 +599,45 @@ public  abstract class Solver {
         public float executeBackward(Node node){
             float change = MINCHANGE;
             if(node.isModified()){
-                //TODO : Consider subbase case (Average)
                 ChainSolver solver = node.getSolver();
                 solver.getPositions().set(0,solver.getHead().position());
                 change = solver.executeBackwardReaching();
+                // When dealing with a sub-base After new position is obtained,
+                // Set its Rotation considering their children Positions
+                if(node.getChildren().size() > 1){
+                    Vec centroid = new Vec();
+                    Vec newCentroid = new Vec();
+                    float totalWeight = 0;
+                    for(Node child: node.getChildren()){
+                        if(child.getSolver().getChain().size() < 2) continue;
+                        if(child.getSolver().getChain().get(1).translation().magnitude() == 0) continue;
+                        centroid.add(Vec.multiply(child.getSolver().getChain().get(1).position(), child.getWeight()));
+                        if(child.isModified()){
+                            newCentroid.add(Vec.multiply(child.getSolver().getPositions().get(1), child.getWeight()));
+                        }else{
+                            newCentroid.add(Vec.multiply(child.getSolver().getChain().get(1).position(), child.getWeight()));
+                        }
+                        totalWeight += child.getWeight();
+                    }
+                    if(totalWeight > 0.0001){
+                        centroid.multiply(1.f/totalWeight);
+                        newCentroid.multiply(1.f/totalWeight);
+                        if(node.getSolver().getEndEffector().is3D()){
+                            Quat deltaOrientation = new Quat(centroid, newCentroid);
+                            node.getSolver().getEndEffector().setOrientationWithConstraint(Quat.compose(node.getSolver().getEndEffector().orientation(),deltaOrientation));
+                        }else{
+                            Rot deltaOrientation = new Rot(centroid, newCentroid);
+                            node.getSolver().getEndEffector().setOrientationWithConstraint(Rot.compose(node.getSolver().getEndEffector().orientation(),deltaOrientation));
+                        }
+                        for(Node child : node.getChildren()){
+                            if(child.getSolver().getChain().size() < 2) continue;
+                            if(child.getSolver().getChain().get(1).translation().magnitude() == 0) continue;
+                            if(child.isModified()){
+                                child.getSolver().getPositions().set(1, child.getSolver().getChain().get(1).position());
+                            }
+                        }
+                    }
+                }
             }
             for(Node child : node.getChildren()){
                 change += executeBackward(child);
@@ -653,252 +688,39 @@ public  abstract class Solver {
             reset(root);
         }
 
-    }
+        /*When executing Backward Step, if the Frame is a SubBase (Has more than 1 Child) and
+         * it is not a "dummy Frame" (Convenient Frame that constraints position but no orientation of
+         * its children) then an additional step must be done: A Weighted Average of Rotations to establish
+         * new Frame orientation
+         * Here a simple approach to find the Average will be taking into account, but for a high accuracy
+         * look at https://stackoverflow.com/questions/12374087/average-of-multiple-quaternions for more information.
+         * */
+        /*Perform a Weighted Average of each component of the Quaternion. Provides good results if Quaternions are close.
+        (Not best Solution: Consider implementation of http://www.acsu.buffalo.edu/~johnc/ave_quat07.pdf, perhaps add it to Quat Class),
+         */
 
-    /*
-    * TODO: FIX TreeSolver, At this very moment is not working
-    * */
-    public static class TreeSolver2 extends Solver{
-        /*Keeps track of a tree structure*/
-        private GenericFrame root;
-        private boolean setup; //flag used to setup the structure
-        /*Set of Joints that are end effectors or are parents of at Least one end effector*/
-        private HashSet<Integer> endEffector = new HashSet<Integer>();
-        private HashSet<Integer> leaves = new HashSet<Integer>();//Make prune
-        //Contains Sub-bases
-        private HashMap<Integer, Vec> initialPositions = new HashMap<Integer, Vec>();
-        private HashMap<Integer, Integer> subBase = new HashMap<Integer, Integer>();
-        private HashMap<Integer, Boolean> solved = new HashMap<Integer, Boolean>();
-        private HashMap<Integer, Frame> targets = new HashMap<Integer, Frame>();
-
-
-        private boolean finished = false;
-        private float change;
-        public TreeSolver2(GenericFrame root){
-            //Find sub-base joints
-            this.root = root;
-            getSubBases(root);
-        }
-
-        public void getSubBases(){
-            initialPositions = new HashMap<Integer, Vec>();
-            subBase = new HashMap<Integer, Integer>();
-            endEffector = new HashSet<Integer>();
-            targets = new HashMap<Integer, Frame>();
-            leaves = new HashSet<Integer>();
-            getSubBases(root);
-        }
-
-        //Execute FABRIK For a Tree Structure (Multiple End Effectors)
-        public void getSubBases(GenericFrame root){
-            int endEffectors = 0;
-            Vec target = targets.get(root.id()) != null ? targets.get(root.id()).position() : root.position();
-
-            if(Vec.distance(target, root.position()) > Float.MIN_VALUE){
-                endEffector.add(root.id());
-                endEffectors++;
-            }
-            //First find all single Chains that must be defined
-            //A Breadth First Traversing is performed to find sub-base joints
-            for(GenericFrame child : root.children()){
-                if(!(child instanceof GenericFrame)) continue;
-                getSubBases((GenericFrame)child);
-                if(endEffector.contains(((GenericFrame)child).id()) || subBase.containsKey(((GenericFrame)child).id())){
-                    endEffectors++;
+        private Quat getWeightedAverage(ArrayList<Quat> quaternions, ArrayList<Float> weight){
+            float x = 0.f , y = 0.f, z = 0.f, w = 0.f, totalWeight = 0;
+            for(int i = 0; i < quaternions.size(); i++){
+                if(i > 0 && quaternions.get(0).dotProduct(quaternions.get(i)) < 0 ){
+                    x = x - (quaternions.get(i).x()*weight.get(i));
+                    y = y - (quaternions.get(i).y()*weight.get(i));
+                    z = z - (quaternions.get(i).z()*weight.get(i));
+                    w = w - (quaternions.get(i).w()*weight.get(i));
+                }else{
+                    x = x + (quaternions.get(i).x()*weight.get(i));
+                    y = y + (quaternions.get(i).y()*weight.get(i));
+                    z = z + (quaternions.get(i).z()*weight.get(i));
+                    w = w + (quaternions.get(i).w()*weight.get(i));
                 }
+                totalWeight += weight.get(i);
             }
-            if(endEffectors > 0){
-                endEffector.add(root.id());
-                //set initial position
-                //positions.put(root.id(), root.position());
-            }
-            if(endEffectors > 1)subBase.put(root.id(), endEffectors);
+            if(totalWeight == 0) return new Quat();
+            x /= totalWeight;
+            y /= totalWeight;
+            z /= totalWeight;
+            w /= totalWeight;
+            return new Quat(x,y,z,w);
         }
-
-        public void executeForwardReaching(GenericFrame joint){
-            if(!endEffector.contains(joint.id())) return;
-            if(isLeaf(joint) || leaves.contains(joint.id())){
-                //Get a chain from joint to nearest sub-base
-                ArrayList<GenericFrame> chain = getShortestChain(joint);
-                printChain(chain);
-                int endEffectors = 0;
-                if(subBase.containsKey(chain.get(0).id())){
-                    endEffectors = subBase.get(joint.id());
-                    chain.add(0,(GenericFrame)chain.get(0).referenceFrame());
-                }
-                printChain(chain);
-                //Perform a Forward reaching
-                //Stage 1: Forward Reaching
-                if(Vec.distance(joint.position(), targets.get(joint.id()).position()) > ERROR){
-                    initialPositions.put(chain.get(0).id(), chain.get(0).position().get());
-                    //positions.put(joint.id(), targets.get(joint.id()).position().get());
-                    printPositions(root);
-                    //executeForwardReaching(chain, targets.get(chain.get(0).id()) ,endEffectors);
-                    finished = false;
-                }
-            }
-            if(subBase.containsKey(joint.id()))
-                targets.get(joint.id()).setPosition(
-                        Vec.multiply(targets.get(joint.id()).position(), 1.f/subBase.get(joint.id())));
-            for(GenericFrame child : joint.children()){
-                if(!(child instanceof GenericFrame)) continue;
-                executeForwardReaching((GenericFrame) child);
-            }
-        }
-
-        public void executeBackwardReaching(GenericFrame root, GenericFrame end){
-            if(!endEffector.contains(end.id())) return;
-            if(subBase.containsKey(end.id())
-                    || isLeaf(end)
-                    || leaves.contains(end.id())){
-                //Perform a Backward reaching
-                //Stage 2: Backward Reaching
-                ArrayList<GenericFrame> chain = new ArrayList<GenericFrame>();
-                GenericFrame cur = end;
-                while(cur != root){
-                    chain.add(0,cur);
-                    cur = (GenericFrame) cur.referenceFrame();
-                }if(cur == root) chain.add(0,cur);
-
-
-                if(Vec.distance(end.position(), targets.get(end.id()).position()) > ERROR){
-                    //positions.put(root.id(), initialPositions.get(root.id()).get());
-                    printChain(chain);
-                    executeBackwardReaching(chain);
-                    change += change(chain);
-                    finished = false;
-                }
-            }
-
-            for(GenericFrame child : end.children()){
-                if(!(child instanceof GenericFrame)) continue;
-                executeBackwardReaching(root, (GenericFrame) child);
-            }
-        }
-
-        public boolean isSetup() {
-            return setup;
-        }
-
-        public void setSetup(boolean setup) {
-            this.setup = setup;
-        }
-
-        public boolean execute(){
-            if(setup){
-                setup = false;
-                getSubBases();
-                printSubBases();
-                printEndEffectors();
-            }
-            finished =true;
-            change = 0;
-            //Stage 1: Forward Reaching
-            printPositions(root);
-            executeForwardReaching(root);
-            printPositions(root);
-            //Stage 2: Backward Reaching
-            printPositions(root);
-            executeBackwardReaching(root, root);
-            printPositions(root);
-
-            if(change <= MINCHANGE) return true;
-            return finished;
-        }
-
-        public void update(){
-            update(root);
-        }
-
-        @Override
-        public boolean stateChanged() {
-            return false;
-        }
-
-        @Override
-        public void reset() {
-
-        }
-
-        public void update(GenericFrame joint){
-            if(!endEffector.contains(joint.id())) return;
-            if(joint.children().size() > 1){
-                joint.setPosition(positions.get(joint.id()));
-            }else{
-                //posToQuat(joint, joint.referenceFrame(), positions.get(joint.id()));
-            }
-
-            for(GenericFrame child : joint.children()){
-                if(!(child instanceof GenericFrame)) continue;
-                update((GenericFrame)child);
-            }
-        }
-
-        public ArrayList<GenericFrame> getShortestChain(GenericFrame j){
-            ArrayList<GenericFrame> chain = new ArrayList<GenericFrame>();
-            chain.add(0, j);
-            GenericFrame cur = (GenericFrame)j.referenceFrame();
-            while(cur != root && !subBase.containsKey(cur.id()) ){
-                chain.add(0, cur);
-                cur = (GenericFrame)cur.referenceFrame();
-            }
-            if(cur == root) chain.add(0, cur);
-            return chain;
-        }
-
-        public boolean isLeaf(GenericFrame joint){
-            //A joint is a leaf when there is no other end effector next to it
-            for(GenericFrame child : joint.children()){
-                if(!(child instanceof GenericFrame)) continue;
-                if(endEffector.contains(((GenericFrame)child).id())) return false;
-            }
-            return true;
-        }
-
-        //Debug Methods
-        public void printSubBases(){
-            printHead("Sub bases");
-            for(Map.Entry<Integer, Integer> entry : subBase.entrySet()){
-                System.out.println("Sub-base : " + entry.getKey());
-                System.out.println("Children : " + entry.getValue());
-            }
-            printHead("");
-        }
-
-        public void printEndEffectors(){
-            printHead("END EFFECTORS");
-            for(Integer i : endEffector){
-                System.out.println("End effectors : " + i);
-            }
-            printHead("");
-        }
-
-        public void printChain(ArrayList<GenericFrame> chain){
-            printHead("CHAIN");
-            System.out.print("[");
-            for(GenericFrame i : chain){
-                System.out.print(" " + i.id() + ", ");
-            }
-            System.out.println("]");
-            printHead("");
-        }
-
-        public void printHead(String s){
-            System.out.println("-----------------------");
-            System.out.println("-----------------------");
-            System.out.println(s);
-        }
-
-        public void printPositions(GenericFrame joint){
-            System.out.println("JOINT INFORMATION");
-            System.out.println("Joint " +joint.id() + " Initial Position : " + joint.position());
-            if(!endEffector.contains(joint.id())) return;
-            System.out.println("Joint " + joint.id()  + " Final Position : " + positions.get(joint.id()));
-            for(GenericFrame child : joint.children()){
-                if(child instanceof GenericFrame)
-                    printPositions(child);
-            }
-        }
-
     }
 }
