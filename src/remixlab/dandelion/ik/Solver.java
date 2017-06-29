@@ -30,10 +30,7 @@ import java.util.Map;
 
 /*
 * TODO: Consider Target with Orientation constraint
-* TODO: Add an auxiliar chain to avoid update in the real one
-* TODO: Add solver in scene
-* TODO: Specify a Constraint of Type Free
-* TODO: Copy and assign properly Ref Frame
+* TODO: Add solver Multiple End Effector Solver in scene
 * */
 
 public  abstract class Solver {
