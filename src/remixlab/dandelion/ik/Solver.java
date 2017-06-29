@@ -319,7 +319,7 @@ public  abstract class Solver {
                 reference = new Frame(reference.position().get(), reference.orientation().get());
             }
             for(Frame joint : list){
-                Frame newJoint = new Frame();
+                Frame newJoint = new Frame(joint.is3D());
                 newJoint.setReferenceFrame(reference);
                 newJoint.setPosition(joint.position().get());
                 newJoint.setOrientation(joint.orientation().get());
