@@ -30,7 +30,8 @@ import java.util.Map;
 
 /*
 * TODO: Consider Target with Orientation constraint
-* TODO: Add solver Multiple End Effector Solver in scene
+* TODO: Add Multiple End Effector Solver in scene
+* TODO: Modify FABRIK Basic Algorithm using Local Coords (More Efficient)
 * */
 
 public  abstract class Solver {
@@ -601,6 +602,7 @@ public  abstract class Solver {
                 change = solver.executeBackwardReaching();
                 // When dealing with a sub-base After new position is obtained,
                 // Set its Rotation considering their children Positions
+                //TODO : Not Take into Account null Targets
                 if(node.getChildren().size() > 1){
                     Vec centroid = new Vec();
                     Vec newCentroid = new Vec();
@@ -616,7 +618,8 @@ public  abstract class Solver {
                         }
                         totalWeight += child.getWeight();
                     }
-                    if(totalWeight > 0.0001){
+                    //Set only when Centroid and New Centroid varies
+                    if(Vec.distance(centroid,newCentroid) > 0.001){
                         centroid.multiply(1.f/totalWeight);
                         newCentroid.multiply(1.f/totalWeight);
                         if(node.getSolver().getEndEffector().is3D()){
