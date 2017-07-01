@@ -610,11 +610,13 @@ public  abstract class Solver {
                     for(Node child: node.getChildren()){
                         if(child.getSolver().getChain().size() < 2) continue;
                         if(child.getSolver().getChain().get(1).translation().magnitude() == 0) continue;
-                        centroid.add(Vec.multiply(child.getSolver().getChain().get(1).position(), child.getWeight()));
+                        Vec diff = Vec.subtract(child.getSolver().getChain().get(1).position(),solver.getHead().position());
+                        centroid.add(Vec.multiply(diff, child.getWeight()));
                         if(child.isModified()){
-                            newCentroid.add(Vec.multiply(child.getSolver().getPositions().get(1), child.getWeight()));
+                            diff = Vec.subtract(child.getSolver().getPositions().get(1),solver.getHead().position());
+                            newCentroid.add(Vec.multiply(diff, child.getWeight()));
                         }else{
-                            newCentroid.add(Vec.multiply(child.getSolver().getChain().get(1).position(), child.getWeight()));
+                            newCentroid.add(Vec.multiply(diff, child.getWeight()));
                         }
                         totalWeight += child.getWeight();
                     }

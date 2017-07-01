@@ -76,15 +76,13 @@ public class MultipleEndEffectorIK3Dv2 extends PApplet{
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
         idx = leaves.size()/2;
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
-        idx = leaves.size()/2;
+        /*idx = leaves.size()/2;
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
         idx = leaves.size()/2;
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
         idx = leaves.size()/2;
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
-        idx = leaves.size()/2;
-        leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
-
+        */
         //Fix hierarchy
         //root.setupHierarchy();
         solverUnconstrained = new Solver.TreeSolver(root);
