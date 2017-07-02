@@ -36,7 +36,6 @@ import java.util.Map;
 
 public  abstract class Solver {
     /*Convenient String to register/unregister solvers in an Abstract Scene*/
-    protected String name;
     protected float ERROR = 0.01f;
     protected int MAXITER = 200;
     protected float MINCHANGE = 0.01f;
@@ -102,13 +101,6 @@ public  abstract class Solver {
         this.iterations = iterations;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
     /*
     * Performs First Stage of FABRIK Algorithm, receives a chan of Frames, being the Frame at i
     * the reference frame of the Frame at i + 1
@@ -363,10 +355,6 @@ public  abstract class Solver {
             this.prevTarget =
                     target == null ? null : new Frame(target.position().get(), target.orientation().get());
         }
-        public ChainSolver(String name, ArrayList<? extends Frame> chain, Frame target){
-            this(chain,target);
-            this.name = name;
-        }
         /*Get maximum length of a given chain*/
         public float getLength(){
             float dist = 0;
@@ -510,6 +498,10 @@ public  abstract class Solver {
         /*Tree structure that contains a list of Solvers that must be accessed in a BFS way*/
         private Node root;
 
+        public GenericFrame getHead(){
+            return (GenericFrame) root.getSolver().getHead();
+        }
+
         public void setup(Node parent, GenericFrame frame, ArrayList<GenericFrame> list){
             if(frame == null) return;
             if(frame.children().isEmpty()){
@@ -533,7 +525,7 @@ public  abstract class Solver {
             }
         }
 
-        private boolean addTarget(Node node, GenericFrame endEffector, GenericFrame target){
+        private boolean addTarget(Node node, GenericFrame endEffector, Frame target){
             if(node == null) return false;
             if(((GenericFrame)node.getSolver().getEndEffector()).id() == endEffector.id()){
                 node.getSolver().setTarget(target);
@@ -545,7 +537,7 @@ public  abstract class Solver {
             return false;
         }
 
-        public boolean addTarget(GenericFrame endEffector, GenericFrame target){
+        public boolean addTarget(GenericFrame endEffector, Frame target){
             return addTarget(root, endEffector, target);
         }
 
@@ -600,14 +592,20 @@ public  abstract class Solver {
                 ChainSolver solver = node.getSolver();
                 solver.getPositions().set(0,solver.getHead().position());
                 change = solver.executeBackwardReaching();
-                // When dealing with a sub-base After new position is obtained,
-                // Set its Rotation considering their children Positions
-                //TODO : Not Take into Account null Targets
+                /*When executing Backward Step, if the Frame is a SubBase (Has more than 1 Child) and
+                 * it is not a "dummy Frame" (Convenient Frame that constraints position but no orientation of
+                 * its children) then an additional step must be done: A Weighted Average of Positions to establish
+                 * new Frame orientation
+                 * */
+                //TODO : Perhaps add an option to not execute this step
+                // (Last chain modified determines Sub Base orientation)
                 if(node.getChildren().size() > 1){
                     Vec centroid = new Vec();
                     Vec newCentroid = new Vec();
                     float totalWeight = 0;
                     for(Node child: node.getChildren()){
+                        //If target is null, then Joint must not be included
+                        if(child.getSolver().getTarget() == null) continue;
                         if(child.getSolver().getChain().size() < 2) continue;
                         if(child.getSolver().getChain().get(1).translation().magnitude() == 0) continue;
                         Vec diff = Vec.subtract(child.getSolver().getChain().get(1).position(),solver.getHead().position());
@@ -661,6 +659,18 @@ public  abstract class Solver {
             //As BackwardStep modify chains, no update is required
         }
 
+        //Update Subtree that have associated Frame as root
+        public boolean updateTree(Node node, GenericFrame frame){
+            if(((GenericFrame)node.getSolver().getEndEffector()).id() == frame.id()){
+                setup(node, frame, new ArrayList<GenericFrame>());
+                return true;
+            }
+            for(Node child : node.getChildren()){
+                updateTree(child, frame);
+            }
+            return false;
+        }
+
         private boolean stateChanged(Node node) {
             if(node == null) return false;
             if(node.getSolver().stateChanged()) return true;
@@ -688,41 +698,6 @@ public  abstract class Solver {
         public void reset() {
             iterations = 0;
             reset(root);
-        }
-
-        /*When executing Backward Step, if the Frame is a SubBase (Has more than 1 Child) and
-         * it is not a "dummy Frame" (Convenient Frame that constraints position but no orientation of
-         * its children) then an additional step must be done: A Weighted Average of Rotations to establish
-         * new Frame orientation
-         * Here a simple approach to find the Average will be taking into account, but for a high accuracy
-         * look at https://stackoverflow.com/questions/12374087/average-of-multiple-quaternions for more information.
-         * */
-        /*Perform a Weighted Average of each component of the Quaternion. Provides good results if Quaternions are close.
-        (Not best Solution: Consider implementation of http://www.acsu.buffalo.edu/~johnc/ave_quat07.pdf, perhaps add it to Quat Class),
-         */
-
-        private Quat getWeightedAverage(ArrayList<Quat> quaternions, ArrayList<Float> weight){
-            float x = 0.f , y = 0.f, z = 0.f, w = 0.f, totalWeight = 0;
-            for(int i = 0; i < quaternions.size(); i++){
-                if(i > 0 && quaternions.get(0).dotProduct(quaternions.get(i)) < 0 ){
-                    x = x - (quaternions.get(i).x()*weight.get(i));
-                    y = y - (quaternions.get(i).y()*weight.get(i));
-                    z = z - (quaternions.get(i).z()*weight.get(i));
-                    w = w - (quaternions.get(i).w()*weight.get(i));
-                }else{
-                    x = x + (quaternions.get(i).x()*weight.get(i));
-                    y = y + (quaternions.get(i).y()*weight.get(i));
-                    z = z + (quaternions.get(i).z()*weight.get(i));
-                    w = w + (quaternions.get(i).w()*weight.get(i));
-                }
-                totalWeight += weight.get(i);
-            }
-            if(totalWeight == 0) return new Quat();
-            x /= totalWeight;
-            y /= totalWeight;
-            z /= totalWeight;
-            w /= totalWeight;
-            return new Quat(x,y,z,w);
         }
     }
 }

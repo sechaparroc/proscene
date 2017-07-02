@@ -27,10 +27,6 @@ public class MultipleEndEffectorIK3D extends PApplet {
     float constraint_factor = 50;
     float boneLength = 20;
 
-    Solver.TreeSolver solverUnconstrained;
-    boolean auto = false;
-    boolean showSteps = true;
-
     int TimesPerFrame = 40;
     InteractiveFrame root;
     ArrayList<InteractiveFrame> targets = new ArrayList<InteractiveFrame>();//one target per Leaf
@@ -48,8 +44,8 @@ public class MultipleEndEffectorIK3D extends PApplet {
         for(int j = 0; j < numSliblings; j++){
             InteractiveFrame dummy = new InteractiveFrame(scene);
             dummy.setReferenceFrame(root);
-            Vec vec = new Vec(0,0, boneLength);
-            Quat q = new Quat(new Vec(1,0,0), step*j - PI);
+            Vec vec = new Vec(0,boneLength, 0);
+            Quat q = new Quat(new Vec(0,0,1), step*j - PI);
             vec = q.multiply(vec);
             InteractiveFrame child = new InteractiveFrame(scene);
             child.setReferenceFrame(dummy);
@@ -76,24 +72,18 @@ public class MultipleEndEffectorIK3D extends PApplet {
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
         idx = leaves.size()/2;
         leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
-        idx = leaves.size()/2;
-        leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
-        idx = leaves.size()/2;
-        leaves = createBranch(leaves.get(idx),  numSliblings, boneLength);
 
         //Fix hierarchy
         //root.setupHierarchy();
-        solverUnconstrained = new Solver.TreeSolver(root);
+        Solver solver = scene.setIKStructure(root);
 
         for(int i = 0; i < leaves.size(); i++){
             targets.get(i).setPosition(leaves.get(i).position());
             targets.get(i).setOrientation(leaves.get(i).orientation());
-            boolean cond = solverUnconstrained.addTarget(leaves.get(i), targets.get(i));
-            System.out.println("Idx : " + leaves.get(i).id());
-            if(cond) System.out.println("Target added");
+            scene.addIKTarget(leaves.get(i), targets.get(i));
         }
-        solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverUnconstrained.setMINCHANGE(0.001f);
+        solver.setTIMESPERFRAME(TimesPerFrame);
+        solver.setMINCHANGE(0.001f);
     }
 
 
@@ -125,112 +115,7 @@ public class MultipleEndEffectorIK3D extends PApplet {
             popStyle();
             popMatrix();
         }
-
-        if(auto){
-            solverUnconstrained.solve();
-        }
     }
-
-    public void keyPressed(){
-        if(key == 'z'){
-            auto = !auto;
-        }
-    }
-    /*
-    float counter = 0;
-    boolean enableBack = false;
-    Vec initial = null;
-    Solver.ChainSolver solver = null;
-    ArrayList<Vec> forward = null;
-    ArrayList<Vec> backward = null;
-    boolean inv = false;
-
-    public void keyPressed(){
-        if(key == 'v'){
-            counter+=3;
-            float val = inv ? -1 : 1;
-            target.translate(3*val, 3*noise(counter));
-            if(target.position().x() > 130) inv = true;
-            if(target.position().x() < -130) inv = false;
-        }
-
-        if(key == 'c'){
-            //create solver
-            Solver.ChainSolver solver = new Solver.ChainSolver("unconstrained", joints, target);
-            solver.setTIMESPERFRAME(1);
-            solver.solve();
-        }
-
-        if(key == 'd'){
-            //create solver
-            Solver.ChainSolver solver = new Solver.ChainSolver("Constrained", jointsConstrained, target);
-            solver.setTIMESPERFRAME(1);
-            solver.solve();
-            printChange();
-        }
-
-        if(key == 'j'){
-            backward = null;
-            enableBack = false;
-            //create solver
-            solver = new Solver.ChainSolver("Constrained",jointsConstrained, target);
-            solver.setTIMESPERFRAME(1);
-            GenericFrame root = jointsConstrained.get(0);
-            GenericFrame end   = jointsConstrained.get(jointsConstrained.size()-1);
-            Vec target = solver.getTarget().position().get();
-            //Get the distance between the Root and the Target
-            initial = solver.getPositions().get(root.id()).get();
-            if(Vec.distance(end.position(), target) <= solver.getERROR()) return;
-            enableBack = true;
-            solver.getPositions().set(jointsConstrained.size()-1, target.get());
-            //Stage 1: Forward Reaching
-            forward = new ArrayList<Vec>();
-            solver.executeForwardReaching(solver.getChain());
-            for(Vec v : solver.getPositions()){
-                forward.add(v);
-            }
-        }
-        if(key == 'k'){
-            if(!enableBack) return;
-            solver.getPositions().set(0, initial);
-            solver.executeBackwardReaching(solver.getChain());
-            backward = solver.getPositions();
-            solver.update();
-            enableBack = false;
-        }
-        if(key == 'z'){
-            auto = !auto;
-        }
-        if(key == 'x'){
-            showSteps = !showSteps;
-        }
-
-        if(key == 'n'){
-            TimesPerFrame++;
-            solverConstrained.setTIMESPERFRAME(TimesPerFrame);
-            solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-            println("Times Per FRAME : " + TimesPerFrame);
-        }
-
-    }
-
-    //DEBUG METHODS
-
-    public void drawChain(ArrayList<Vec> positions, int c){
-        PShape p = createShape(SPHERE,5);
-        p.setStroke(false);
-        int tr = 30;
-        for(Vec v : positions){
-            p.setFill(color(red(c),green(c),blue(c), tr));
-            pushMatrix();
-            translate(v.x(),v.y(),v.z());
-            shape(p);
-            popMatrix();
-            tr +=20;
-        }
-    }
-    //*/
-
 
     public static void main(String args[]) {
         PApplet.main(new String[]{"ik.MultipleEndEffectorIK3D"});
