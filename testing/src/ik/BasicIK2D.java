@@ -78,9 +78,9 @@ public class BasicIK2D extends PApplet {
         target = new InteractiveFrame(scene);
         target.translate(new Vec(50, 50*noise(0)));
 
-        solverConstrained = new ChainSolver("Constrained", constrainedFrames, target);
+        solverConstrained = new ChainSolver(constrainedFrames, target);
         solverConstrained.setTIMESPERFRAME(1);
-        solverUnconstrained = new ChainSolver("Unconstrained",unconstrainedFrames, target);
+        solverUnconstrained = new ChainSolver(unconstrainedFrames, target);
         solverUnconstrained.setTIMESPERFRAME(1);
     }
 
