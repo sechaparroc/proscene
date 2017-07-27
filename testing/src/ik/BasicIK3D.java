@@ -18,25 +18,29 @@ public class BasicIK3D extends PApplet {
     ArrayList<GenericFrame>  jointsConstrained = new ArrayList<GenericFrame>();
     InteractiveFrame target;
 
-    int num_joints = 12;
+    int num_joints = 8;
     float constraint_factor = 50;
+    float boneLength = 20;
 
     ChainSolver solverUnconstrained;
     ChainSolver solverConstrained;
-    boolean auto = true;
+    boolean auto = false;
+    boolean showSteps = true;
 
-    int TimesPerFrame = 1;
+    int TimesPerFrame = 10;
 
     public void settings() {
-        size(800, 800, P3D);
+        size(500, 500, P3D);
     }
 
     public void setup() {
         scene = new Scene(this);
         scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
         scene.setAxesVisualHint(true);
-        Vec v = new Vec(10,10,10);
+        Vec v = new Vec(1, 1, 1);
+        v.normalize(); v.multiply(boneLength);
         InteractiveFrame prev = null;
+        target = new InteractiveFrame(scene);
         //Unconstrained Chain
         for(int i = 0; i < num_joints; i++){
             InteractiveFrame j;
@@ -67,15 +71,14 @@ public class BasicIK3D extends PApplet {
             constraint.setRestRotation((Quat)jointsConstrained.get(i).rotation().get());
             jointsConstrained.get(i).setConstraint(constraint);
         }
-        target = new InteractiveFrame(scene);
         target.translate(new Vec(50, 50*noise(0)));
 
-        solverConstrained = new ChainSolver("Constrained",jointsConstrained, target);
+        solverConstrained = new ChainSolver(jointsConstrained, target);
         solverConstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverConstrained.setMINCHANGE(999);
-        solverUnconstrained = new ChainSolver("Unconstrained",joints, target);
+        solverConstrained.setMINCHANGE(0.001f);
+        solverUnconstrained = new ChainSolver(joints, target);
         solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverUnconstrained.setMINCHANGE(999);
+        solverUnconstrained.setMINCHANGE(0.001f);
     }
 
 
@@ -127,17 +130,17 @@ public class BasicIK3D extends PApplet {
             solverUnconstrained.solve();
         }
 
-        //if(forward != null)drawChain(forward, color(0,255,0,30));
-        //if(backward != null)drawChain(backward, color(0,0,255,30));
+        if(forward != null && showSteps)drawChain(forward, color(0,255,0,30));
+        if(backward != null && showSteps)drawChain(backward, color(0,0,255,30));
     }
 
-    /*
+    ///*
     float counter = 0;
     boolean enableBack = false;
     Vec initial = null;
     ChainSolver solver = null;
-    HashMap<Integer, Vec> forward = null;
-    HashMap<Integer, Vec> backward = null;
+    ArrayList<Vec> forward = null;
+    ArrayList<Vec> backward = null;
     boolean inv = false;
 
     public void keyPressed(){
@@ -151,23 +154,24 @@ public class BasicIK3D extends PApplet {
 
         if(key == 'c'){
             //create solver
-            ChainSolver solver = new ChainSolver("unconstrained", joints, target);
+            ChainSolver solver = new ChainSolver(joints, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
         }
 
         if(key == 'd'){
             //create solver
-            ChainSolver solver = new ChainSolver("Constrained", jointsConstrained, target);
+            ChainSolver solver = new ChainSolver(jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             solver.solve();
+            printChange();
         }
 
         if(key == 'j'){
             backward = null;
             enableBack = false;
             //create solver
-            solver = new ChainSolver("Constrained",jointsConstrained, target);
+            solver = new ChainSolver(jointsConstrained, target);
             solver.setTIMESPERFRAME(1);
             GenericFrame root = jointsConstrained.get(0);
             GenericFrame end   = jointsConstrained.get(jointsConstrained.size()-1);
@@ -176,17 +180,17 @@ public class BasicIK3D extends PApplet {
             initial = solver.getPositions().get(root.id()).get();
             if(Vec.distance(end.position(), target) <= solver.getERROR()) return;
             enableBack = true;
-            solver.getPositions().put(end.id(), target.get());
+            solver.getPositions().set(jointsConstrained.size()-1, target.get());
             //Stage 1: Forward Reaching
-            forward = new HashMap<Integer, Vec>();
+            forward = new ArrayList<Vec>();
             solver.executeForwardReaching(solver.getChain());
-            for(Map.Entry<Integer, Vec> entry : solver.getPositions().entrySet()){
-                forward.put(entry.getKey(), entry.getValue());
+            for(Vec v : solver.getPositions()){
+                forward.add(v);
             }
         }
         if(key == 'k'){
             if(!enableBack) return;
-            solver.getPositions().put(jointsConstrained.get(0).id(), initial);
+            solver.getPositions().set(0, initial);
             solver.executeBackwardReaching(solver.getChain());
             backward = solver.getPositions();
             solver.update();
@@ -195,6 +199,10 @@ public class BasicIK3D extends PApplet {
         if(key == 'z'){
             auto = !auto;
         }
+        if(key == 'x'){
+            showSteps = !showSteps;
+        }
+
         if(key == 'n'){
             TimesPerFrame++;
             solverConstrained.setTIMESPERFRAME(TimesPerFrame);
@@ -206,11 +214,11 @@ public class BasicIK3D extends PApplet {
 
     //DEBUG METHODS
 
-    public void drawChain(HashMap<Integer, Vec> positions, int c){
-        PShape p = createShape(SPHERE,12);
+    public void drawChain(ArrayList<Vec> positions, int c){
+        PShape p = createShape(SPHERE,5);
         p.setStroke(false);
         int tr = 30;
-        for(Vec v : positions.values()){
+        for(Vec v : positions){
             p.setFill(color(red(c),green(c),blue(c), tr));
             pushMatrix();
             translate(v.x(),v.y(),v.z());
@@ -220,6 +228,17 @@ public class BasicIK3D extends PApplet {
         }
     }
     //*/
+
+    //Debug method to print how much must the chain change from restRotation
+    public void printChange(){
+        float angle = 0.f;
+        for(GenericFrame f : jointsConstrained){
+            BallAndSocket b = (BallAndSocket) f.constraint();
+            Quat q = Quat.multiply((Quat)f.rotation(), b.getRestRotation().inverse());
+            angle += q.angle();
+        }
+        System.out.println("---> How much the chain has rotated : " + angle);
+    }
 
     public static void main(String args[]) {
         PApplet.main(new String[]{"ik.BasicIK3D"});

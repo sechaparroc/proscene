@@ -4,8 +4,8 @@ import processing.core.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.ik.Solver;
 import remixlab.proscene.*;
-import remixlab.dandelion.ik.Solver.*;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ public class BasicIK extends PApplet {
 
     boolean constrained = true;
     //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-    String renderer = P3D;
+    String renderer = P2D;
 
     public void settings() {
         size(700, 700, renderer);
@@ -71,9 +71,10 @@ public class BasicIK extends PApplet {
                     hinge.setAxis(branch.get(i).transformOf(new Vec(1, -1, 0)));
                     branch.get(i).setConstraint(hinge);
                 }
-        scene.registerSolver("Solver", scene.branch(chainRoot, false), target);
-        scene.getSolver("Solver").setTIMESPERFRAME(TimesPerFrame);
-        scene.getSolver("Solver").setMINCHANGE(999);
+        Solver solver = scene.setIKStructure(chainRoot);
+        scene.addIKTarget(branch.get(branch.size()-1), target);
+        solver.setTIMESPERFRAME(TimesPerFrame);
+        solver.setMINCHANGE(999);
     }
 
     public void frameGraphics(InteractiveFrame iFrame, PGraphics pg) {

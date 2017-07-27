@@ -148,7 +148,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   // public final static int ARP = 1 << 7;
 
   // IKinematics solvers
-  protected List<Solver> solvers;
+  protected List<Solver.TreeSolver> solvers;
 
 
   /**
@@ -179,7 +179,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   public AbstractScene() {
     seeds = new ArrayList<GenericFrame>();
-    solvers = new ArrayList<Solver>();
+    solvers = new ArrayList<Solver.TreeSolver>();
     setPlatform();
     setTimingHandler(new TimingHandler(this));
     deltaCount = frameCount;
@@ -2774,7 +2774,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   /**
    * Return registered solvers
    * */
-  public List<Solver> solvers() {
+  public List<Solver.TreeSolver> solvers() {
     return solvers;
   }
 
@@ -2782,29 +2782,24 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Registers the given chain with the given name
    * to solve IK.
    */
-  public boolean registerSolver(Solver newSolver){
-    for(Solver solver : solvers) {
-      if (solver.getName().equals(newSolver))
-        return false;
+  public Solver.TreeSolver setIKStructure(GenericFrame branchRoot) {
+    for(Solver.TreeSolver solver : solvers) {
+      //If Head is Contained in any structure do nothing
+      if(!branch(solver.getHead(), branchRoot, true).isEmpty())
+        return null;
     }
-    return solvers().add(newSolver);
-  }
-
-  public boolean registerSolver(String name, ArrayList<GenericFrame> chain, GenericFrame target) {
-    for(Solver solver : solvers) {
-      if (solver.getName().equals(name))
-        return false;
-    }
-    return solvers().add(new Solver.ChainSolver(name, chain, target));
+    Solver.TreeSolver solver = new Solver.TreeSolver(branchRoot);
+    solvers.add(solver);
+    return solver;
   }
 
   /**
-   * Unregisters the IK Solver with the given name
+   * Unregisters the IK Solver with the given Frame as branchRoot
    */
-  public boolean unregisterSolver(String name) {
-    Solver toRemove = null;
-    for(Solver solver: solvers) {
-      if (solver.getName().equals(name)) {
+  public boolean resetIKStructure(GenericFrame branchRoot) {
+    Solver.TreeSolver toRemove = null;
+    for(Solver.TreeSolver solver: solvers) {
+      if (solver.getHead().id() == branchRoot.id()) {
         toRemove = solver;
         break;
       }
@@ -2815,13 +2810,19 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   /**
    * Gets the IK Solver with the given name
    */
-  public Solver getSolver(String name){
-    for(Solver solver: solvers) {
-      if (solver.getName().equals(name)) {
+  public Solver.TreeSolver getSolver(GenericFrame branchRoot){
+    for(Solver.TreeSolver solver: solvers) {
+      if (solver.getHead().id() == branchRoot.id()) {
         return solver;
       }
     }
     return null;
   }
 
+  public boolean addIKTarget(GenericFrame endEffector, Frame target){
+    for(Solver.TreeSolver solver: solvers) {
+      if(solver.addTarget(endEffector, target)) return true;
+    }
+    return false;
+  }
 }
