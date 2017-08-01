@@ -172,7 +172,7 @@ public  abstract class Solver {
          * */
         public boolean execute(){
             //As no target is specified there is no need to perform an iteration
-            if(target == null) return true;
+            if(target == null || chain.size() < 2) return true;
             Frame end   = chain.get(chain.size()-1);
             Vec target  = this.target.position().get();
             //Execute Until the distance between the end effector and the target is below a threshold
@@ -180,17 +180,21 @@ public  abstract class Solver {
                 return true;
             }
             float change = 0.0f;
+            Vec endLocalPosition = chain.get(chain.size()-2).coordinatesOf(end.position());
+            Vec targetLocalPosition= chain.get(chain.size()-2).coordinatesOf(target);
             for(int i = chain.size()-2; i >= 0; i--){
-                Vec l1 = chain.get(i).coordinatesOf(end.position());
-                Vec l2 = chain.get(i).coordinatesOf(target);
                 Rotation delta = null;
                 Rotation initial = chain.get(i).rotation().get();
                 if(chain.get(i).is2D()){
-                    delta = new Rot(l1, l2);
+                    delta = new Rot(endLocalPosition, targetLocalPosition);
                 }else{
-                    delta = new Quat(l1,l2);
+                    delta = new Quat(endLocalPosition,targetLocalPosition);
                 }
+                //update target local position
+                targetLocalPosition = chain.get(i).localInverseCoordinatesOf(targetLocalPosition);
                 chain.get(i).rotate(delta);
+                //update end effector local position
+                endLocalPosition = chain.get(i).localInverseCoordinatesOf(endLocalPosition);
                 initial.compose(chain.get(i).rotation().get());
                 change += Math.abs(initial.angle());
             }
