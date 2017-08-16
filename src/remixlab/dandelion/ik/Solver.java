@@ -226,6 +226,7 @@ public  abstract class Solver {
     public static abstract class FABRIKSolver extends Solver{
         /*Store Joint's desired position*/
         protected ArrayList<Vec> positions = new ArrayList<Vec>();
+        protected ArrayList<Float> distances = new ArrayList<Float>();
 
         public ArrayList<Vec> getPositions(){ return positions;}
 
@@ -250,7 +251,7 @@ public  abstract class Solver {
                 pos_i.add(diff);
                 positions.set(i, pos_i);
                 float r_i = Vec.distance(pos_i, pos_i1);
-                float dist_i = chain.get(i+1).translation().magnitude()/chain.get(i+1).magnitude();
+                float dist_i = distances.get(i);
                 if(dist_i == 0){
                     positions.set(i, pos_i1.get());
                     continue;
@@ -274,7 +275,7 @@ public  abstract class Solver {
                 positions.set(i+1, pos_i1);
                 //Get the distance between Joint i and the Target
                 float r_i = Vec.distance(pos_i, pos_i1);
-                float dist_i = chain.get(i+1).translation().magnitude()/chain.get(i+1).magnitude();
+                float dist_i = distances.get(i);
                 if(dist_i == 0){
                     positions.set(i+1, pos_i.get());
                     continue;
@@ -317,6 +318,8 @@ public  abstract class Solver {
         * Vec o is a Vector where Parent is located, whereas p is express the position of J
         * Vec q is the position of Child of J.
         * */
+
+        //TO DO : Execute all constraints in World coordinate System to make it more Efficiently
         public Vec applyConstraintsForwardStage(Frame j, Frame parent, Vec o, Vec p, Vec q){
             if(parent.constraint() instanceof BallAndSocket){
                 if(q == null) return p;
@@ -447,8 +450,13 @@ public  abstract class Solver {
         public ChainSolver(ArrayList<? extends Frame> chain, Frame target){
             setChain(chain);
             positions = new ArrayList<Vec>();
+            distances = new ArrayList<Float>();
+            Vec prevPosition = new Vec(0,0,0);
             for(Frame joint : chain){
-                positions.add(joint.position().get());
+                Vec position = joint.position().get();
+                positions.add(position);
+                distances.add(Vec.subtract(position, prevPosition).magnitude());
+                prevPosition = position;
             }
             this.target = target;
             this.prevTarget =
