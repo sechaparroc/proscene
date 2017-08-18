@@ -1220,10 +1220,6 @@ public class Scene extends AbstractScene implements PConstants {
       eye().updateBoundaryEquations();
       lastEqUpdate = frameCount;
     }
-    // 3. Execute IK Solvers in the order they were registered
-    for(Solver solver : solvers){
-      solver.solve();
-    }
   }
 
   /**
