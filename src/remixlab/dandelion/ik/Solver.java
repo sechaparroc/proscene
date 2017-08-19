@@ -266,24 +266,17 @@ public  abstract class Solver {
             for(int i = chain.size()-2; i >= 0; i--){
                 Vec pos_i = positions.get(i);
                 Vec pos_i1 = positions.get(i+1);
-            /*Check constraints (for Ball & Socket) it is not applied in First iteration
-            * Look at paper FABRIK: A fast, iterative solver for the Inverse Kinematics problem For more information*/
-                Vec pos_i2 = null;
-                if(i != chain.size()-2){
-                    pos_i2 = positions.get(i+2);
-                }
-                Vec pos_i1_constrained = applyConstraintsForwardStage(chain , i);
-            /*Checking constraints without considering special cases in Forward Step, as the Paper suggests, is possible, solutions are not as good thought*/
-                //Vec pos_i1_constrained = applyConstraintsBackwardStage(chain, i);
-                Vec diff = Vec.subtract(pos_i1, pos_i1_constrained);
-                pos_i.add(diff);
-                positions.set(i, pos_i);
                 float r_i = Vec.distance(pos_i, pos_i1);
-                float dist_i = chain.get(i+1).translation().magnitude();//distances.get(i+1);
+                float dist_i = distances.get(i+1);
                 if(dist_i == 0){
                     positions.set(i, pos_i1.get());
                     continue;
                 }
+                /*Check constraints (for Ball & Socket) it is not applied in First iteration
+                * Look at paper FABRIK: A fast, iterative solver for the Inverse Kinematics problem For more information*/
+                Vec pos_i1_constrained = applyConstraintsForwardStage(chain , i);
+                Vec diff = Vec.subtract(pos_i1, pos_i1_constrained);
+                pos_i.add(diff);
                 float lambda_i =  dist_i/r_i;
                 Vec new_pos = Vec.multiply(pos_i1, 1.f - lambda_i);
                 new_pos.add(Vec.multiply(pos_i, lambda_i));
@@ -291,54 +284,37 @@ public  abstract class Solver {
             }
         }
 
-        /*Return the total distance between the configuration at beginning of the Iteration and the final configuration*/
         public float executeBackwardReaching(ArrayList<? extends Frame> chain){
             float change = 0;
+            Rotation orientation;
+            if(chain.get(0).is2D()){
+                orientation = chain.get(0).referenceFrame() != null ? chain.get(0).referenceFrame().orientation() : new Rot();
+            }else{
+                orientation = chain.get(0).referenceFrame() != null ? chain.get(0).referenceFrame().orientation() : new Quat();
+            }
+            //orientation.compose(chain.get(0).rotation());
             for(int i = 0; i < chain.size()-1; i++){
-                Vec pos_i = positions.get(i);
-                Vec pos_i1 = positions.get(i+1);
-
-            /*Check constraints*/
-                pos_i1 = applyConstraintsBackwardStage(chain, i);
-                positions.set(i+1, pos_i1);
-                //Get the distance between Joint i and the Target
-                float r_i = Vec.distance(pos_i, pos_i1);
-                float dist_i = chain.get(i+1).translation().magnitude();//distances.get(i+1);
-                if(dist_i == 0){
-                    positions.set(i+1, pos_i.get());
+                if(distances.get(i+1) == 0){
+                    positions.set(i+1, positions.get(i));
                     continue;
                 }
-                float lambda_i =  dist_i/r_i;
-                Vec new_pos = Vec.multiply(pos_i, 1.f - lambda_i);
-                new_pos.add(Vec.multiply(pos_i1, lambda_i));
-                positions.set(i+1, new_pos);
-
-                Rotation delta = null;
-                if(chain.get(i+1).is3D())
-                    delta = posToQuat(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(i+1));
-                else
-                    delta = posToRot(chain.get(i+1), chain.get(i+1).referenceFrame(), chain.get(i+1).referenceFrame().position(), positions.get(i+1));
-
-                chain.get(i+1).referenceFrame().rotate(delta);
-                Vec constrained_pos = chain.get(i+1).position().get();
+                //Find delta rotation
+                Vec newTranslation = Quat.compose(orientation,chain.get(i).rotation()).inverse().rotate(Vec.subtract(positions.get(i+1), positions.get(i)));
+                Rotation deltaRotation = chain.get(i).is2D() ?
+                        new Rot(chain.get(i+1).translation(), newTranslation) :
+                        new Quat(chain.get(i+1).translation(), newTranslation);
+                //Apply delta rotation
+                chain.get(i).rotate(deltaRotation);
+                orientation.compose(chain.get(i).rotation());
+                //Vec constrained_pos = chain.get(i+1).position().get();
+                Vec constrained_pos = orientation.rotate(chain.get(i+1).translation().get());
+                constrained_pos.add(positions.get(i));
                 change += Vec.distance(positions.get(i+1),constrained_pos);
                 positions.set(i+1, constrained_pos);
             }
             return change;
         }
-        /*Set Joint's Parent orientation assuming that
-         * new Joint position is v*/
-        public Rot posToRot(Frame j, Frame parent, Vec o, Vec p){
-            Vec diff = Vec.subtract(p, o);
-            diff.add(parent.position());
-            return new Rot(j.translation(), parent.coordinatesOf(diff));
-        }
 
-        public Quat posToQuat(Frame j, Frame parent, Vec o, Vec p){
-            Vec diff = Vec.subtract(p, o);
-            diff.add(parent.position());
-            return new Quat(j.translation(), parent.coordinatesOf(diff));
-        }
 
         /*
         * Check the type of the constraint related to the Frame Parent (at the i-th position),
@@ -347,7 +323,6 @@ public  abstract class Solver {
         * Vec q is the position of Child of J.
         * */
 
-        //TO DO : Execute all constraints in World coordinate System to make it more Efficiently
         public Vec applyConstraintsForwardStage(ArrayList<? extends Frame> chain, int i){
             Frame j = chain.get(i + 1);
             Frame parent = chain.get(i + 1).referenceFrame();
@@ -356,33 +331,27 @@ public  abstract class Solver {
             Vec q = i+2 >= chain.size() ? null : positions.get(i+2);
             if(parent.constraint() instanceof BallAndSocket){
                 if(q == null) return p.get();
-                /*Calculate new Rest Orientation*/
-                //1. Express Rotation Change in World Coordinates System
-                Vec newTranslation = Vec.subtract(q,p);
-                Vec translation = chain.get(i).orientation().rotate(j.translation());
-                Quat deltaRestRotation = new Quat(translation, newTranslation);
-
-                //2. Express Rest Rotation in World Coordinates System
+                //Find the orientation of restRotation
                 BallAndSocket constraint = (BallAndSocket) parent.constraint();
-                Quat restRotation = i-1 > 0 ? (Quat) chain.get(i-1).orientation().get() : new Quat();
-                restRotation.compose(constraint.getRestRotation());
+                Quat reference = (Quat) Quat.compose(orientations.get(i), parent.rotation().inverse());
+                Quat restOrientation = (Quat) Quat.compose(reference, constraint.getRestRotation());
 
-                //3. Apply constraint
-                newTranslation = constraint.getConstraint(newTranslation, (Quat) Quat.compose(restRotation,deltaRestRotation));
-                return Vec.add(o, newTranslation);
-                //target = constraint.getConstraint(target, (Quat) Quat.compose(restRotation,deltaRestRotation));
-                //target.normalize();
-                //target.multiply(Vec.subtract(p,o).magnitude());
-                //return parent.inverseCoordinatesOf(Quat.multiply((Quat)parent.rotation().inverse(), target));
+                //Align axis
+                Vec translation = orientations.get(i).rotate(j.translation().get());
+                Vec newTranslation = Vec.subtract(q,p);
+                restOrientation = (Quat) Quat.compose(new Quat(translation, newTranslation), restOrientation);
+
+                //Find constraint
+                Vec target = constraint.getConstraint(Vec.subtract(p,o), restOrientation);
+                return Vec.add(o,target);
             } else if(parent.constraint() instanceof Hinge){
                 if(parent.is2D()){
-                /*Consider same steps as in Backward Step*/
+                    /*Get new translation in Local Coordinate System*/
                     Hinge constraint = (Hinge) parent.constraint();
-                    Rot desired = posToRot(j,parent, o, p);
-                    Rot constrained = (Rot) constraint.constrainRotation(desired, parent);
-                    Vec target = constrained.rotate(j.translation());
-                    target.normalize();
-                    target.multiply(Vec.subtract(p,o).magnitude());
+                    Vec newTranslation = Vec.subtract(p,o);
+                    newTranslation = orientations.get(i).inverse().rotate(newTranslation);
+                    Rot desired = new Rot(j.translation(), newTranslation);
+                    constraint.constrainRotation(desired, parent);
                 }
             }
             return p;
@@ -392,7 +361,7 @@ public  abstract class Solver {
         * Check the type of the constraint related to the Frame Parent,
         * Frame J is the frame used to verify if the orientation of Parent is appropriate,
         * Vec o is a Vector where Parent is located, whereas p is express the position of J
-        * */
+        *
         public Vec applyConstraintsBackwardStage(ArrayList<? extends Frame> chain, int i){
             Frame j = chain.get(i+1);
             Frame parent = chain.get(i+1).referenceFrame();
@@ -400,7 +369,6 @@ public  abstract class Solver {
             Vec p = positions.get(i+1);
             if(parent.constraint() instanceof BallAndSocket){
                 //here it's easier to Work on Reference Frame (not World Coordinate System)
-
                 BallAndSocket constraint = (BallAndSocket) parent.constraint();
                 Quat desired = (Quat) Quat.compose(parent.rotation(), posToQuat(j, parent, o, p));
                 Vec target = Quat.multiply(desired, j.translation());
@@ -419,7 +387,8 @@ public  abstract class Solver {
                 }
             }
             return p;
-        }
+        }*/
+
 
         public float change(ArrayList<? extends Frame> chain){
             float change = 0.f;
@@ -507,12 +476,12 @@ public  abstract class Solver {
             for(Frame joint : chain){
                 Vec position = joint.position().get();
                 Rotation orientation = prevOrientation.get();
-                orientation.compose(joint.rotation());
+                orientation.compose(joint.rotation().get());
                 positions.add(position);
                 distances.add(Vec.subtract(position, prevPosition).magnitude());
                 orientations.add(orientation);
                 prevPosition = position;
-                prevOrientation = joint.rotation().get();
+                prevOrientation = orientation.get();
             }
             this.target = target;
             this.prevTarget =
@@ -624,12 +593,12 @@ public  abstract class Solver {
             for(Frame joint : chain){
                 Vec position = joint.position().get();
                 Rotation orientation = prevOrientation.get();
-                orientation.compose(joint.rotation());
+                orientation.compose(joint.rotation().get());
                 positions.add(position);
                 distances.add(Vec.subtract(position, prevPosition).magnitude());
                 orientations.add(orientation);
                 prevPosition = position;
-                prevOrientation = joint.rotation().get();
+                prevOrientation = orientation.get();
             }
         }
     }
