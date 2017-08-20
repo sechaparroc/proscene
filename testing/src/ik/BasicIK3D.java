@@ -114,6 +114,22 @@ public class BasicIK3D extends PApplet {
             popStyle();
             popMatrix();
         }
+        int i = 0;
+        for(GenericFrame j : jointsConstrained){
+            if(i == jointsConstrained.size()-1) continue;
+            pushMatrix();
+            pushStyle();
+            GenericFrame frame = new GenericFrame(scene, j.position(), Quat.compose(j.orientation(), j.rotation().inverse()));
+            frame.rotate(((BallAndSocket)j.constraint()).getRestRotation());
+            frame.applyWorldTransformation();
+            //scene.drawCone(10,0,0,boneLength/2.f*tan(constraint_factor), -boneLength/2.f);
+            drawCone(boneLength/2.f, 2*boneLength*tan(constraint_factor), 2*boneLength*tan(constraint_factor), 20);
+            popStyle();
+            popMatrix();
+            i++;
+        }
+
+
 
 
         pushMatrix();
@@ -227,7 +243,27 @@ public class BasicIK3D extends PApplet {
             tr +=20;
         }
     }
-    //*/
+    public void drawCone(float height, float a, float b, int detail){
+        float x[] = new float[detail + 1];
+        float y[] = new float[detail + 1];
+
+        for (int i = 0; i <= detail; i++) {
+            float theta = PApplet.TWO_PI * i / detail;
+            float r = a*b/(float)(Math.sqrt(b*b*Math.cos(theta)*Math.cos(theta) + a*a*Math.sin(theta)*Math.sin(theta)));
+            x[i] = r * (float) Math.cos(theta);
+            y[i] = r * (float) Math.sin(theta);
+        }
+        pushStyle();
+        noStroke();
+        fill(246,117,19,80);
+        beginShape(PApplet.TRIANGLE_FAN);
+        vertex(0, 0, 0);
+        for (int i = 0; i <= detail; i++) {
+            vertex( x[i], y[i], height);
+        }
+        endShape();
+        popStyle();
+    }
 
     //Debug method to print how much must the chain change from restRotation
     public void printChange(){
