@@ -19,7 +19,9 @@ public class BasicIK3D extends PApplet {
     InteractiveFrame target;
 
     int num_joints = 8;
-    float constraint_factor = 50;
+    float constraint_factor_x = 50;
+    float constraint_factor_y = 30;
+
     float boneLength = 20;
 
     ChainSolver solverUnconstrained;
@@ -62,12 +64,22 @@ public class BasicIK3D extends PApplet {
             jointsConstrained.add(j);
             prev = j;
         }
+
+        ArrayList<Vec> vertices = new ArrayList<Vec>();
+        //float factor = boneLength/.4f;
+        vertices.add(new Vec(-5,5));
+        vertices.add(new Vec(5, 5));
+        vertices.add(new Vec(5,-5));
+        vertices.add(new Vec(-5,-5));
+
         //Fix hierarchy
         jointsConstrained.get(0).setupHierarchy();
         //Add constraints
         for(int i = 0; i < jointsConstrained.size(); i++){
-            BallAndSocket constraint = new BallAndSocket(radians(constraint_factor),
-                    radians(constraint_factor),radians(constraint_factor),radians(constraint_factor));
+            //BallAndSocket constraint = new BallAndSocket(radians(constraint_factor_y),
+            //        radians(constraint_factor_y),radians(constraint_factor_x),radians(constraint_factor_x));
+            PlanarPolygon constraint = new PlanarPolygon(vertices);
+            constraint.setHeight(boneLength/2.f);
             constraint.setRestRotation((Quat)jointsConstrained.get(i).rotation().get());
             jointsConstrained.get(i).setConstraint(constraint);
         }
@@ -119,11 +131,13 @@ public class BasicIK3D extends PApplet {
             if(i == jointsConstrained.size()-1) continue;
             pushMatrix();
             pushStyle();
-            GenericFrame frame = new GenericFrame(scene, j.position(), Quat.compose(j.orientation(), j.rotation().inverse()));
-            frame.rotate(((BallAndSocket)j.constraint()).getRestRotation());
-            frame.applyWorldTransformation();
+            Frame frame = new Frame(j.position(), Quat.compose(j.orientation(), j.rotation().inverse()));
+            //frame.rotate(((BallAndSocket)j.constraint()).getRestRotation());
+            frame.rotate(((PlanarPolygon)j.constraint()).getRestRotation());
+            scene.applyWorldTransformation(frame);
             //scene.drawCone(10,0,0,boneLength/2.f*tan(constraint_factor), -boneLength/2.f);
-            drawCone(boneLength/2.f, 2*boneLength*tan(constraint_factor), 2*boneLength*tan(constraint_factor), 20);
+            //drawCone(boneLength/2.f, (boneLength/2.f)*tan(radians(constraint_factor_x)), (boneLength/2.f)*tan(radians(constraint_factor_y)), 20);
+            drawCone(((PlanarPolygon)j.constraint()).getHeight(),((PlanarPolygon)j.constraint()).getVertices());
             popStyle();
             popMatrix();
             i++;
@@ -261,6 +275,20 @@ public class BasicIK3D extends PApplet {
         for (int i = 0; i <= detail; i++) {
             vertex( x[i], y[i], height);
         }
+        endShape(CLOSE);
+        popStyle();
+    }
+
+    public void drawCone(float height, ArrayList<Vec> vertices){
+        pushStyle();
+        noStroke();
+        fill(246,117,19,80);
+        beginShape(PApplet.TRIANGLE_FAN);
+        vertex(0, 0, 0);
+        for (Vec v : vertices) {
+            vertex( v.x(), v.y(), height);
+        }
+        if(!vertices.isEmpty()) vertex( vertices.get(0).x(), vertices.get(0).y(), height);
         endShape();
         popStyle();
     }

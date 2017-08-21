@@ -70,7 +70,7 @@ public class PlanarPolygon extends Constraint{
         computeBoundingBox();
     }
 
-    public PlanarPolygon(ArrayList<Vec> Vertices) {
+    public PlanarPolygon(ArrayList<Vec> vertices) {
         this.vertices = vertices;
         projectToPlane();
         computeBoundingBox();
@@ -104,16 +104,19 @@ public class PlanarPolygon extends Constraint{
         Vec line    = new Vec(0,0,1);
         Vec point   = restRotation.inverse().multiply(target);
         Vec proj    = new Vec(height*point.x()/point.z(),height*point.y()/point.z());
+        float inverse = (height < 0) == (point.z() < 0) ? 1 : -1;
         if(!isInside(proj)){
+            proj.multiply(inverse);
             Vec constrained = closestPoint(proj);
             constrained.setZ(height);
-            constrained.multiply(point.z()/height);
+            constrained.multiply(inverse*point.z()/height);
             return restRotation.rotate(constrained);
         }
-        return target;
+        return inverse == -1 ? new Vec(target.x(),target.y(), -target.z()) : target;
     }
 
     public void computeBoundingBox(){
+        min = new Vec(); max = new Vec();
         for(Vec v : vertices){
             if(v.x() < min.x()) min.setX(v.x());
             if(v.y() < min.y()) min.setY(v.y());
@@ -139,7 +142,7 @@ public class PlanarPolygon extends Constraint{
             Vec v_i = vertices.get(i);
             Vec v_j = vertices.get(j);
             if ( ((v_i.y()>point.y()) != (v_j.y()>point.y())) &&
-                    (point.x() < (v_j.x()-v_i.x()) * (point.y()-v_i.y()) / (v_j.y()-v_i.y()) + v_i.x()));
+                    (point.x() < (v_j.x()-v_i.x()) * (point.y()-v_i.y()) / (v_j.y()-v_i.y()) + v_i.x()))
                         c = !c;
         }
         return c;
@@ -156,8 +159,9 @@ public class PlanarPolygon extends Constraint{
             Vec edge = Vec.subtract(v_i, v_j);
             //Get distance to line
             float t = Vec.dot(edge, Vec.subtract(point, v_j));
-            t /= Vec.subtract(point,v_j).magnitude();
-            if(t > 0){
+            t /= edge.magnitude()*edge.magnitude();
+
+            if(t < 0){
                 dist = Vec.distance(v_j,point);
                 projection = v_j.get();
             }else if(t > 1){
