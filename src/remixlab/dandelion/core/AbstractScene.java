@@ -2826,4 +2826,17 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     }
     return false;
   }
+
+  /**
+   * Execute IK Task for a IK Solver that is not registered
+   */
+  public void executeIKSolver(Solver solver){
+    executeIKSolver(solver, 1);
+  }
+
+  public void executeIKSolver(Solver solver, long period){
+    registerTimingTask(solver.getExecutionTask());
+    solver.getExecutionTask().run(period);
+  }
+
 }

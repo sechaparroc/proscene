@@ -13,6 +13,7 @@ package remixlab.dandelion.ik;
 
 import remixlab.dandelion.constraint.BallAndSocket;
 import remixlab.dandelion.constraint.Hinge;
+import remixlab.dandelion.constraint.PlanarPolygon;
 import remixlab.dandelion.core.GenericFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -333,6 +334,21 @@ public  abstract class Solver {
                 if(q == null) return p.get();
                 //Find the orientation of restRotation
                 BallAndSocket constraint = (BallAndSocket) parent.constraint();
+                Quat reference = (Quat) Quat.compose(orientations.get(i), parent.rotation().inverse());
+                Quat restOrientation = (Quat) Quat.compose(reference, constraint.getRestRotation());
+
+                //Align axis
+                Vec translation = orientations.get(i).rotate(j.translation().get());
+                Vec newTranslation = Vec.subtract(q,p);
+                restOrientation = (Quat) Quat.compose(new Quat(translation, newTranslation), restOrientation);
+
+                //Find constraint
+                Vec target = constraint.getConstraint(Vec.subtract(p,o), restOrientation);
+                return Vec.add(o,target);
+            }else if(parent.constraint() instanceof PlanarPolygon){
+                if(q == null) return p.get();
+                //Find the orientation of restRotation
+                PlanarPolygon constraint = (PlanarPolygon) parent.constraint();
                 Quat reference = (Quat) Quat.compose(orientations.get(i), parent.rotation().inverse());
                 Quat restOrientation = (Quat) Quat.compose(reference, constraint.getRestRotation());
 
