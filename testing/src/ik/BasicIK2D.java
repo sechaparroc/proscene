@@ -25,8 +25,8 @@ public class BasicIK2D extends PApplet {
     float boneLength = 20;
 
     //Hinge Constraint
-    float max = 20;
-    float min = 20;
+    float max = 30;
+    float min = 30;
 
     public void settings() {
         size(800, 800, P2D);
@@ -34,21 +34,19 @@ public class BasicIK2D extends PApplet {
 
     public void setup() {
         scene = new Scene(this);
-        scene.setRadius(250);
+        scene.setRadius(150);
         scene.showAll();
         scene.setAxesVisualHint(true);
         target = new InteractiveFrame(scene, "targetGraphics");
-        Vec targetPosition = new Vec(1,1);
-        targetPosition.normalize();
-        targetPosition.multiply(boneLength*num_joints*1.1f);
-        target.translate(targetPosition);
+        target.translate(new Vec((num_joints * boneLength - 100)+25, 0,0 ));
+
 
         //Three identical chains that will have different constraints
-        ArrayList<GenericFrame> unconstrainedChain = generateChain(num_joints, boneLength, new Vec(-10,10));
-        ArrayList<GenericFrame> constrainedChain = generateChain(num_joints, boneLength, new Vec());
+        ArrayList<GenericFrame> unconstrainedChain = generateChain(num_joints, boneLength, new Vec(-100, -50));
+        ArrayList<GenericFrame> constrainedChain = generateChain(num_joints, boneLength, new Vec(-100, 50));
 
         //Apply constraints
-        for(int i = 0; i < constrainedChain.size()-1; i++){
+        for(int i = 1; i < constrainedChain.size()-1; i++){
             Hinge hinge = new Hinge();
             hinge.setRestRotation(constrainedChain.get(i).rotation());
             hinge.setMax(radians(max));
@@ -58,12 +56,13 @@ public class BasicIK2D extends PApplet {
         }
 
         //Register Solver
-        Solver solverConstrained = new ChainSolver(constrainedChain, target);
+        Solver solverConstrained = scene.setIKStructure(constrainedChain.get(0));
+        scene.addIKTarget(constrainedChain.get(constrainedChain.size()-1), target);
         solverConstrained.setTIMESPERFRAME(1);
-        scene.executeIKSolver(solverConstrained);
-        Solver solverUnconstrained = new ChainSolver(unconstrainedChain, target);
+
+        Solver solverUnconstrained = scene.setIKStructure(unconstrainedChain.get(0));
+        scene.addIKTarget(unconstrainedChain.get(unconstrainedChain.size()-1), target);
         solverUnconstrained.setTIMESPERFRAME(1);
-        scene.executeIKSolver(solverUnconstrained);
     }
 
     public ArrayList<GenericFrame> generateChain(int num_joints, float boneLength, Vec translation){
@@ -105,7 +104,7 @@ public class BasicIK2D extends PApplet {
         pg.pushStyle();
         pg.noStroke();
         pg.fill(255, 0, 0, 200);
-        pg.ellipse(0, 0, 5, 5);
+        pg.ellipse(0, 0, 10, 10);
         pg.popStyle();
     }
 

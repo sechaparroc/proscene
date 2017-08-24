@@ -116,7 +116,6 @@ public  abstract class Solver {
 
 
     /*Performs an Iteration of Solver Algorithm */
-    public abstract void initialize();
     public abstract boolean iterate();
     public abstract void update();
     public abstract boolean stateChanged();
@@ -127,8 +126,6 @@ public  abstract class Solver {
         if(stateChanged()){
             reset();
         }
-
-        initialize();
 
         if(iterations == MAXITER){
             return true;
@@ -227,10 +224,6 @@ public  abstract class Solver {
             return false;
         }
 
-        public void initialize(){
-            /*Not required, since no further information is needed*/
-        }
-
         public void update(){
             /*Not required, since chain is updated inside execute step*/
         }
@@ -307,6 +300,7 @@ public  abstract class Solver {
                 //Apply delta rotation
                 chain.get(i).rotate(deltaRotation);
                 orientation.compose(chain.get(i).rotation());
+                orientations.set(i,orientation.get());
                 //Vec constrained_pos = chain.get(i+1).position().get();
                 Vec constrained_pos = orientation.rotate(chain.get(i+1).translation().get());
                 constrained_pos.add(positions.get(i));
@@ -577,9 +571,9 @@ public  abstract class Solver {
         }
 
         public void update(){
-            for(int i = 0; i < chain.size(); i++){
-                chain.get(i).setRotation(bestSolution.get(i).rotation().get());
-            }
+            //for(int i = 0; i < chain.size(); i++){
+            //    chain.get(i).setRotation(bestSolution.get(i).rotation().get());
+            //}
         }
 
         public boolean stateChanged(){
@@ -595,6 +589,8 @@ public  abstract class Solver {
         public void reset(){
             prevTarget = target == null ? null : new Frame(target.position().get(), target.orientation().get());
             iterations = 0;
+            //We know that State has change but not where, then it is better to reset Global Positions and Orientations
+            initialize();
         }
 
         public void initialize(){
@@ -867,10 +863,6 @@ public  abstract class Solver {
         public void reset() {
             iterations = 0;
             reset(root);
-        }
-
-        public void initialize(){
-            /*Not required, executed by each Chain Solver */
         }
     }
 }
