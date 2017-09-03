@@ -29,7 +29,7 @@ public class BasicIK3D extends PApplet {
 
 
     public void settings() {
-        size(700, 700, P3D);
+        size(800, 800, P3D);
     }
 
     public void setup() {
