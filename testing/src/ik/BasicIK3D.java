@@ -4,240 +4,194 @@ import processing.core.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.ik.Solver;
 import remixlab.proscene.*;
-import remixlab.dandelion.ik.Solver.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+/*
+* Tree different chains (With different kind of constraints) are pursuing the same Target
+* */
 
 public class BasicIK3D extends PApplet {
     Scene scene;
-    PFont myFont;
-    ArrayList<GenericFrame>  joints = new ArrayList<GenericFrame>();
-    ArrayList<GenericFrame>  jointsConstrained = new ArrayList<GenericFrame>();
     InteractiveFrame target;
 
     int num_joints = 8;
-    float constraint_factor = 50;
-    float boneLength = 20;
 
-    ChainSolver solverUnconstrained;
-    ChainSolver solverConstrained;
-    boolean auto = false;
-    boolean showSteps = true;
+    //Ball and Socket
+    float constraint_factor_x = 50;
+    float constraint_factor_y = 50;
 
-    int TimesPerFrame = 10;
+    float boneLength = 15;
+
+    int TimesPerFrame = 1;
+
 
     public void settings() {
-        size(500, 500, P3D);
+        size(800, 800, P3D);
     }
 
     public void setup() {
         scene = new Scene(this);
         scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
         scene.setAxesVisualHint(true);
-        Vec v = new Vec(1, 1, 1);
-        v.normalize(); v.multiply(boneLength);
-        InteractiveFrame prev = null;
-        target = new InteractiveFrame(scene);
-        //Unconstrained Chain
-        for(int i = 0; i < num_joints; i++){
-            InteractiveFrame j;
-            j = new InteractiveFrame(scene);
-            if(prev != null)   j.setReferenceFrame(prev);
-            j.setTranslation(v.get());
-            joints.add(j);
-            prev = j;
-        }
-        //Fix hierarchy
-        joints.get(0).setupHierarchy();
-        prev = null;
-        //Constrained Chain
-        for(int i = 0; i < num_joints; i++){
-            InteractiveFrame j;
-            j = new InteractiveFrame(scene);
-            if(prev != null)   j.setReferenceFrame(prev);
-            j.setTranslation(v.get());
-            jointsConstrained.add(j);
-            prev = j;
-        }
-        //Fix hierarchy
-        jointsConstrained.get(0).setupHierarchy();
-        //Add constraints
-        for(int i = 0; i < jointsConstrained.size(); i++){
-            BallAndSocket constraint = new BallAndSocket(radians(constraint_factor),
-                    radians(constraint_factor),radians(constraint_factor),radians(constraint_factor));
-            constraint.setRestRotation((Quat)jointsConstrained.get(i).rotation().get());
-            jointsConstrained.get(i).setConstraint(constraint);
-        }
-        target.translate(new Vec(50, 50*noise(0)));
 
-        solverConstrained = new ChainSolver(jointsConstrained, target);
-        solverConstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverConstrained.setMINCHANGE(0.001f);
-        solverUnconstrained = new ChainSolver(joints, target);
+        target = new InteractiveFrame(scene, "targetGraphics");
+        target.translate(new Vec((num_joints * boneLength - 100)+25, 0,0 ));
+
+        //Three identical chains that will have different constraints
+        ArrayList<GenericFrame> branchUnconstrained = generateChain(num_joints, boneLength, new Vec(-100, -75, 0));
+        ArrayList<GenericFrame> branchEllipseConstraint = generateChain(num_joints, boneLength, new Vec(-100, 0, 0));
+        ArrayList<GenericFrame> branchPolygonalConstraints = generateChain(num_joints, boneLength, new Vec(-100, 75, 0));
+
+        //Apply Constraints
+
+        //Spherical Ellipse Constraints
+        for (int i = 1; i < branchEllipseConstraint.size()-1; i++) {
+            BallAndSocket constraint = new BallAndSocket(radians(constraint_factor_y), radians(constraint_factor_y), radians(constraint_factor_x), radians(constraint_factor_x));
+            constraint.setRestRotation((Quat) branchEllipseConstraint.get(i).rotation().get());
+            branchEllipseConstraint.get(i).setConstraint(constraint);
+        }
+
+        //Sinus cone planar Polygon constraints
+
+        //Define the Base (Any Polygon in clockwise or Counterclockwise order)
+        ArrayList<Vec> vertices = new ArrayList<Vec>();
+        vertices.add(new Vec(-8,8));
+        vertices.add(new Vec(8, 8));
+        vertices.add(new Vec(8,-8));
+        vertices.add(new Vec(-8,-8));
+
+        for (int i = 1; i < branchPolygonalConstraints.size()-1; i++) {
+            PlanarPolygon constraint = new PlanarPolygon(vertices);
+            constraint.setHeight(boneLength/2.f);
+            constraint.setRestRotation((Quat) branchPolygonalConstraints.get(i).rotation().get());
+            branchPolygonalConstraints.get(i).setConstraint(constraint);
+        }
+
+        Solver solverUnconstrained = scene.setIKStructure(branchUnconstrained.get(0));
+        scene.addIKTarget(branchUnconstrained.get(branchUnconstrained.size()-1), target);
         solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-        solverUnconstrained.setMINCHANGE(0.001f);
+
+        Solver solverEllipseConstraint = scene.setIKStructure(branchEllipseConstraint.get(0));
+        scene.addIKTarget(branchEllipseConstraint.get(branchEllipseConstraint.size()-1), target);
+        solverEllipseConstraint.setTIMESPERFRAME(TimesPerFrame);
+
+        Solver solverPolygonalConstraints = scene.setIKStructure(branchPolygonalConstraints.get(0));
+        scene.addIKTarget(branchPolygonalConstraints.get(branchPolygonalConstraints.size()-1), target);
+        solverPolygonalConstraints.setTIMESPERFRAME(TimesPerFrame);
+    }
+
+    public ArrayList<GenericFrame> generateChain(int num_joints, float boneLength, Vec translation){
+        InteractiveFrame prevFrame = null;
+        InteractiveFrame chainRoot = null;
+        for (int i = 0; i < num_joints; i++) {
+            InteractiveFrame iFrame;
+            iFrame = new InteractiveFrame(scene, "frameGraphics");
+            if (i == 0)
+                chainRoot = iFrame;
+            if (prevFrame != null) iFrame.setReferenceFrame(prevFrame);
+            Vec translate = new Vec(1, 1, 1);
+            translate.normalize();
+            translate.multiply(boneLength);
+            iFrame.setTranslation(translate);
+            iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.FIXED);
+            prevFrame = iFrame;
+        }
+        //Consider Standard Form: Parent Z Axis is Pointing at its Child
+        chainRoot.translate(translation);
+        chainRoot.setupHierarchy();
+        return scene.branch(chainRoot, false);
+    }
+
+    public void frameGraphics(InteractiveFrame iFrame, PGraphics pg) {
+        pg.pushStyle();
+        scene.drawAxes(pg, 3);
+        pg.fill(0, 255, 0);
+        pg.strokeWeight(5);
+        pg.stroke(0, 100, 100, 100);
+        if (iFrame.referenceFrame() != null) {
+            Vec v = iFrame.coordinatesOfFrom(new Vec(), iFrame.referenceFrame());
+            if(pg.is2D())
+                pg.line(0, 0, v.x(), v.y());
+            else
+                pg.line(0, 0, 0, v.x(), v.y(), v.z());
+
+        }
+        pg.popStyle();
+    }
+
+    public void targetGraphics(PGraphics pg) {
+        pg.pushStyle();
+        pg.noStroke();
+        pg.fill(255, 0, 0, 200);
+        if(pg.is2D())
+            pg.ellipse(0, 0, 5, 5);
+        else
+            pg.sphere(5);
+        pg.popStyle();
     }
 
 
     public void draw() {
         background(0);
-        for(GenericFrame j : joints){
-            pushMatrix();
-            pushStyle();
-            j.applyWorldTransformation();
-            scene.drawAxes(3);
-            fill(0,255,0);
-            strokeWeight(5);
-            stroke(0,100,100,100);
-            if(j.referenceFrame() != null){
-                Vec v = j.coordinatesOfFrom(new Vec(), j.referenceFrame());
-                line(0,0,0, v.x(), v.y(), v.z());
+        //Draw Constraints
+        for(InteractiveFrame frame : scene.frames()){
+            frame.draw();
+            if(frame.constraint() != null){
+                pushMatrix();
+                pushStyle();
+                Frame reference = new Frame(frame.position(), Quat.compose(frame.orientation(), frame.rotation().inverse()));
+                if(frame.constraint() instanceof BallAndSocket){
+                    reference.rotate(((BallAndSocket)frame.constraint()).getRestRotation());
+                    scene.applyWorldTransformation(reference);
+                    drawCone(boneLength/2.f, (boneLength/2.f)*tan(radians(constraint_factor_x)), (boneLength/2.f)*tan(radians(constraint_factor_y)), 20);
+                }else if(frame.constraint() instanceof PlanarPolygon){
+                    reference.rotate(((PlanarPolygon)frame.constraint()).getRestRotation());
+                    scene.applyWorldTransformation(reference);
+                    drawCone(((PlanarPolygon)frame.constraint()).getHeight(),((PlanarPolygon)frame.constraint()).getVertices());
+                }
+                popStyle();
+                popMatrix();
             }
-            popStyle();
-            popMatrix();
         }
-        for(GenericFrame j : jointsConstrained){
-            pushMatrix();
-            pushStyle();
-            j.applyWorldTransformation();
-            scene.drawAxes(3);
-            fill(0,255,0);
-            strokeWeight(5);
-            stroke(100,0,100,100);
-            if(j.referenceFrame() != null){
-                Vec v = j.coordinatesOfFrom(new Vec(), j.referenceFrame());
-                line(0,0,0, v.x(), v.y(), v.z());
-            }
-            popStyle();
-            popMatrix();
+    }
+
+    public void drawCone(float height, float a, float b, int detail){
+        float x[] = new float[detail + 1];
+        float y[] = new float[detail + 1];
+
+        for (int i = 0; i <= detail; i++) {
+            float theta = PApplet.TWO_PI * i / detail;
+            float r = a*b/(float)(Math.sqrt(b*b*Math.cos(theta)*Math.cos(theta) + a*a*Math.sin(theta)*Math.sin(theta)));
+            x[i] = r * (float) Math.cos(theta);
+            y[i] = r * (float) Math.sin(theta);
         }
-
-
-        pushMatrix();
         pushStyle();
         noStroke();
-        fill(255,0,0,200);
-        translate(target.position().x(),target.position().y(),target.position().z());
-        sphere(5);
+        fill(246,117,19,80);
+        beginShape(PApplet.TRIANGLE_FAN);
+        vertex(0, 0, 0);
+        for (int i = 0; i <= detail; i++) {
+            vertex( x[i], y[i], height);
+        }
+        endShape(CLOSE);
         popStyle();
-        popMatrix();
-
-        if(auto){
-            solverConstrained.solve();
-            solverUnconstrained.solve();
-        }
-
-        if(forward != null && showSteps)drawChain(forward, color(0,255,0,30));
-        if(backward != null && showSteps)drawChain(backward, color(0,0,255,30));
     }
 
-    ///*
-    float counter = 0;
-    boolean enableBack = false;
-    Vec initial = null;
-    ChainSolver solver = null;
-    ArrayList<Vec> forward = null;
-    ArrayList<Vec> backward = null;
-    boolean inv = false;
-
-    public void keyPressed(){
-        if(key == 'v'){
-            counter+=3;
-            float val = inv ? -1 : 1;
-            target.translate(3*val, 3*noise(counter));
-            if(target.position().x() > 130) inv = true;
-            if(target.position().x() < -130) inv = false;
+    public void drawCone(float height, ArrayList<Vec> vertices){
+        pushStyle();
+        noStroke();
+        fill(246,117,19,80);
+        beginShape(PApplet.TRIANGLE_FAN);
+        vertex(0, 0, 0);
+        for (Vec v : vertices) {
+            vertex( v.x(), v.y(), height);
         }
-
-        if(key == 'c'){
-            //create solver
-            ChainSolver solver = new ChainSolver(joints, target);
-            solver.setTIMESPERFRAME(1);
-            solver.solve();
-        }
-
-        if(key == 'd'){
-            //create solver
-            ChainSolver solver = new ChainSolver(jointsConstrained, target);
-            solver.setTIMESPERFRAME(1);
-            solver.solve();
-            printChange();
-        }
-
-        if(key == 'j'){
-            backward = null;
-            enableBack = false;
-            //create solver
-            solver = new ChainSolver(jointsConstrained, target);
-            solver.setTIMESPERFRAME(1);
-            GenericFrame root = jointsConstrained.get(0);
-            GenericFrame end   = jointsConstrained.get(jointsConstrained.size()-1);
-            Vec target = solver.getTarget().position().get();
-            //Get the distance between the Root and the Target
-            initial = solver.getPositions().get(root.id()).get();
-            if(Vec.distance(end.position(), target) <= solver.getERROR()) return;
-            enableBack = true;
-            solver.getPositions().set(jointsConstrained.size()-1, target.get());
-            //Stage 1: Forward Reaching
-            forward = new ArrayList<Vec>();
-            solver.executeForwardReaching(solver.getChain());
-            for(Vec v : solver.getPositions()){
-                forward.add(v);
-            }
-        }
-        if(key == 'k'){
-            if(!enableBack) return;
-            solver.getPositions().set(0, initial);
-            solver.executeBackwardReaching(solver.getChain());
-            backward = solver.getPositions();
-            solver.update();
-            enableBack = false;
-        }
-        if(key == 'z'){
-            auto = !auto;
-        }
-        if(key == 'x'){
-            showSteps = !showSteps;
-        }
-
-        if(key == 'n'){
-            TimesPerFrame++;
-            solverConstrained.setTIMESPERFRAME(TimesPerFrame);
-            solverUnconstrained.setTIMESPERFRAME(TimesPerFrame);
-            println("Times Per FRAME : " + TimesPerFrame);
-        }
-
-    }
-
-    //DEBUG METHODS
-
-    public void drawChain(ArrayList<Vec> positions, int c){
-        PShape p = createShape(SPHERE,5);
-        p.setStroke(false);
-        int tr = 30;
-        for(Vec v : positions){
-            p.setFill(color(red(c),green(c),blue(c), tr));
-            pushMatrix();
-            translate(v.x(),v.y(),v.z());
-            shape(p);
-            popMatrix();
-            tr +=20;
-        }
-    }
-    //*/
-
-    //Debug method to print how much must the chain change from restRotation
-    public void printChange(){
-        float angle = 0.f;
-        for(GenericFrame f : jointsConstrained){
-            BallAndSocket b = (BallAndSocket) f.constraint();
-            Quat q = Quat.multiply((Quat)f.rotation(), b.getRestRotation().inverse());
-            angle += q.angle();
-        }
-        System.out.println("---> How much the chain has rotated : " + angle);
+        if(!vertices.isEmpty()) vertex( vertices.get(0).x(), vertices.get(0).y(), height);
+        endShape();
+        popStyle();
     }
 
     public static void main(String args[]) {

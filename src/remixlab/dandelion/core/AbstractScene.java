@@ -1414,13 +1414,9 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       eye().updateBoundaryEquations();
       lastEqUpdate = frameCount;
     }
-    // 3. Execute IK Solvers in the order they were registered
-    for(Solver solver : solvers){
-      solver.solve();
-    }
-    // 4. Alternative use only
+    // 3. Alternative use only
     proscenium();
-    // 5. Display visual hints
+    // 4. Display visual hints
     displayVisualHints(); // abstract
   }
 
@@ -1436,7 +1432,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * @see #preDraw()
    */
   public void postDraw() {
-    // 1. timers
+    // 1. timers (include IK Solvers' execution in the order they were registered)
     timingHandler().handle();
     if (frameCount < timingHandler().frameCount())
       frameCount = timingHandler().frameCount();
@@ -2790,6 +2786,9 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     }
     Solver.TreeSolver solver = new Solver.TreeSolver(branchRoot);
     solvers.add(solver);
+    //Add task
+    registerTimingTask(solver.getExecutionTask());
+    solver.getExecutionTask().run(1);
     return solver;
   }
 
@@ -2804,6 +2803,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
         break;
       }
     }
+    //Remove task
+    unregisterTimingTask(toRemove.getExecutionTask());
     return solvers.remove(toRemove);
   }
 
@@ -2825,4 +2826,17 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     }
     return false;
   }
+
+  /**
+   * Execute IK Task for a IK Solver that is not registered
+   */
+  public void executeIKSolver(Solver solver){
+    executeIKSolver(solver, 1);
+  }
+
+  public void executeIKSolver(Solver solver, long period){
+    registerTimingTask(solver.getExecutionTask());
+    solver.getExecutionTask().run(period);
+  }
+
 }
