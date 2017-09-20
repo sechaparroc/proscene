@@ -2,20 +2,9 @@
 
 ## Foundation
 
-Examples need refactor:
-
-1. Define new categories. Particularly for Basics, e.g., Minimap
-2. Update the following examples (use InteractiveFrame instead of GrabberObject) while moving the original ones to other repo such as proscene-experiments:
-    1. Sensitivities
-    2. Scramble
-    3. CameraInterpolation
-    4. Dizzy
-
 The following three issues were tested with Processing-3.2.3 under Windows and Linux and they give similar results. They need testing under MAC.
 
-1. Test [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java).
-2. FX2D renderer is buggy (can also be tested with the previous [ModifiersFix](https://github.com/remixlab/proscene/blob/master/testing/src/frame/ModifiersFix.java) example).
-3. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
+1. Proscene shaders examples that are broken that used to work in Processing 3.2.1.:
     1. [PostEffects.Fxaa](https://github.com/remixlab/proscene/tree/master/examples/Demos/PostEffects) gives a blank screen, even after removing the sampler2D define in the shader and using a uniform instead, as suggested by @codeanticode.
     2. [Bloom](https://github.com/remixlab/proscene/tree/master/examples/Demos/Bloom) displays the scene but doesn't apply the effect.
 
@@ -38,19 +27,21 @@ The following three issues were tested with Processing-3.2.3 under Windows and L
 
 ## JS
 
-1. Set webgl matrices,
-2. Release a first proof-of-concept [example]().
+1. Port test each sub-tree.
+* events (bias.js)
+* timing (fpstiming.js)
+* scene graph (proscene.js)
 
 ## Demos
 
-1. Include @sechaparroc experiments.
-2. [Platonic](http://blog.jpcarrascal.com/2016/04/platonic-solids-in-processing/) [solids](https://github.com/jpcarrascal/ProcessingPlatonicSolids).
-3. A BIAS custom touch agent to handle (absolute? which sounds good for an student workshop) DOF2 events.
-4. A BIAS custom touch agent to handle custom events.
+1. [Platonic](http://blog.jpcarrascal.com/2016/04/platonic-solids-in-processing/) [solids](https://github.com/jpcarrascal/ProcessingPlatonicSolids).
+2. A BIAS custom touch agent to handle (absolute? which sounds good for an student workshop) DOF2 events.
+3. A BIAS custom touch agent to handle custom events.
 
 # Future releases
 
 ## Foundation
 
-1. Serialize scene profiles and iFrame shapes and profiles.
-2. Perform a deep copy of generic-children frames.
+1. Release inverse kinematics.
+2. Serialize scene profiles and iFrame shapes and profiles.
+3. Perform a deep copy of generic-children frames.
