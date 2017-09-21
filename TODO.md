@@ -1,4 +1,4 @@
-# Next release: 32 (3.0.0)
+# Next release: 33 (3.1.0 or 4.0.0)
 
 ## Foundation
 
