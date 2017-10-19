@@ -99,9 +99,6 @@ public class PlanarPolygon extends Constraint{
     }
 
     public Vec getConstraint(Vec target, Quat restRotation){
-        Vec uvec    = new Vec(0,1,0);
-        Vec rvec    = new Vec(1,0,0);
-        Vec line    = new Vec(0,0,1);
         Vec point   = restRotation.inverse().multiply(target);
         Vec proj    = new Vec(height*point.x()/point.z(),height*point.y()/point.z());
         float inverse = (height < 0) == (point.z() < 0) ? 1 : -1;
