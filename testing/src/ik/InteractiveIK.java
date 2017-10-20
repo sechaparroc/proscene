@@ -40,7 +40,7 @@ public class InteractiveIK extends PApplet {
     //Visualization settings--------------------
     int w = 1110;
     int h = 510;
-    int oW = w/3;
+    int oW = w/4;
     int oH = h/3;
     int oX = w - oW;
     int oY = h - oH;
@@ -81,6 +81,9 @@ public class InteractiveIK extends PApplet {
             constraint.setHeight(boneLength/2.f);
             constraint.setRestRotation((Quat) branchPlanarConstraints.get(i).rotation().get());
             branchPlanarConstraints.get(i).setConstraint(constraint);
+            //assign 1 Click Event
+            ((InteractiveFrame)branchPlanarConstraints.get(i)).setClickBinding(LEFT, 1, "setCurrentFrame");
+
         }
 
         Solver solverPlanarConstraints = scene.setIKStructure(branchPlanarConstraints.get(0));
@@ -96,6 +99,7 @@ public class InteractiveIK extends PApplet {
         //Draw Constraints
         scene.beginDraw();
         canvas.background(0);
+        canvas.lights();
         scene.drawFrames();
         for(InteractiveFrame frame : scene.frames()){
             if(frame.constraint() != null){
@@ -103,9 +107,10 @@ public class InteractiveIK extends PApplet {
                 canvas.pushStyle();
                 Frame reference = new Frame(frame.position(), Quat.compose(frame.orientation(), frame.rotation().inverse()));
                 if(frame.constraint() instanceof PlanarPolygon){
+                    boolean current = interactiveShape.getIFrame() == frame;
                     reference.rotate(((PlanarPolygon)frame.constraint()).getRestRotation());
                     scene.applyWorldTransformation(reference);
-                    drawCone(canvas,((PlanarPolygon)frame.constraint()).getHeight(),((PlanarPolygon)frame.constraint()).getVertices());
+                    drawCone(canvas,((PlanarPolygon)frame.constraint()).getHeight(),((PlanarPolygon)frame.constraint()).getVertices(), current);
                 }
                 canvas.popStyle();
                 canvas.popMatrix();
@@ -145,6 +150,17 @@ public class InteractiveIK extends PApplet {
         return scene.branch(chainRoot, false);
     }
 
+    public void setCurrentFrame(InteractiveFrame frame){
+        if(frame.constraint() != null) {
+            if (frame.constraint() instanceof PlanarPolygon) {
+                interactiveShape.setIFrame(frame);
+                interactiveShape.setVertices(((PlanarPolygon)frame.constraint()).getVertices());
+            }
+        }else{
+            interactiveShape.setIFrame(null);
+        }
+    }
+
     public void frameGraphics(InteractiveFrame iFrame, PGraphics pg) {
         pg.pushStyle();
         scene.drawAxes(pg, 3);
@@ -173,16 +189,17 @@ public class InteractiveIK extends PApplet {
         pg.popStyle();
     }
 
-    public void drawCone(PGraphics pg, float height, ArrayList<Vec> vertices){
+    public void drawCone(PGraphics pg, float height, ArrayList<Vec> vertices, boolean current){
         pg.pushStyle();
         pg.noStroke();
-        pg.fill(246,117,19,80);
+        if(current) pg.fill(255,0,0,80);
+        else pg.fill(246,117,19,80);
         pg.beginShape(PApplet.TRIANGLE_FAN);
         pg.vertex(0, 0, 0);
         for (Vec v : vertices) {
             pg.vertex( v.x(), v.y(), height);
         }
-        if(!vertices.isEmpty()) vertex( vertices.get(0).x(), vertices.get(0).y(), height);
+        if(!vertices.isEmpty()) pg.vertex( vertices.get(0).x(), vertices.get(0).y(), height);
         pg.endShape();
         pg.popStyle();
     }
@@ -195,7 +212,7 @@ public class InteractiveIK extends PApplet {
     //Required Auxiliar Classes
     public static class InteractivePoint extends InteractiveFrame{
         InteractiveShape interactiveShape;
-        float radius = 1.f;
+        float radius = 2.f;
 
 
         public InteractivePoint(Scene scn) {
@@ -234,6 +251,7 @@ public class InteractiveIK extends PApplet {
 
     public static class InteractiveShape extends InteractiveFrame{
         private ArrayList<InteractivePoint> vertices = new ArrayList<InteractivePoint>();
+        private InteractiveFrame iFrame;
         private float radius = 10.f;
         private boolean update = false;
 
@@ -261,6 +279,14 @@ public class InteractiveIK extends PApplet {
 
         public int getK(){
             return vertices.size();
+        }
+
+        public void setIFrame(InteractiveFrame iFrame){
+            this.iFrame = iFrame;
+        }
+
+        public InteractiveFrame getIFrame(){
+            return iFrame;
         }
 
         //Create a Regular Polygon with K vertices
@@ -296,6 +322,7 @@ public class InteractiveIK extends PApplet {
             }
             shape.endShape(CLOSE);
             this.setShape(shape);
+            updateIFrame();
             update = false;
         }
 
@@ -311,6 +338,7 @@ public class InteractiveIK extends PApplet {
             removeVertices();
             vertices = buildShape(getK() + times);
             updateShape();
+            updateIFrame();
         }
 
         public void removePoint(int times){
@@ -318,16 +346,19 @@ public class InteractiveIK extends PApplet {
             removeVertices();
             vertices = buildShape(getK() - times);
             updateShape();
+            updateIFrame();
         }
 
         public void changePolygon(DOF1Event dof1Event ){
-            //DOF1Event dof1Event = MotionEvent.dof1Event(event);
-            System.out.println("dx : " + dof1Event.dx());
             if(dof1Event.dx() > 0) addPoint((int) dof1Event.dx());
             else{
-                System.out.println("ENTRA!!!");
                 removePoint((int) -dof1Event.dx());
             }
+        }
+
+        public void updateIFrame(){
+            if(iFrame != null)
+                ((PlanarPolygon) iFrame.constraint()).setVertices(getVertices());
         }
 
         public ArrayList<Vec> getVertices(){
@@ -336,6 +367,18 @@ public class InteractiveIK extends PApplet {
                 vertices.add(point.position().get());
             }
             return vertices;
+        }
+
+        public void setVertices(ArrayList<Vec> vertices){
+            if(vertices.size() < 3) return;
+            removeVertices();
+            this.vertices = new ArrayList<InteractivePoint>();
+            for(Vec vec : vertices){
+                InteractivePoint vertex = new InteractivePoint(scene(),this);
+                vertex.setPosition(vec);
+                this.vertices.add(vertex);
+            }
+            update = true;
         }
     }
 }
