@@ -19,6 +19,7 @@ import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
+import remixlab.proscene.Scene;
 import remixlab.util.Copyable;
 import remixlab.util.Util;
 
@@ -192,7 +193,6 @@ public abstract class Eye implements Copyable {
    * Which was the last frame the Eye changes.
    */
   public long lastNonFrameUpdate = 0;
-  protected long lastFPCoeficientsUpdateIssued = -1;
 
   protected Vec anchorPnt;
 
@@ -1776,10 +1776,7 @@ public abstract class Eye implements Copyable {
    * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
    */
   public void updateBoundaryEquations() {
-    if (lastUpdate() != lastFPCoeficientsUpdateIssued) {
-      computeBoundaryEquations(fpCoefficients);
-      lastFPCoeficientsUpdateIssued = lastUpdate();
-    }
+    computeBoundaryEquations(fpCoefficients);
   }
 
   /**
